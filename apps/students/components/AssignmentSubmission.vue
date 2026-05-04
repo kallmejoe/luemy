@@ -50,7 +50,7 @@ interface Props {
   assignmentId: number
 }
 
-withDefaults(defineProps<Props>(), {})
+const props = withDefaults(defineProps<Props>(), {})
 
 const emit = defineEmits<{
   submitted: [value: { success: boolean; message: string }]
@@ -111,8 +111,6 @@ const handleClear = () => {
   successMessage.value = ''
   errorMessage.value = ''
 }
-
-const props = defineProps<Props>()
 </script>
 
 <style scoped>
