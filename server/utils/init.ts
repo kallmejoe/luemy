@@ -85,6 +85,18 @@ CREATE TABLE IF NOT EXISTS assignment_grades (
     FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS assignment_submissions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id INTEGER NOT NULL,
+    assignment_id INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    submission_date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status TEXT NOT NULL DEFAULT 'Pending' CHECK(status IN ('Pending', 'Submitted', 'Graded')),
+    FOREIGN KEY (student_id) REFERENCES students_info(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE,
+    UNIQUE(student_id, assignment_id)
+);
+
 `);
 } catch (err) {
   console.error('[DB Init] Schema initialization error:', err)
