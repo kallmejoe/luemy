@@ -196,9 +196,11 @@ const saveGrade = async (submission: Submission) => {
         <div v-if="gradedSubmissions.length === 0" class="empty-note">No graded submissions yet.</div>
         <div v-else class="submission-list compact">
           <article v-for="submission in gradedSubmissions" :key="submission.id" class="submission-item compact-item">
-            <div>
+            <div class="graded-meta">
               <h3>{{ submission.assignment_title }}</h3>
               <p>{{ submission.student_name }} • {{ submission.course_name }}</p>
+              <p v-if="submission.feedback" class="feedback-text">Feedback: {{ submission.feedback }}</p>
+              <p v-else class="feedback-text muted">Feedback: No feedback provided.</p>
             </div>
             <p class="grade-pill">{{ submission.grade }} / {{ submission.max_score }}</p>
           </article>
@@ -322,8 +324,24 @@ const saveGrade = async (submission: Submission) => {
 .compact-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
+}
+
+.graded-meta {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.feedback-text {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  white-space: pre-wrap;
+}
+
+.feedback-text.muted {
+  color: var(--muted-foreground);
 }
 
 .grade-pill {
