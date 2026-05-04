@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS professors_info (
     user_id INTEGER PRIMARY KEY,
     department TEXT,
+    phone TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -104,6 +105,12 @@ CREATE TABLE IF NOT EXISTS assignment_submissions (
 
   try {
     db.exec("ALTER TABLE assignment_grades ADD COLUMN feedback TEXT")
+  } catch {
+    // Column already exists on initialized databases.
+  }
+
+  try {
+    db.exec("ALTER TABLE professors_info ADD COLUMN phone TEXT")
   } catch {
     // Column already exists on initialized databases.
   }
