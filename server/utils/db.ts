@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS assignment_grades (
     student_id INTEGER NOT NULL,
     assignment_id INTEGER NOT NULL,
     grade REAL,
+    feedback TEXT,
     PRIMARY KEY (student_id, assignment_id),
     FOREIGN KEY (student_id) REFERENCES students_info(user_id) ON DELETE CASCADE,
     FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE
@@ -100,6 +101,13 @@ CREATE TABLE IF NOT EXISTS assignment_submissions (
     UNIQUE(student_id, assignment_id)
 );
   `)
+
+  try {
+    db.exec("ALTER TABLE assignment_grades ADD COLUMN feedback TEXT")
+  } catch {
+    // Column already exists on initialized databases.
+  }
+
   console.log('[DB] Database initialized successfully')
 } catch (err) {
   console.error('[DB] Schema initialization error:', err)
