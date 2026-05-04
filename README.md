@@ -56,6 +56,7 @@ bun run dev:students
 
 # Run staff app (localhost:3000)
 bun run dev:staff
+bun run dev:instructors
 ```
 
 ## Building for Production
