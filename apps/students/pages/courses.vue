@@ -75,6 +75,14 @@ const clearSelection = () => {
 }
 
 const isEnrolled = (courseId: number) => activeCourseIds.value.includes(courseId)
+
+const toggleSelection = (courseId: number) => {
+  if (selectedCourseIds.value.includes(courseId)) {
+    selectedCourseIds.value = selectedCourseIds.value.filter(id => id !== courseId)
+  } else {
+    selectedCourseIds.value.push(courseId)
+  }
+}
 </script>
 
 <template>
@@ -87,20 +95,21 @@ const isEnrolled = (courseId: number) => activeCourseIds.value.includes(courseId
     </div>
 
     <div class="course-list">
-      <div
+      <NuxtLink
         v-for="course in courses"
         :key="course.id"
+        :to="`/courses/${course.id}`"
         class="course-card"
         :class="{ enrolled: isEnrolled(course.id) }"
       >
-        <label class="course-row">
-          <input
-            v-if="!isEnrolled(course.id)"
-            v-model="selectedCourseIds"
-            type="checkbox"
-            :value="course.id"
-            class="course-checkbox"
-          />
+        <div class="course-row">
+          <div v-if="!isEnrolled(course.id)" @click.prevent="toggleSelection(course.id)" class="selection-area">
+            <input
+              type="checkbox"
+              :checked="selectedCourseIds.includes(course.id)"
+              class="course-checkbox"
+            />
+          </div>
           <span v-else class="check-icon"></span>
 
           <div class="course-info">
@@ -108,8 +117,8 @@ const isEnrolled = (courseId: number) => activeCourseIds.value.includes(courseId
             <span class="course-professor">{{ course.professor_name }}</span>
           </div>
           <span v-if="isEnrolled(course.id)" class="badge">Enrolled</span>
-        </label>
-      </div>
+        </div>
+      </NuxtLink>
     </div>
   </div>
 </template>
@@ -145,6 +154,8 @@ const isEnrolled = (courseId: number) => activeCourseIds.value.includes(courseId
   border-radius: var(--radius-lg);
   background: var(--card);
   transition: all 0.2s ease;
+  text-decoration: none;
+  color: inherit;
 }
 
 .course-card::before {
@@ -179,10 +190,18 @@ const isEnrolled = (courseId: number) => activeCourseIds.value.includes(courseId
   cursor: pointer;
 }
 
+.selection-area {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
 .course-checkbox {
   width: 1.25rem;
   height: 1.25rem;
   accent-color: var(--primary);
+  cursor: pointer;
 }
 
 .check-icon {
