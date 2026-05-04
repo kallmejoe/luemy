@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useAuth } from '@core/composables/useAuth'
 
 definePageMeta({
@@ -8,39 +8,33 @@ definePageMeta({
 
 const { token } = useAuth()
 const route = useRoute()
-const assignmentId = ref<number>(parseInt(route.params.id as string))
+const assignmentId = computed(() => parseInt(route.params.id as string))
 const assignment = ref<any>(null)
 const submission = ref<any>(null)
 const loading = ref(true)
+const error = ref('')
 const showSubmissionForm = ref(false)
 
 const fetchAssignmentDetails = async () => {
   try {
-    const res = await $fetch('/api/assignments/student-assignments', {
+    loading.value = true
+    error.value = ''
+
+    const res = await $fetch(`/api/assignments/${assignmentId.value}`, {
       headers: {
         Authorization: `Bearer ${token.value}`
       }
     })
-    
+
     if (res.success) {
-      assignment.value = res.assignments.find((a: any) => a.id === assignmentId.value)
-      
-      // Try to fetch existing submission
-      try {
-        const submissionRes = await $fetch(`/api/assignments/submission/${assignmentId.value}`, {
-          headers: {
-            Authorization: `Bearer ${token.value}`
-          }
-        })
-        if (submissionRes.success && submissionRes.submission) {
-          submission.value = submissionRes.submission
-        }
-      } catch {
-        // No submission yet
-      }
+      assignment.value = res.assignment
+      submission.value = res.submission || null
+    } else {
+      error.value = res.message || 'Failed to load assignment'
     }
-  } catch (error) {
-    console.error('Error fetching assignment:', error)
+  } catch (err) {
+    console.error('Error fetching assignment:', err)
+    error.value = err instanceof Error ? err.message : 'Failed to load assignment details'
   } finally {
     loading.value = false
   }
@@ -89,6 +83,10 @@ const handleSubmissionComplete = async (event: any) => {
 
     <div v-if="loading" class="loading-state">
       Loading assignment details...
+    </div>
+
+    <div v-else-if="error" class="error-state">
+      {{ error }}
     </div>
 
     <div v-else-if="!assignment" class="error-state">

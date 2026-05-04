@@ -6,6 +6,7 @@ export const useNavItems = (): NavItem[] => {
   return [
     { id: "dashboard", href: "/dashboard", label: "Dashboard" },
     { id: "active-courses", href: "/active-courses", label: "My Courses" },
-    { id: "enrollment", href: "/enrollment", label: "Enrollment" },
+    { id: "assignments", href: "/assignments", label: "Assignments" },
+    { id: "courses", href: "/courses", label: "Browse Courses" },
   ];
 };
