@@ -70,9 +70,10 @@ onMounted(async () => {
     </div>
 
     <div v-else class="course-list">
-      <div
+      <NuxtLink
         v-for="course in enrolledCourses"
         :key="course.id"
+        :to="`/courses/${course.id}`"
         class="course-card"
       >
         <div class="course-info">
@@ -80,7 +81,7 @@ onMounted(async () => {
           <span class="course-professor">{{ course.professor_name }}</span>
         </div>
         <span class="badge">Enrolled</span>
-      </div>
+      </NuxtLink>
     </div>
   </div>
 </template>
@@ -89,6 +90,7 @@ onMounted(async () => {
 .courses-page {
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-md);
 }
 
 .loading,
@@ -96,12 +98,16 @@ onMounted(async () => {
   padding: var(--spacing-xl);
   text-align: center;
   color: var(--muted-foreground);
+  background: var(--card);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
 }
 
 .link {
   color: var(--primary);
   text-decoration: none;
   font-weight: 500;
+  margin-top: var(--spacing-md);
 }
 
 .link:hover {
@@ -111,6 +117,7 @@ onMounted(async () => {
 .course-list {
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
 }
 
 .course-card {
@@ -118,10 +125,20 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: 1rem 1.25rem;
+  margin: 0 0.25rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
   background: var(--muted);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.course-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .course-card::before {
@@ -131,8 +148,13 @@ onMounted(async () => {
   top: 0;
   bottom: 0;
   width: 3px;
-  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  border-radius: 8px 0 0 8px;
   background: var(--primary);
+  transition: all 0.2s;
+}
+
+.course-card:hover::before {
+  width: 4px;
 }
 
 .course-info {
@@ -145,7 +167,8 @@ onMounted(async () => {
 
 .course-name {
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--foreground);
 }
 
 .course-professor {
@@ -159,6 +182,22 @@ onMounted(async () => {
   background: var(--primary);
   color: var(--primary-foreground);
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: var(--spacing-md);
+}
+
+@media (max-width: 640px) {
+  .courses-page {
+    padding: var(--spacing-sm);
+  }
+
+  .course-card {
+    gap: var(--spacing-sm);
+  }
+
+  .badge {
+    margin-left: auto;
+  }
 }
 </style>

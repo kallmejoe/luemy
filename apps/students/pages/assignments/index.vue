@@ -45,11 +45,6 @@ const isOverdue = (dateString: string) => {
 
 <template>
   <div class="assignments-page">
-    <div class="page-header">
-      <h1 class="page-title">My Assignments</h1>
-      <p class="page-subtitle">View upcoming coursework for your enrolled courses.</p>
-    </div>
-
     <div v-if="loading" class="loading-state">
       Loading assignments...
     </div>
@@ -59,7 +54,13 @@ const isOverdue = (dateString: string) => {
     </div>
 
     <div v-else class="assignment-grid">
-      <div v-for="assignment in assignments" :key="assignment.id" class="assignment-card" :class="{ 'is-overdue': isOverdue(assignment.due_date) }">
+      <NuxtLink
+        v-for="assignment in assignments"
+        :key="assignment.id"
+        :to="`/assignments/${assignment.id}`"
+        class="assignment-card"
+        :class="{ 'is-overdue': isOverdue(assignment.due_date) }"
+      >
         <div class="assignment-header">
           <span class="course-badge">{{ assignment.course_name }}</span>
           <span class="due-date" :class="{ 'text-destructive': isOverdue(assignment.due_date) }">
@@ -75,8 +76,9 @@ const isOverdue = (dateString: string) => {
         
         <div class="assignment-footer">
           <span class="max-score">Max Score: {{ assignment.max_score }}</span>
+          <span class="view-link">View Details →</span>
         </div>
-      </div>
+      </NuxtLink>
     </div>
   </div>
 </template>
@@ -84,23 +86,6 @@ const isOverdue = (dateString: string) => {
 <style scoped>
 .assignments-page {
   padding-bottom: 2rem;
-}
-
-.page-header {
-  margin-bottom: 2rem;
-}
-
-.page-title {
-  margin: 0 0 0.25rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--foreground);
-}
-
-.page-subtitle {
-  margin: 0;
-  color: var(--muted-foreground);
-  font-size: 0.9375rem;
 }
 
 .loading-state,
@@ -126,11 +111,14 @@ const isOverdue = (dateString: string) => {
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  text-decoration: none;
+  color: inherit;
 }
 
 .assignment-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: var(--primary);
 }
 
 .assignment-card.is-overdue {
@@ -184,7 +172,8 @@ const isOverdue = (dateString: string) => {
 
 .assignment-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding-top: 1rem;
   border-top: 1px solid var(--border);
 }
@@ -193,5 +182,16 @@ const isOverdue = (dateString: string) => {
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--foreground);
+}
+
+.view-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary);
+  transition: opacity 0.2s;
+}
+
+.assignment-card:hover .view-link {
+  opacity: 0.8;
 }
 </style>
