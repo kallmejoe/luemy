@@ -116,6 +116,11 @@ const formatDate = (dateString: string) => {
   if (!dateString) return 'N/A';
   return new Date(dateString).toLocaleString();
 }
+
+const isPastDue = (dateString: string) => {
+  if (!dateString) return false
+  return new Date(dateString).getTime() <= Date.now()
+}
 </script>
 
 <template>
@@ -211,7 +216,9 @@ const formatDate = (dateString: string) => {
             <p v-if="assignment.description" class="assignment-desc">{{ assignment.description }}</p>
             <div class="assignment-meta">
               <span><strong>Max Score:</strong> {{ assignment.max_score }}</span>
-              <span class="due-date"><strong>Due:</strong> {{ formatDate(assignment.due_date) }}</span>
+              <span
+                :class="['due-date', isPastDue(assignment.due_date) ? 'due-date-passed' : 'due-date-open']"
+              ><strong>Due:</strong> {{ formatDate(assignment.due_date) }}</span>
             </div>
           </div>
         </div>
@@ -390,6 +397,14 @@ const formatDate = (dateString: string) => {
 }
 
 .due-date {
+  font-weight: 600;
+}
+
+.due-date-open {
+  color: var(--chart-2);
+}
+
+.due-date-passed {
   color: var(--destructive);
 }
 
