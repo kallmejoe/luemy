@@ -73,13 +73,6 @@ const isEnrolled = (courseId: number) =>
 
 <template>
   <div class="enrollment-page">
-    <div class="enrollment-header">
-      <h1 class="page-title">Enrollment</h1>
-      <p class="page-subtitle">
-        Browse available courses and enroll in the ones you're interested in.
-      </p>
-    </div>
-
     <div class="course-list">
       <div
         v-for="course in courses"
@@ -89,30 +82,13 @@ const isEnrolled = (courseId: number) =>
       >
         <div class="course-row">
           <div class="course-info">
-            <div class="course-title-row">
-              <h3>{{ course.name }}</h3>
-              <span v-if="isEnrolled(course.id)" class="badge badge--enrolled"
-                >Enrolled</span
-              >
-              <span v-else class="badge badge--available">Available</span>
-            </div>
-            <p v-if="course.professor_name" class="course-professor">
-              {{ course.professor_name }}
-            </p>
-            <p v-if="course.description" class="course-description">
-              {{ course.description }}
-            </p>
+            <span class="course-name">{{ course.name }}</span>
+            <span class="course-professor">{{ course.professor_name }}</span>
           </div>
-
-          <div class="course-action">
-            <UiButton
-              v-if="!isEnrolled(course.id)"
-              @click="handleEnrollment(course.id)"
-            >
-              Enroll
-            </UiButton>
-            <span v-else class="enrolled-indicator">Enrolled</span>
-          </div>
+          <UiButton v-if="!isEnrolled(course.id)" size="sm" @click="handleEnrollment(course.id)">
+            Enroll
+          </UiButton>
+          <span v-else class="badge">Enrolled</span>
         </div>
       </div>
     </div>
@@ -123,125 +99,80 @@ const isEnrolled = (courseId: number) =>
 .enrollment-page {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  min-height: 100%;
-}
-
-.enrollment-header {
-  padding-bottom: 0.75rem;
-}
-
-.page-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--color-text);
-  margin: 0 0 0.5rem 0;
-}
-
-.page-subtitle {
-  font-size: 0.95rem;
-  color: var(--color-text-secondary, #666);
-  margin: 0;
 }
 
 .course-list {
-  display: grid;
-  gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .course-card {
-  border: 1px solid var(--color-border, #e0e0e0);
-  border-radius: 6px;
-  padding: 1rem;
-  background: var(--color-surface, white);
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card);
   transition: all 0.2s ease;
 }
 
+.course-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
 .course-card:hover {
-  border-color: var(--color-primary, #3b82f6);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: var(--accent);
 }
 
 .course-card.enrolled {
-  border-color: var(--color-primary, #3b82f6);
-  background: var(--color-primary-light, #eff6ff);
+  background: var(--muted);
+}
+
+.course-card.enrolled::before {
+  background: var(--primary);
 }
 
 .course-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  gap: var(--spacing-md);
+  width: 100%;
 }
 
 .course-info {
   flex: 1;
   min-width: 0;
-}
-
-.course-title-row {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-.course-title-row h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-.badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
+.course-name {
+  font-size: 1rem;
   font-weight: 500;
-}
-
-.badge--enrolled {
-  background: var(--color-primary, #3b82f6);
-  color: white;
-}
-
-.badge--available {
-  background: var(--color-secondary, #e5e7eb);
-  color: var(--color-text);
 }
 
 .course-professor {
-  margin: 0 0 0.25rem 0;
-  font-size: 0.9rem;
-  color: var(--color-text-secondary, #666);
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.badge {
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 0.75rem;
   font-weight: 500;
-}
-
-.course-description {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--color-text-secondary, #666);
-  line-height: 1.4;
-}
-
-.course-action {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-}
-
-.enrolled-indicator {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  background: var(--color-primary, #3b82f6);
-  color: white;
-  font-size: 0.9rem;
-  font-weight: 500;
-  white-space: nowrap;
 }
 </style>

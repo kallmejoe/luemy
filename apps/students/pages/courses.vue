@@ -79,20 +79,11 @@ const isEnrolled = (courseId: number) => activeCourseIds.value.includes(courseId
 
 <template>
   <div class="courses-page">
-    <div class="courses-toolbar">
-      <div class="courses-heading">
-        <h1 class="page-title">Available Courses</h1>
-        <p class="page-subtitle">Select one or more courses, then enroll from the top right.</p>
-      </div>
-
-      <div class="actions">
-        <UiButton :disabled="selectedCourseIds.length === 0" @click="handleEnrollment">
-          Enroll Selected ({{ selectedCourseIds.length }})
-        </UiButton>
-        <UiButton variant="outline" :disabled="selectedCourseIds.length === 0" @click="clearSelection">
-          Clear
-        </UiButton>
-      </div>
+    <div class="header-actions" v-if="selectedCourseIds.length > 0">
+      <UiButton @click="handleEnrollment">
+        Enroll ({{ selectedCourseIds.length }})
+      </UiButton>
+      <UiButton variant="ghost" @click="clearSelection">Clear</UiButton>
     </div>
 
     <div class="course-list">
@@ -103,23 +94,20 @@ const isEnrolled = (courseId: number) => activeCourseIds.value.includes(courseId
         :class="{ enrolled: isEnrolled(course.id) }"
       >
         <label class="course-row">
-          <div class="course-select">
-            <input
-              v-if="!isEnrolled(course.id)"
-              v-model="selectedCourseIds"
-              type="checkbox"
-              :value="course.id"
-            />
-            <span v-else class="course-dot course-dot--enrolled"></span>
-          </div>
+          <input
+            v-if="!isEnrolled(course.id)"
+            v-model="selectedCourseIds"
+            type="checkbox"
+            :value="course.id"
+            class="course-checkbox"
+          />
+          <span v-else class="check-icon"></span>
 
           <div class="course-info">
-            <div class="course-title-row">
-              <h3>{{ course.name }}</h3>
-              <span v-if="isEnrolled(course.id)" class="badge">Enrolled</span>
-            </div>
-            <p v-if="course.professor_name">{{ course.professor_name }}</p>
+            <span class="course-name">{{ course.name }}</span>
+            <span class="course-professor">{{ course.professor_name }}</span>
           </div>
+          <span v-if="isEnrolled(course.id)" class="badge">Enrolled</span>
         </label>
       </div>
     </div>
@@ -130,121 +118,105 @@ const isEnrolled = (courseId: number) => activeCourseIds.value.includes(courseId
 .courses-page {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  min-height: 100%;
+  gap: var(--spacing-md);
 }
 
-.courses-toolbar {
+.header-actions {
   position: sticky;
   top: 0;
-  z-index: 5;
+  z-index: 10;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 0.75rem;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
   background: var(--background);
-}
-
-.courses-heading {
-  min-width: 0;
-}
-
-.page-title {
-  margin: 0;
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-.page-subtitle {
-  margin: 0.35rem 0 0;
-  color: var(--muted-foreground);
-  font-size: 0.875rem;
-}
-
-.actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
 }
 
 .course-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
 }
 
 .course-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   background: var(--card);
-  padding: 0.9rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.course-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
+.course-card:hover {
+  background: var(--accent);
 }
 
 .course-card.enrolled {
-  background: var(--muted, #f8f8f8);
+  background: var(--muted);
+}
+
+.course-card.enrolled::before {
+  background: var(--primary);
 }
 
 .course-row {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
+  gap: var(--spacing-md);
   width: 100%;
+  cursor: pointer;
 }
 
-.course-select {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 1.5rem;
+.course-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--primary);
 }
 
-.course-dot {
+.check-icon {
   width: 0.75rem;
   height: 0.75rem;
-  border-radius: 999px;
-  background: var(--border);
-}
-
-.course-dot--enrolled {
-  background: #4caf50;
+  border-radius: 50%;
+  background: var(--primary);
 }
 
 .course-info {
-  min-width: 0;
   flex: 1;
-}
-
-.course-title-row {
+  min-width: 0;
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-.course-info h3 {
-  margin: 0;
+.course-name {
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--foreground);
 }
 
-.course-info p {
-  margin: 0.25rem 0 0;
-  color: var(--muted-foreground);
+.course-professor {
   font-size: 0.875rem;
+  color: var(--muted-foreground);
 }
 
 .badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.2rem 0.5rem;
+  padding: 0.25rem 0.625rem;
   border-radius: 999px;
-  background: rgba(76, 175, 80, 0.12);
-  color: #2e7d32;
+  background: var(--primary);
+  color: var(--primary-foreground);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
 }
 </style>

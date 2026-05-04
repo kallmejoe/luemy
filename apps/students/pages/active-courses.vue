@@ -62,73 +62,24 @@ onMounted(async () => {
 
 <template>
   <div class="courses-page">
-    <div class="page-header">
-      <h1 class="page-title">Active Courses</h1>
-      <p class="page-subtitle">
-        View all active courses and your enrollment status.
-      </p>
+    <div v-if="loading" class="loading">Loading...</div>
+
+    <div v-else-if="enrolledCourses.length === 0" class="empty-state">
+      <p>No enrolled courses</p>
+      <NuxtLink to="/enrollment" class="link">Browse courses</NuxtLink>
     </div>
 
-    <div v-if="loading" class="loading">Loading courses...</div>
-
-    <div v-else-if="activeCourses.length === 0" class="empty-state">
-      <p>No active courses available.</p>
-      <NuxtLink to="/enrollment" class="link">Browse all courses</NuxtLink>
-    </div>
-
-    <div v-else>
-      <!-- My Enrolled Courses Section -->
-      <div v-if="enrolledCourses.length > 0" class="courses-section">
-        <h2 class="section-title">My Enrolled Courses</h2>
-        <div class="course-list">
-          <div
-            v-for="course in enrolledCourses"
-            :key="course.id"
-            class="course-card enrolled"
-          >
-            <div class="course-content">
-              <div class="course-info">
-                <div class="course-header">
-                  <h3 class="course-title">{{ course.name }}</h3>
-                  <span class="badge badge--enrolled">Enrolled</span>
-                </div>
-                <p v-if="course.professor_name" class="course-professor">
-                  {{ course.professor_name }}
-                </p>
-                <p v-if="course.description" class="course-description">
-                  {{ course.description }}
-                </p>
-              </div>
-            </div>
-          </div>
+    <div v-else class="course-list">
+      <div
+        v-for="course in enrolledCourses"
+        :key="course.id"
+        class="course-card"
+      >
+        <div class="course-info">
+          <span class="course-name">{{ course.name }}</span>
+          <span class="course-professor">{{ course.professor_name }}</span>
         </div>
-      </div>
-
-      <!-- Available Courses Section -->
-      <div v-if="availableCourses.length > 0" class="courses-section">
-        <h2 class="section-title">Available Courses</h2>
-        <div class="course-list">
-          <div
-            v-for="course in availableCourses"
-            :key="course.id"
-            class="course-card"
-          >
-            <div class="course-content">
-              <div class="course-info">
-                <div class="course-header">
-                  <h3 class="course-title">{{ course.name }}</h3>
-                  <span class="badge badge--available">Available</span>
-                </div>
-                <p v-if="course.professor_name" class="course-professor">
-                  {{ course.professor_name }}
-                </p>
-                <p v-if="course.description" class="course-description">
-                  {{ course.description }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <span class="badge">Enrolled</span>
       </div>
     </div>
   </div>
@@ -138,41 +89,17 @@ onMounted(async () => {
 .courses-page {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  min-height: 100%;
-}
-
-.page-header {
-  padding-bottom: 0.75rem;
-}
-
-.page-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--color-text);
-  margin: 0 0 0.5rem 0;
-}
-
-.page-subtitle {
-  font-size: 0.95rem;
-  color: var(--color-text-secondary, #666);
-  margin: 0;
 }
 
 .loading,
 .empty-state {
+  padding: var(--spacing-xl);
   text-align: center;
-  padding: 3rem 1rem;
-  color: var(--color-text-secondary, #666);
-}
-
-.empty-state p {
-  margin-bottom: 1rem;
+  color: var(--muted-foreground);
 }
 
 .link {
-  display: inline-block;
-  color: var(--color-primary, #3b82f6);
+  color: var(--primary);
   text-decoration: none;
   font-weight: 500;
 }
@@ -181,99 +108,57 @@ onMounted(async () => {
   text-decoration: underline;
 }
 
-.courses-section {
+.course-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.section-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin: 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--color-primary, #3b82f6);
-}
-
-.course-list {
-  display: grid;
-  gap: 1rem;
 }
 
 .course-card {
-  border: 1px solid var(--color-border, #e0e0e0);
-  border-radius: 6px;
-  padding: 1.5rem;
-  background: var(--color-surface, white);
-  transition: all 0.2s ease;
+  position: relative;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--muted);
 }
 
-.course-card:hover {
-  border-color: var(--color-primary, #3b82f6);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.course-card.enrolled {
-  border-color: var(--color-primary, #3b82f6);
-  background: var(--color-primary-light, #eff6ff);
-}
-
-.course-content {
-  width: 100%;
+.course-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  background: var(--primary);
 }
 
 .course-info {
+  flex: 1;
   min-width: 0;
-}
-
-.course-header {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-.course-title {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-.badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
+.course-name {
+  font-size: 1rem;
   font-weight: 500;
-  white-space: nowrap;
-}
-
-.badge--enrolled {
-  background: var(--color-primary, #3b82f6);
-  color: white;
-}
-
-.badge--available {
-  background: var(--color-secondary, #e5e7eb);
-  color: var(--color-text);
 }
 
 .course-professor {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.9rem;
-  color: var(--color-text-secondary, #666);
-  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
 }
 
-.course-description {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--color-text-secondary, #666);
-  line-height: 1.5;
+.badge {
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 </style>

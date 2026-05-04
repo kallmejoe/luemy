@@ -49,7 +49,7 @@ const isAuthPage = computed(() => {
   width: 75%;
   max-width: 75%;
   margin: 0 auto;
-  padding: 0.75rem 0;
+  padding: var(--spacing-sm) 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -61,7 +61,7 @@ const isAuthPage = computed(() => {
   width: 75%;
   max-width: 75%;
   margin: 0 auto;
-  padding: 2rem 0;
+  padding: var(--spacing-md) 0;
 }
 
 .app-main--full {
