@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useAuth } from '@core/composables/useAuth'
 
 definePageMeta({
@@ -8,7 +8,7 @@ definePageMeta({
 
 const { token } = useAuth()
 const route = useRoute()
-const courseId = ref<number>(parseInt(route.params.id as string))
+const courseId = computed(() => parseInt(route.params.id as string))
 const course = ref<any>(null)
 const assignments = ref<any[]>([])
 const loading = ref(true)
@@ -61,7 +61,7 @@ const getAssignmentStats = () => {
 <template>
   <div class="course-detail">
     <div class="page-header">
-      <NuxtLink to="/courses" class="back-link">&larr; Back to Courses</NuxtLink>
+      <NuxtLink to="/active-courses" class="back-link">&larr; Back to My Courses</NuxtLink>
       <h1 v-if="course" class="page-title">{{ course.name }}</h1>
     </div>
 
