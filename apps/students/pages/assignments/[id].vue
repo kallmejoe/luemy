@@ -116,36 +116,28 @@ const handleSubmissionComplete = async (event: any) => {
         <p>{{ assignment.description }}</p>
       </div>
 
-      <div class="submission-section">
-        <h2>Submission Status</h2>
-        
-        <div v-if="submission" class="submission-status">
-          <div class="status-badge" :class="getStatusColor(submission.status)">
-            {{ submission.status }}
-          </div>
-          <p class="submission-date">
-            Submitted on: {{ formatDate(submission.submission_date) }}
-          </p>
-          
-          <div class="submission-content">
-            <h4>Your Submission:</h4>
-            <div class="content-box">
-              {{ submission.content }}
-            </div>
-          </div>
-
-          <button 
-            v-if="submission.status === 'Pending' || submission.status === 'Submitted'"
-            @click="showSubmissionForm = !showSubmissionForm"
-            class="btn btn-secondary"
+      <div v-if="submission" class="submission-section">
+        <div class="submission-top">
+          <h2>Your Submission</h2>
+          <span 
+            :class="['status-badge', getStatusColor(submission.status)]"
           >
-            {{ showSubmissionForm ? 'Cancel Editing' : 'Edit Submission' }}
-          </button>
+            {{ submission.status }}
+          </span>
+        </div>
+        <p class="submission-date">{{ formatDate(submission.submission_date) }}</p>
+        
+        <div class="content-box">
+          {{ submission.content }}
         </div>
 
-        <div v-else class="no-submission">
-          <p>You have not submitted this assignment yet.</p>
-        </div>
+        <button 
+          v-if="submission.status === 'Pending' || submission.status === 'Submitted'"
+          @click="showSubmissionForm = !showSubmissionForm"
+          class="btn btn-secondary"
+        >
+          {{ showSubmissionForm ? '✕ Cancel' : '✎ Edit' }}
+        </button>
       </div>
 
       <div v-if="!submission || showSubmissionForm" class="submission-form-section">
@@ -174,6 +166,7 @@ const handleSubmissionComplete = async (event: any) => {
   text-decoration: none;
   font-weight: 500;
   transition: opacity 0.2s;
+  font-size: 0.95rem;
 }
 
 .back-link:hover {
@@ -193,21 +186,21 @@ const handleSubmissionComplete = async (event: any) => {
   text-align: center;
   color: var(--muted-foreground);
   background: var(--card);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  border-radius: 8px;
 }
 
 .assignment-content {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .assignment-info {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
+  border-radius: 8px;
+  padding: 1.25rem;
 }
 
 .info-row {
@@ -222,144 +215,180 @@ const handleSubmissionComplete = async (event: any) => {
 }
 
 .info-label {
-  font-weight: 600;
-  color: var(--foreground);
+  font-weight: 500;
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
 }
 
 .info-value {
-  color: var(--muted-foreground);
+  color: var(--foreground);
+  font-weight: 500;
 }
 
 .text-overdue {
-  color: var(--destructive);
+  color: #ef4444;
   font-weight: 600;
 }
 
 .assignment-description {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
+  border-radius: 8px;
+  padding: 1.25rem;
 }
 
 .assignment-description h3 {
-  margin: 0 0 1rem;
-  font-size: 1.1rem;
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
   color: var(--foreground);
+  font-weight: 600;
 }
 
 .assignment-description p {
   margin: 0;
   color: var(--muted-foreground);
   line-height: 1.6;
+  font-size: 0.95rem;
 }
 
 .submission-section {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
+  border-radius: 8px;
+  padding: 1rem;
 }
 
-.submission-section h2 {
-  margin: 0 0 1.5rem;
-  font-size: 1.3rem;
-  color: var(--foreground);
+.submission-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
 }
 
-.submission-status {
-  margin-bottom: 1.5rem;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
+.submission-top h2 {
+  margin: 0;
+  font-size: 1rem;
   font-weight: 600;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-}
-
-.status-pending {
-  background: rgba(239, 193, 58, 0.1);
-  color: hsl(47, 93%, 43%);
-}
-
-.status-submitted {
-  background: rgba(59, 130, 246, 0.1);
-  color: hsl(217, 97%, 44%);
-}
-
-.status-graded {
-  background: rgba(34, 197, 94, 0.1);
-  color: hsl(142, 72%, 29%);
+  color: var(--foreground);
 }
 
 .submission-date {
   margin: 0 0 1rem;
+  font-size: 0.8rem;
   color: var(--muted-foreground);
-  font-size: 0.9rem;
-}
-
-.submission-content {
-  margin: 1.5rem 0;
-}
-
-.submission-content h4 {
-  margin: 0 0 0.75rem;
-  font-size: 0.95rem;
-  color: var(--foreground);
+  font-weight: 500;
 }
 
 .content-box {
   background: var(--background);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem;
-  color: var(--muted-foreground);
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.6;
+  border-radius: 6px;
+  padding: 0.875rem;
+  margin-bottom: 0.75rem;
+  color: var(--foreground);
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-word;
-  max-height: 300px;
-  overflow-y: auto;
 }
 
-.no-submission {
-  padding: 2rem;
+.content-box::-webkit-scrollbar {
+  display: none;
+}
+
+.empty-submission {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
   text-align: center;
   background: var(--background);
   border: 1px dashed var(--border);
-  border-radius: var(--radius);
+  border-radius: 6px;
+}
+
+.empty-content p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.empty-content span {
+  font-size: 0.75rem;
   color: var(--muted-foreground);
+}
+
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  border: none;
+  cursor: default;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.status-pending {
+  background: rgba(202, 138, 4, 0.12);
+  color: #ca8a04;
+}
+
+.status-submitted {
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+}
+
+.status-graded {
+  background: rgba(22, 163, 74, 0.12);
+  color: #16a34a;
 }
 
 .submission-form-section {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
+  border-radius: 8px;
+  padding: 1.25rem;
 }
 
 .btn {
-  padding: 0.5rem 1rem;
+  padding: 0.625rem 1.25rem;
   border: none;
-  border-radius: var(--radius);
-  font-size: 0.95rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  margin-top: 1rem;
+  transition: all 0.2s ease;
 }
 
 .btn-secondary {
-  background: var(--secondary);
-  color: var(--secondary-foreground);
+  background: var(--primary);
+  color: white;
 }
 
 .btn-secondary:hover {
-  opacity: 0.8;
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
 }
 
 @media (max-width: 768px) {
@@ -370,6 +399,12 @@ const handleSubmissionComplete = async (event: any) => {
   .info-row {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .submission-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
   }
 }
 </style>

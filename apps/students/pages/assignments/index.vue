@@ -45,11 +45,6 @@ const isOverdue = (dateString: string) => {
 
 <template>
   <div class="assignments-page">
-    <div class="page-header">
-      <h1 class="page-title">My Assignments</h1>
-      <p class="page-subtitle">View upcoming coursework for your enrolled courses.</p>
-    </div>
-
     <div v-if="loading" class="loading-state">
       Loading assignments...
     </div>
@@ -91,23 +86,6 @@ const isOverdue = (dateString: string) => {
 <style scoped>
 .assignments-page {
   padding-bottom: 2rem;
-}
-
-.page-header {
-  margin-bottom: 2rem;
-}
-
-.page-title {
-  margin: 0 0 0.25rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--foreground);
-}
-
-.page-subtitle {
-  margin: 0;
-  color: var(--muted-foreground);
-  font-size: 0.9375rem;
 }
 
 .loading-state,

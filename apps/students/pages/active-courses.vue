@@ -90,7 +90,6 @@ onMounted(async () => {
 .courses-page {
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-md);
   gap: var(--spacing-md);
 }
 
@@ -118,7 +117,7 @@ onMounted(async () => {
 .course-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: 0.75rem;
 }
 
 .course-card {
@@ -126,9 +125,10 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: 1rem 1.25rem;
+  margin: 0 0.25rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
   background: var(--muted);
   text-decoration: none;
   color: inherit;
@@ -148,7 +148,7 @@ onMounted(async () => {
   top: 0;
   bottom: 0;
   width: 3px;
-  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  border-radius: 8px 0 0 8px;
   background: var(--primary);
   transition: all 0.2s;
 }

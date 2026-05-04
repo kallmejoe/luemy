@@ -16,19 +16,19 @@
 
       <div class="form-actions">
         <button
-          type="submit"
-          class="btn btn-primary"
-          :disabled="!content.trim() || isSubmitting"
-        >
-          {{ isSubmitting ? 'Submitting...' : 'Submit Assignment' }}
-        </button>
-        <button
           type="button"
-          class="btn btn-secondary"
+          class="btn btn-clear"
           @click="handleClear"
           :disabled="isSubmitting"
         >
           Clear
+        </button>
+        <button
+          type="submit"
+          class="btn btn-submit"
+          :disabled="!content.trim() || isSubmitting"
+        >
+          {{ isSubmitting ? 'Submitting...' : 'Submit' }}
         </button>
       </div>
 
@@ -166,18 +166,20 @@ const handleClear = () => {
 
 .form-actions {
   display: flex;
-  gap: var(--spacing-md);
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
   margin-bottom: var(--spacing-lg);
 }
 
 .btn {
-  padding: var(--spacing-sm) var(--spacing-lg);
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: var(--radius);
+  border-radius: 6px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .btn:disabled {
@@ -194,13 +196,26 @@ const handleClear = () => {
   opacity: 0.9;
 }
 
-.btn-secondary {
-  background: var(--secondary);
-  color: var(--secondary-foreground);
+.btn-submit {
+  background: #16a34a;
+  color: white;
 }
 
-.btn-secondary:hover:not(:disabled) {
-  opacity: 0.8;
+.btn-submit:hover:not(:disabled) {
+  background: #15803d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+}
+
+.btn-clear {
+  background: transparent;
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+}
+
+.btn-clear:hover:not(:disabled) {
+  background: var(--secondary);
+  color: var(--foreground);
 }
 
 .message {

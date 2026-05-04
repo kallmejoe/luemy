@@ -73,7 +73,6 @@ const isEnrolled = (courseId: number) =>
 
 <template>
   <div class="enrollment-page">
-    <h1 class="page-title">Available Courses</h1>
     <div class="course-list">
       <div
         v-for="course in courses"
@@ -106,7 +105,6 @@ const isEnrolled = (courseId: number) =>
 .enrollment-page {
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-md);
   gap: var(--spacing-lg);
 }
 
@@ -120,16 +118,17 @@ const isEnrolled = (courseId: number) =>
 .course-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: 0.75rem;
 }
 
 .course-card {
   position: relative;
   display: flex;
   align-items: center;
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: 1rem 1.25rem;
+  margin: 0 0.25rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
   background: var(--card);
   transition: all 0.2s ease;
 }
@@ -141,7 +140,7 @@ const isEnrolled = (courseId: number) =>
   top: 0;
   bottom: 0;
   width: 3px;
-  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  border-radius: 8px 0 0 8px;
   background: transparent;
   transition: background 0.2s ease;
 }
