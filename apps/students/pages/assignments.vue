@@ -59,7 +59,13 @@ const isOverdue = (dateString: string) => {
     </div>
 
     <div v-else class="assignment-grid">
-      <div v-for="assignment in assignments" :key="assignment.id" class="assignment-card" :class="{ 'is-overdue': isOverdue(assignment.due_date) }">
+      <NuxtLink
+        v-for="assignment in assignments"
+        :key="assignment.id"
+        :to="`/assignments/${assignment.id}`"
+        class="assignment-card"
+        :class="{ 'is-overdue': isOverdue(assignment.due_date) }"
+      >
         <div class="assignment-header">
           <span class="course-badge">{{ assignment.course_name }}</span>
           <span class="due-date" :class="{ 'text-destructive': isOverdue(assignment.due_date) }">
@@ -75,8 +81,9 @@ const isOverdue = (dateString: string) => {
         
         <div class="assignment-footer">
           <span class="max-score">Max Score: {{ assignment.max_score }}</span>
+          <span class="view-link">View Details →</span>
         </div>
-      </div>
+      </NuxtLink>
     </div>
   </div>
 </template>
@@ -126,11 +133,14 @@ const isOverdue = (dateString: string) => {
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  text-decoration: none;
+  color: inherit;
 }
 
 .assignment-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: var(--primary);
 }
 
 .assignment-card.is-overdue {
@@ -184,7 +194,8 @@ const isOverdue = (dateString: string) => {
 
 .assignment-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding-top: 1rem;
   border-top: 1px solid var(--border);
 }
@@ -193,5 +204,16 @@ const isOverdue = (dateString: string) => {
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--foreground);
+}
+
+.view-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary);
+  transition: opacity 0.2s;
+}
+
+.assignment-card:hover .view-link {
+  opacity: 0.8;
 }
 </style>
