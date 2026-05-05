@@ -115,6 +115,15 @@ CREATE TABLE IF NOT EXISTS assignment_submissions (
     // Column already exists on initialized databases.
   }
 
+  try {
+    db.exec(`
+      CREATE UNIQUE INDEX IF NOT EXISTS uq_professor_av_time_slots
+      ON professor_av_time_slots (professor_id, day_of_week, start_time, end_time)
+    `)
+  } catch {
+    // Index already exists on initialized databases.
+  }
+
   console.log('[DB] Database initialized successfully')
 } catch (err) {
   console.error('[DB] Schema initialization error:', err)

@@ -75,19 +75,6 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const existing = db
-      .prepare(
-        `SELECT id
-         FROM professor_av_time_slots
-         WHERE professor_id = ? AND day_of_week = ? AND start_time = ? AND end_time = ?`
-      )
-      .get(professorId, day, start, end) as { id: number } | undefined;
-
-    if (existing) {
-      setResponseStatus(event, 400);
-      return { success: false, message: "This time slot already exists" };
-    }
-
     const result = db
       .prepare(
         `INSERT INTO professor_av_time_slots (professor_id, day_of_week, start_time, end_time)
@@ -105,7 +92,16 @@ export default defineEventHandler(async (event) => {
         end,
       },
     };
-  } catch (err) {
+  } catch (err: unknown) {
+    const isUniqueViolation =
+      err instanceof Error &&
+      err.message.includes("UNIQUE constraint failed");
+
+    if (isUniqueViolation) {
+      setResponseStatus(event, 400);
+      return { success: false, message: "This time slot already exists" };
+    }
+
     console.error("[staff office-hours] Error:", err);
     setResponseStatus(event, 500);
     return { success: false, message: "Failed to add time slot" };
