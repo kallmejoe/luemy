@@ -109,6 +109,7 @@ interface Course {
 }
 
 const route = useRoute()
+const token = useCookie("token")
 
 const course = ref<Course | null>(null)
 const isLoading = ref(true)
