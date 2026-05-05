@@ -16,16 +16,7 @@ const props = defineProps<{
 
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const currentDate = ref(new Date());
-const selectedAssignment = ref<AssignmentDeadline | null>(props.assignments[0] || null);
-
-watch(
-  () => props.assignments,
-  (assignments) => {
-    if (!selectedAssignment.value || !assignments.some((assignment) => assignment.id === selectedAssignment.value?.id)) {
-      selectedAssignment.value = assignments[0] || null;
-    }
-  },
-);
+const selectedDate = ref(getDateKey(new Date().toISOString()));
 
 const currentMonth = computed(() => currentDate.value.getMonth());
 const currentYear = computed(() => currentDate.value.getFullYear());
@@ -69,6 +60,22 @@ const calendarDays = computed(() => {
   return days;
 });
 
+const selectedDayAssignments = computed(() => {
+  return props.assignments.filter((assignment) => {
+    return getDateKey(assignment.due_date) === selectedDate.value;
+  });
+});
+
+watch(
+  () => props.assignments,
+  (assignments) => {
+    if (selectedDayAssignments.value.length === 0 && assignments.length > 0) {
+      selectedDate.value = getDateKey(assignments[0].due_date);
+    }
+  },
+  { immediate: true },
+);
+
 function nextMonth() {
   currentDate.value = new Date(currentYear.value, currentMonth.value + 1, 1);
 }
@@ -77,8 +84,9 @@ function previousMonth() {
   currentDate.value = new Date(currentYear.value, currentMonth.value - 1, 1);
 }
 
-function selectAssignment(assignment: AssignmentDeadline) {
-  selectedAssignment.value = assignment;
+function selectDay(date: string, hasDay: boolean) {
+  if (!hasDay) return;
+  selectedDate.value = date;
 }
 
 function formatDateKey(year: number, month: number, day: number) {
@@ -122,52 +130,67 @@ function formatDate(date: string) {
           v-for="day in calendarDays"
           :key="day.date"
           class="calendar-day"
-          :class="{ 'is-empty': !day.day, 'is-today': day.isToday }"
+          :class="{
+            'is-empty': !day.day,
+            'is-today': day.isToday,
+            'is-selected': selectedDate === day.date,
+            'has-deadlines': day.assignments.length > 0,
+          }"
+          role="button"
+          :tabindex="day.day ? 0 : -1"
+          @click="selectDay(day.date, Boolean(day.day))"
+          @keydown.enter="selectDay(day.date, Boolean(day.day))"
+          @keydown.space.prevent="selectDay(day.date, Boolean(day.day))"
         >
           <div class="day-number">{{ day.day }}</div>
 
-          <button
+          <div
             v-for="assignment in day.assignments"
             :key="assignment.id"
-            type="button"
             class="assignment-marker"
-            :class="{ 'is-selected': selectedAssignment?.id === assignment.id }"
-            @click="selectAssignment(assignment)"
           >
             <span class="marker-course">{{ assignment.course_name }}</span>
             <span class="marker-title">{{ assignment.title }}</span>
-          </button>
+          </div>
         </div>
       </div>
     </section>
 
-    <aside class="details-panel" aria-label="Selected assignment details">
-      <template v-if="selectedAssignment">
-        <div class="details-header">
-          <span class="course-name">{{ selectedAssignment.course_name }}</span>
-          <span class="due-date">{{ formatDate(selectedAssignment.due_date) }}</span>
-        </div>
+    <aside class="details-panel" aria-label="Selected day assignment details">
+      <div class="details-heading">
+        <span class="details-label">Selected day</span>
+        <h3>{{ formatDate(selectedDate) }}</h3>
+      </div>
 
-        <h3>{{ selectedAssignment.title }}</h3>
+      <template v-if="selectedDayAssignments.length > 0">
+        <article
+          v-for="assignment in selectedDayAssignments"
+          :key="assignment.id"
+          class="details-item"
+        >
+          <div class="details-header">
+            <span class="course-name">{{ assignment.course_name }}</span>
+            <span class="due-date">Max score: {{ assignment.max_score }}</span>
+          </div>
 
-        <p v-if="selectedAssignment.description" class="details-text">
-          {{ selectedAssignment.description }}
-        </p>
+          <h4>{{ assignment.title }}</h4>
 
-        <p v-if="selectedAssignment.course_description" class="course-description">
-          {{ selectedAssignment.course_description }}
-        </p>
+          <p v-if="assignment.description" class="details-text">
+            {{ assignment.description }}
+          </p>
 
-        <div class="details-footer">
-          <span>Max score: {{ selectedAssignment.max_score }}</span>
-          <NuxtLink :to="`/assignments/${selectedAssignment.id}`" class="details-link">
+          <p v-if="assignment.course_description" class="course-description">
+            {{ assignment.course_description }}
+          </p>
+
+          <NuxtLink :to="`/assignments/${assignment.id}`" class="details-link">
             View assignment
           </NuxtLink>
-        </div>
+        </article>
       </template>
 
       <div v-else class="empty-details">
-        Select a deadline to see its course, title, and details.
+        No assignments due on this day.
       </div>
     </aside>
   </div>
@@ -234,6 +257,8 @@ function formatDate(date: string) {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
+  color: var(--foreground);
+  cursor: pointer;
   min-height: 7rem;
   overflow: hidden;
   padding: var(--spacing-xs);
@@ -241,11 +266,28 @@ function formatDate(date: string) {
 
 .calendar-day.is-empty {
   background: var(--muted);
+  cursor: default;
   opacity: 0.45;
 }
 
 .calendar-day.is-today {
   border-color: var(--primary);
+}
+
+.calendar-day.is-selected {
+  background: var(--accent);
+  border-color: var(--primary);
+}
+
+.calendar-day.has-deadlines .day-number::after {
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-left: var(--spacing-xs);
+  border-radius: 999px;
+  background: var(--chart-2);
+  content: "";
+  vertical-align: middle;
 }
 
 .day-number {
@@ -262,20 +304,13 @@ function formatDate(date: string) {
   width: 100%;
   margin-top: var(--spacing-xs);
   overflow: hidden;
-  border: 1px solid transparent;
+  border: 1px solid var(--primary);
   border-radius: var(--radius);
   background: var(--primary);
   color: var(--primary-foreground);
-  cursor: pointer;
-  font: inherit;
   line-height: 1.2;
   padding: 0.25rem 0.35rem;
   text-align: left;
-}
-
-.assignment-marker:hover,
-.assignment-marker.is-selected {
-  border-color: var(--foreground);
 }
 
 .marker-course,
@@ -299,7 +334,7 @@ function formatDate(date: string) {
 .details-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
@@ -308,12 +343,34 @@ function formatDate(date: string) {
   padding: var(--spacing-md);
 }
 
-.details-header,
-.details-footer {
+.details-heading,
+.details-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.details-item {
+  border-top: 1px solid var(--border);
+  padding-top: var(--spacing-md);
+}
+
+.details-item:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.details-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-sm);
+}
+
+.details-label {
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 .course-name {
@@ -322,18 +379,25 @@ function formatDate(date: string) {
   font-weight: 700;
 }
 
-.due-date,
-.details-footer {
+.due-date {
   color: var(--muted-foreground);
   font-size: 0.85rem;
   font-weight: 600;
 }
 
-.details-panel h3 {
+.details-panel h3,
+.details-panel h4 {
   margin: 0;
   color: var(--foreground);
-  font-size: 1.1rem;
   font-weight: 700;
+}
+
+.details-panel h3 {
+  font-size: 1.1rem;
+}
+
+.details-panel h4 {
+  font-size: 1rem;
 }
 
 .details-text,
@@ -369,8 +433,7 @@ function formatDate(date: string) {
 
 @media (max-width: 640px) {
   .calendar-toolbar,
-  .details-header,
-  .details-footer {
+  .details-header {
     align-items: flex-start;
     flex-direction: column;
   }
