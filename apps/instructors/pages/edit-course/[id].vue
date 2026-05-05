@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import EditCourseForm from "@core/components/EditCourseForm.vue"
+import EditCourseForm from "../../components/EditCourseForm.vue"
 import { ref, onMounted } from "vue"
 import { useRouter, useRoute } from "vue-router"
 
@@ -19,39 +19,10 @@ interface Course {
 const router = useRouter()
 const route = useRoute()
 const token = useCookie("token")
-</script>
 
-<template>
-  <div class="edit-course-page">
-    <div class="page-header">
-      <router-link to="/courses" class="back-link">
-        <span class="back-arrow">←</span> Back to Courses
-      </router-link>
-      <h1 class="page-title">Edit Course</h1>
-    </div>
-
-    <div class="page-content">
-      <div v-if="isLoadingCourse" class="loading-state">
-        <p>Loading course details...</p>
-      </div>
-
-      <div v-else-if="courseLoadError" class="error-state">
-        <p>{{ courseLoadError }}</p>
-        <router-link to="/courses" class="btn btn--primary">
-          Back to Courses
-        </router-link>
-      </div>
-
-      <div v-else-if="course" class="form-container">
-        <EditCourseForm
-          :course="course"
-          @submit="handleFormSubmit"
-          @cancel="handleCancel"
-        />
-      </div>
-    </div>
-  </div>
-</template>
+const course = ref<Course | null>(null)
+const isLoadingCourse = ref(true)
+const courseLoadError = ref("")
 const isSubmitting = ref(false)
 
 const courseId = route.params.id as string
@@ -71,11 +42,12 @@ const fetchCourse = async () => {
       }
     })
 
-    if (response.success) {
-      course.value = response.course
+    if ((response as Record<string, unknown>).success) {
+      course.value = (response as Record<string, unknown>).course as Course
     } else {
       courseLoadError.value =
-        (response as Record<string, unknown>).message || "Failed to load course"
+        (response as Record<string, unknown>).message ||
+        "Failed to load course"
     }
   } catch (error: unknown) {
     console.error("Error fetching course:", error)
@@ -109,12 +81,9 @@ const handleFormSubmit = async (formData: {
     })
 
     if ((response as Record<string, unknown>).success) {
-      // Update local course data
       if ((response as Record<string, unknown>).course) {
         course.value = (response as Record<string, unknown>).course as Course
       }
-
-      // Show success and redirect after a short delay
       setTimeout(() => {
         router.push("/courses")
       }, 1500)
@@ -130,6 +99,38 @@ const handleCancel = () => {
   router.push("/courses")
 }
 </script>
+
+<template>
+  <div class="edit-course-page">
+    <div class="page-header">
+      <router-link to="/courses" class="back-link">
+        <span class="back-arrow">←</span> Back to Courses
+      </router-link>
+      <h1 class="page-title">Edit Course</h1>
+    </div>
+
+    <div class="page-content">
+      <div v-if="isLoadingCourse" class="loading-state">
+        <p>Loading course details...</p>
+      </div>
+
+      <div v-else-if="courseLoadError" class="error-state">
+        <p>{{ courseLoadError }}</p>
+        <router-link to="/courses" class="btn btn--primary">
+          Back to Courses
+        </router-link>
+      </div>
+
+      <div v-else-if="course" class="form-container">
+        <EditCourseForm
+          :course="course"
+          @submit="handleFormSubmit"
+          @cancel="handleCancel"
+        />
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .edit-course-page {
