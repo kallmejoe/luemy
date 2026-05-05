@@ -36,7 +36,8 @@ export default defineEventHandler(async (event) => {
     }
     userId = payload.userId
     role = payload.role
-  } catch {
+  } catch (err) {
+    console.error("[courses.id.get] JWT verification failed:", err)
     setResponseStatus(event, 401)
     return { success: false, message: "Invalid or expired token" }
   }
@@ -49,24 +50,18 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    console.log(`[courses.id.get] Fetching course ${courseId} for user ${userId} (${role})`)
     const course = db
       .prepare("SELECT * FROM courses WHERE id = ?")
       .get(courseId) as Course | null
 
     if (!course) {
+      console.log(`[courses.id.get] Course ${courseId} not found`)
       setResponseStatus(event, 404)
       return { success: false, message: "Course not found" }
     }
 
-    // Professors can only view their own courses
-    if (role === "professor" && course.professor_id !== userId) {
-      setResponseStatus(event, 403)
-      return {
-        success: false,
-        message: "Forbidden: you can only view your own courses"
-      }
-    }
-
+    console.log(`[courses.id.get] Returning course ${courseId}`)
     return {
       success: true,
       course
