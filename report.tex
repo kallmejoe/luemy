@@ -1,0 +1,952 @@
+\documentclass[12pt, a4paper]{article}
+
+\raggedbottom
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1cm, top=1.5cm, bottom=1.5cm]{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{calc}
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{amssymb}
+\usepackage[hidelinks]{hyperref}
+\usepackage{setspace}
+\usepackage{needspace}
+\usepackage{etoolbox}
+
+% Prevent widow/orphan headings by requiring minimum space before section breaks
+\newcommand{\ensuresection}[1]{%
+  \needspace{8\baselineskip}%
+  #1%
+}
+
+% Command to ensure tcolorbox content stays together with preceding heading
+\newcommand{\ensurecontentspace}[1]{%
+  \needspace{#1}%
+}
+
+% Set penalties to discourage page breaks after headings
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\brokenpenalty=10000
+
+% Define centered column types for vertical alignment
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash\vspace{0pt}}m{#1}<{\vspace{0pt}}}
+
+% Hook to prevent orphaned tables by requiring minimum space before longtable
+\BeforeBeginEnvironment{longtable}{\needspace{5\baselineskip}}
+
+\tcbuselibrary{skins, breakable}
+\usetikzlibrary{calc, decorations.pathmorphing}
+
+\definecolor{agileblue}{HTML}{1A3C5E}
+\definecolor{agilecyan}{HTML}{0097B2}
+\definecolor{agilegreen}{HTML}{27AE60}
+\definecolor{agileorange}{HTML}{E67E22}
+\definecolor{agilelightgray}{HTML}{F4F6F8}
+\definecolor{agileaccent}{HTML}{5C6BC0}
+\definecolor{mustcolor}{HTML}{1B5E20}
+\definecolor{shouldcolor}{HTML}{1565C0}
+\definecolor{couldcolor}{HTML}{E65100}
+\definecolor{wontcolor}{HTML}{B71C1C}
+
+\titleformat{\section}
+  {\needspace{8\baselineskip}\color{agileblue}\Large\bfseries}
+  {\thesection}
+  {0.5em}
+  {}
+  [\color{agilecyan}\rule{\textwidth}{2pt}]
+
+\titleformat{\subsection}
+  {\needspace{6\baselineskip}\color{agileblue}\large\bfseries}
+  {}
+  {0em}
+  {\thesubsection\quad}
+  [\color{agileblue!30}\rule{\textwidth}{0.8pt}]
+
+\titleformat{\subsubsection}{\color{agileblue}\normalsize\bfseries}{\color{agilecyan}\thesubsubsection}{0.6em}{}
+
+\titlespacing*{\section}{0pt}{12pt}{12pt}
+\titlespacing*{\subsection}{0pt}{8pt}{8pt}
+\titlespacing*{\subsubsection}{0pt}{6pt}{4pt}
+
+\contentsmargin{8pt}
+\titlecontents{section}[1.2em]{\addvspace{6pt}\bfseries\color{agileblue}}{\contentslabel{1.2em}}{}{\hfill\color{agilecyan}\contentspage}
+\titlecontents{subsection}[2.4em]{\addvspace{2pt}\color{agileblue!80}}{\contentslabel{1.8em}}{}{\titlerule*[6pt]{.}\contentspage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\color{agileblue}\small\textbf{University Management System}}
+\fancyhead[R]{\color{agileblue}\small\textbf{Agile Project Report}}
+\fancyfoot[C]{\color{agileblue!60}\small\thepage}
+\fancyfoot[L]{\color{agileblue!40}\small\textit{FMAP --- Scrum Framework}}
+\renewcommand{\headrulewidth}{1.5pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{agilecyan}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{agileblue!30}\leaders\hrule height \footrulewidth\hfill}}
+
+\tcbset{
+  moscowbox/.style={enhanced,breakable,colback=#1!10,colframe=#1,boxrule=2pt,arc=6pt,left=10pt,right=10pt,top=8pt,bottom=8pt,shadow={3pt}{-3pt}{1pt}{#1!25},fonttitle=\bfseries\color{white}\large,attach boxed title to top left={yshift=-4mm,xshift=8mm},boxed title style={colback=#1,arc=4pt,boxrule=0pt}},
+  dodbox/.style={enhanced,breakable,colback=agileblue!6,colframe=agileblue,boxrule=2pt,arc=5pt,left=10pt,right=10pt,top=8pt,bottom=8pt,shadow={3pt}{-3pt}{1pt}{agileblue!20},fonttitle=\bfseries\large\color{white}},
+  notebox/.style={enhanced,colback=agilecyan!10,colframe=agilecyan,boxrule=1.5pt,arc=4pt,left=8pt,right=8pt,top=5pt,bottom=5pt},
+  storybox/.style={enhanced,colback=agileblue!5,colframe=agileblue!40,boxrule=1.2pt,arc=4pt,left=8pt,right=8pt,top=5pt,bottom=5pt,fonttitle=\bfseries\color{agileblue}},
+}
+
+\newcommand{\curlysep}{%
+\begin{center}\begin{tikzpicture}
+  \draw[agilecyan,line width=1.2pt](-4.5cm,0)--(4.5cm,0);
+  \node[circle,fill=agilecyan,inner sep=3pt] at (0,0) {};
+\end{tikzpicture}\end{center}\vspace{6pt}}
+
+\newcommand{\sectionsep}{%
+\begin{center}\begin{tikzpicture}
+  \draw[agilecyan!50,line width=0.8pt](-4,0)to[out=8,in=172](0,0.12)to[out=352,in=188](4,0);
+  \draw[agileblue!25,line width=0.5pt](-4,-0.1)to[out=4,in=176](0,0.02)to[out=356,in=184](4,-0.1);
+  \node[circle,fill=agilecyan,inner sep=2.2pt] at (0,0.06) {};
+\end{tikzpicture}\end{center}\vspace{6pt}}
+
+\newcommand{\mustbadge}{\colorbox{mustcolor}{\color{white}\tiny\bfseries\,MUST\,}}
+\newcommand{\shouldbadge}{\colorbox{shouldcolor}{\color{white}\tiny\bfseries\,SHOULD\,}}
+\newcommand{\couldbadge}{\colorbox{couldcolor}{\color{white}\tiny\bfseries\,COULD\,}}
+\newcommand{\wontbadge}{\colorbox{wontcolor}{\color{white}\tiny\bfseries\,WON'T\,}}
+\newcommand{\sprintbadge}[1]{\colorbox{agileaccent}{\color{white}\tiny\bfseries\,SP#1\,}}
+
+\begin{document}
+
+% COVER PAGE
+\begin{titlepage}
+\pagecolor{white}\color{black}
+
+% Top decorative line
+\noindent\rule{\textwidth}{3pt}\vspace{1cm}
+
+\begin{center}
+
+% University/Project Title
+{\fontsize{16}{20}\selectfont\bfseries\color{agileblue}AGILE PROJECT REPORT}\\[0.3em]
+{\fontsize{12}{14}\selectfont\color{agileblue!70}University Management System}
+
+\vspace{1.5cm}
+
+% Main Title
+{\fontsize{48}{56}\selectfont\bfseries\color{agileblue}UMS}\\[0.4em]
+{\fontsize{28}{34}\selectfont\bfseries\color{agileblue}University\\Management\\System}
+
+\vspace{1cm}
+
+% Subtitle
+{\fontsize{14}{16}\selectfont\color{agileblue!80}Product Backlog, Prioritization \& Sprint Planning}
+
+\vspace{1cm}
+
+% Course Code
+{\fontsize{13}{15}\selectfont\bfseries\color{agileblue}CSE342 --- Agile Software Development}
+
+\vspace{2cm}
+
+% Team Members Section
+
+{\fontsize{11}{13}\selectfont\color{black}
+\begin{tabular}{@{}l@{\hspace{3cm}}l@{}}
+Youssef Tarek & 23p0177 \\[0.5em]
+Marwan Ahmed & 23p0242 \\[0.5em]
+Youssef Haddad & 23p0113 \\[0.5em]
+Ziyad Elnemr & 23p0013 \\[0.5em]
+Loay Khaled & 23p0340 \\[0.5em]
+Ahmed Sadik & 23p0140 \\
+\end{tabular}
+}
+
+\vfill
+% Bottom section
+\noindent\rule{\textwidth}{1pt}\vspace{0.8cm}
+
+{\fontsize{11}{13}\selectfont\color{agileblue!70}
+Academic Year 2025--2026\\
+Presented TO:\\
+Prof Mohamed Hassan Mahmoud El Gazzar\\
+Eng Abdelrahman Salah \\
+Eng Hazem Zaki
+}
+
+\end{center}
+\end{titlepage}
+
+\pagecolor{white}\color{black}
+
+\newpage
+\begin{tcolorbox}[enhanced,colback=agileblue!5,colframe=agileblue,boxrule=1.5pt,arc=6pt,title={$\equiv$ Table of Contents},fonttitle=\bfseries\large\color{white},attach boxed title to top left={yshift=-4mm,xshift=8mm},boxed title style={colback=agileblue,arc=3pt},left=16pt,right=10pt,top=10pt,bottom=10pt,width=\textwidth-2pt]
+\makeatletter\@starttoc{toc}\makeatother
+\end{tcolorbox}
+
+\newpage
+\section{Project Overview}
+
+\begin{tcolorbox}[notebox,title={\textcircled{\footnotesize i}\quad About This Document}]
+This report documents the full Agile planning process for the \textbf{FMAP University Management System}. It covers the MoSCoW prioritization of all backlog items, the MVP scope, user story decomposition techniques, and the team's agreed Definition of Done.
+\end{tcolorbox}
+
+\subsection{System Description}
+
+The \textbf{University Management System (UMS)} is a comprehensive digital platform developed using the \textbf{Scrum framework}. It aims to streamline administrative and academic operations for all university stakeholders --- students, professors, staff, parents, and administrators.
+
+The system is structured into \textbf{four major product modules}, each developed through iterative sprints:
+
+\vspace{4pt}
+\begin{tcolorbox}[enhanced,colback=agilecyan!6,colframe=agilecyan,boxrule=1pt,arc=5pt]
+\begin{tabular}{@{}L{0.22\textwidth}L{0.72\textwidth}@{}}
+\textbf{\color{agileblue}[1] Facilities} & Classroom/lab booking, administrative office automation, and resource allocation. \\[6pt]
+\textbf{\color{agileblue}[2] Curriculum} & Course catalog management, LMS integration, and assessment \& grading tools. \\[6pt]
+\textbf{\color{agileblue}[3] Staff} & Centralized staff directory, performance tracking, and payroll/HR tools. \\[6pt]
+\textbf{\color{agileblue}[4] Community} & Parent--teacher portals, student--staff messaging, and announcements. \\
+\end{tabular}
+\end{tcolorbox}
+
+\sectionsep
+
+\subsection{Scrum Team Roles}
+
+\begin{tabular}{@{}>{\bfseries\color{agileblue}}L{0.25\textwidth}L{0.70\textwidth}@{}}
+Product Owner & Defines and prioritizes the Product Backlog; ensures alignment with university stakeholders. \\[4pt]
+Scrum Master & Facilitates ceremonies, removes impediments, coaches the team on Agile practices. \\[4pt]
+Development Team & Cross-functional members responsible for delivering working software each sprint. \\
+\end{tabular}
+
+\newpage
+\section{Feature Prioritization}
+
+\subsection{Prioritization Technique: MoSCoW Method}
+
+\begin{tcolorbox}[notebox]
+The team adopted the \textbf{MoSCoW prioritization method} --- a widely-used Agile technique that classifies all Product Backlog Items into four categories based on business value, technical dependencies, stakeholder impact, and delivery risk.
+\end{tcolorbox}
+
+\vspace{4pt}
+\begin{tcolorbox}[moscowbox=mustcolor,title={M --- Must Have}]
+\textbf{Non-negotiable features} that the system cannot go live without. These represent core functionality essential to all primary user journeys. If any Must Have is missing, the release is considered a failure.
+\end{tcolorbox}
+
+\vspace{3pt}
+\begin{tcolorbox}[moscowbox=shouldcolor,title={S --- Should Have}]
+\textbf{High-value features} that are important but not critical for the initial release. The system will function without them, but their absence significantly impacts user experience. These are high candidates for the next sprint.
+\end{tcolorbox}
+
+\vspace{3pt}
+\begin{tcolorbox}[moscowbox=couldcolor,title={C --- Could Have}]
+\textbf{Nice-to-have features} that improve usability or provide added convenience. Included only if time and resources allow within the sprint budget. Minimal impact if omitted.
+\end{tcolorbox}
+
+\vspace{3pt}
+\begin{tcolorbox}[moscowbox=wontcolor,title={W --- Won't Have (this time)}]
+\textbf{Out-of-scope features} for the current release cycle. They are acknowledged and documented for future sprints. This category also covers high-complexity items where cost/benefit does not justify immediate inclusion.
+\end{tcolorbox}
+
+\curlysep
+
+\subsection{MoSCoW Classification Decision Criteria}
+
+Each backlog item was evaluated against the following criteria before being assigned a priority:
+
+\vspace{3pt}
+\begin{center}
+\begin{tabular}{@{}>{\bfseries}L{0.25\textwidth}L{0.70\textwidth}@{}}
+\toprule
+\color{mustcolor}Business Value & Does this directly serve a primary stakeholder (student, professor, admin)? \\
+\color{shouldcolor}User Dependency & Do other features depend on this item to function correctly? \\
+\color{couldcolor}Risk \& Complexity & Is there technical uncertainty or third-party integration risk? \\
+\color{wontcolor}Effort vs.\ Reward & Does implementation effort justify the business benefit within this sprint? \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\newpage
+\section{Complete Product Backlog}
+
+All backlog items are grouped by MoSCoW priority. Items are sourced directly from the Jira project \textbf{FMAP}.
+
+\curlysep
+
+\subsection{Must Have --- MVP Core Features}
+
+\begin{tcolorbox}[moscowbox=mustcolor,title={Must Have Items (33 Items --- Full MVP Scope)}]
+These 33 items form the \textbf{Minimum Viable Product}. All must be delivered before any release is considered viable.
+\end{tcolorbox}
+
+\vspace{4pt}
+{\small
+\begin{longtable}{@{}>{\color{agileblue}\bfseries}M{0.13\textwidth}L{0.38\textwidth}M{0.17\textwidth}M{0.14\textwidth}@{}}
+\toprule
+\rowcolor{mustcolor!15}
+\textbf{ID} & \textbf{User Story Title} & \textbf{Module} & \textbf{Points} \\
+\midrule
+\endfirsthead
+\rowcolor{mustcolor!15}
+\textbf{ID} & \textbf{User Story Title} & \textbf{Module} & \textbf{Points} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+FMAP-132 & Search and Filter the Course Catalog & Curriculum & 5 \\
+\rowcolor{agilelightgray}
+FMAP-133 & Create a New Course & Curriculum & 5 \\
+FMAP-135 & Enroll in a Selected Course & Curriculum & 5 \\
+\rowcolor{agilelightgray}
+FMAP-137 & View the List of Active Courses & Curriculum & 5 \\
+FMAP-138 & Create a New Assignment with Deadlines & Curriculum & 5 \\
+\rowcolor{agilelightgray}
+FMAP-139 & Securely View Final Grades and Feedback & Curriculum & 5 \\
+FMAP-141 & Upload and Submit Assignment Documents & Curriculum & 5 \\
+\rowcolor{agilelightgray}
+FMAP-147 & Grade an Assignment and Provide Feedback & Curriculum & 5 \\
+FMAP-148 & Student Accesses and Downloads Materials & Curriculum & 5 \\
+\rowcolor{agilelightgray}
+FMAP-153 & Professor Uploads Digital Course Materials & Curriculum & 8 \\
+FMAP-159 & Account Creation for Parent & Community & 5 \\
+\rowcolor{agilelightgray}
+FMAP-160 & Registration \& Login for Student & Community & 3 \\
+FMAP-163 & View Available Time Slots for Student & Community & 5 \\
+\rowcolor{agilelightgray}
+FMAP-165 & Create Announcements for Staff Member & Community & 5 \\
+FMAP-167 & Reply to Messages for Professor & Community & 5 \\
+\rowcolor{agilelightgray}
+FMAP-170 & Secure Login for Parent & Community & 5 \\
+FMAP-174 & View Announcements for User & Community & 3 \\
+\rowcolor{agilelightgray}
+FMAP-175 & Send Messages for Student & Community & 5 \\
+FMAP-176 & Send Messages for Parent & Community & 5 \\
+\rowcolor{agilelightgray}
+FMAP-178 & Manage Availability for Professor & Community & 5 \\
+FMAP-184 & View Centralized Staff Directory & Staff & 5 \\
+\rowcolor{agilelightgray}
+FMAP-186 & Manage Course Duties and Responsibilities & Staff & 13 \\
+FMAP-189 & Submit and Manage Leave Requests & Staff & 5 \\
+\rowcolor{agilelightgray}
+FMAP-193 & Report Broken Equipment in a Classroom & Facilities & 3 \\
+\rowcolor{agilelightgray}
+FMAP-194 & Request Equipment Allocation for Dept. & Facilities & 5 \\
+\rowcolor{agilelightgray}
+FMAP-195 & Filter Rooms by Capacity and Equipment & Facilities & 5 \\
+FMAP-196 & Request an Official Sealed Transcript & Facilities & 3 \\
+\rowcolor{agilelightgray}
+FMAP-197 & Request Access to Licensed Software & Facilities & 5 \\
+FMAP-198 & Update Student Personal Information & Facilities & 5 \\
+\rowcolor{agilelightgray}
+FMAP-199 & Reserve a Classroom & Facilities & 5 \\
+FMAP-200 & Update or Cancel an Existing Booking & Facilities & 8 \\
+\rowcolor{agilelightgray}
+FMAP-201 & Submit an Admission Application Online & Facilities & 8 \\
+FMAP-202 & Process and Digitally Sign Official Transcripts & Facilities & 8 \\
+\end{longtable}
+}
+
+\sectionsep
+
+\ensurecontentspace{8\baselineskip}
+\subsection{Should Have --- High Priority Enhancements}
+
+{\small
+\begin{longtable}{@{}>{\color{shouldcolor}\bfseries}M{0.13\textwidth}L{0.38\textwidth}M{0.17\textwidth}M{0.14\textwidth}@{}}
+\toprule
+\rowcolor{shouldcolor!12}
+\textbf{ID} & \textbf{User Story Title} & \textbf{Module} & \textbf{Points} \\
+\midrule
+\endfirsthead
+\rowcolor{shouldcolor!12}
+\textbf{ID} & \textbf{User Story Title} & \textbf{Module} & \textbf{Points} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+FMAP-131 & Update Existing Course Details & Curriculum & 5 \\
+\rowcolor{agilelightgray}
+FMAP-134 & System Validation of Course Prerequisites & Curriculum & 5 \\
+FMAP-140 & View Upcoming Assignment Deadlines & Curriculum & 3 \\
+\rowcolor{agilelightgray}
+FMAP-142 & View Dashboard of Student Submissions & Curriculum & 5 \\
+\rowcolor{agilelightgray}
+FMAP-152 & IT Admin Configures External LMS Connection & Curriculum & 5 \\
+FMAP-154 & System Automatically Syncs Student Roster & Curriculum & 5 \\
+\rowcolor{agilelightgray}
+FMAP-162 & View Child Profile for Parent & Community & 3 \\
+FMAP-164 & Schedule Meetings for Student & Community & 5 \\
+\rowcolor{agilelightgray}
+FMAP-177 & Message Notifications for User & Community & 3 \\
+\rowcolor{agilelightgray}
+FMAP-188 & View Payslips and Compensation & Staff & 5 \\
+\end{longtable}
+}
+
+\sectionsep
+
+\ensurecontentspace{8\baselineskip}
+\subsection{Could Have --- Value-Adding Features}
+
+{\small
+\begin{longtable}{@{}>{\color{couldcolor}\bfseries}M{0.13\textwidth}L{0.38\textwidth}M{0.17\textwidth}M{0.14\textwidth}@{}}
+\toprule
+\rowcolor{couldcolor!10}
+\textbf{ID} & \textbf{User Story Title} & \textbf{Module} & \textbf{Points} \\
+\midrule
+\endfirsthead
+\rowcolor{couldcolor!10}
+\textbf{ID} & \textbf{User Story Title} & \textbf{Module} & \textbf{Points} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+FMAP-136 & View Remaining Course Capacity / Seats & Curriculum & 3 \\
+\rowcolor{agilelightgray}
+FMAP-143 & Bulk Download Student Submissions Offline & Curriculum & 5 \\
+\rowcolor{agilelightgray}
+FMAP-146 & Receive Automated Submission Receipts & Curriculum & 3 \\
+FMAP-151 & Professor Imports Grades from External LMS & Curriculum & 5 \\
+\rowcolor{agilelightgray}
+FMAP-168 & View Student Profiles for Professor & Community & 3 \\
+FMAP-172 & View Upcoming Events for User & Community & 5 \\
+\rowcolor{agilelightgray}
+FMAP-173 & Cancel Meetings for Student & Community & 3 \\
+FMAP-183 & Publish Research Links on Profile & Staff & 5 \\
+\rowcolor{agilelightgray}
+FMAP-187 & View Benefits and Healthcare Hub & Staff & 2 \\
+\end{longtable}
+}
+
+\sectionsep
+
+\ensurecontentspace{8\baselineskip}
+\subsection{Won't Have --- Out of Current Scope}
+
+{\small
+\begin{longtable}{@{}>{\color{wontcolor}\bfseries}M{0.13\textwidth}L{0.38\textwidth}M{0.17\textwidth}M{0.14\textwidth}@{}}
+\toprule
+\rowcolor{wontcolor!10}
+\textbf{ID} & \textbf{User Story Title} & \textbf{Module} & \textbf{Points} \\
+\midrule
+\endfirsthead
+\rowcolor{wontcolor!10}
+\textbf{ID} & \textbf{User Story Title} & \textbf{Module} & \textbf{Points} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+FMAP-130 & Archive a Retired Course & Curriculum & 3 \\
+\rowcolor{agilelightgray}
+FMAP-144 & Conduct Peer Reviews on Submissions & Curriculum & 5 \\
+FMAP-145 & Automated AI Grading of Text Submissions & Curriculum & 8 \\
+\rowcolor{agilelightgray}
+FMAP-149 & Real-Time Bi-Directional Data Sync & Curriculum & 13 \\
+FMAP-150 & Automated Legacy Content Migration & Curriculum & 8 \\
+\rowcolor{agilelightgray}
+FMAP-161 & Meeting Reminders for Student & Community & 3 \\
+FMAP-166 & View Conversation History for User & Community & 3 \\
+\rowcolor{agilelightgray}
+FMAP-169 & Filter Announcements for User & Community & 3 \\
+FMAP-171 & Event Reminders for User & Community & 3 \\
+\rowcolor{agilelightgray}
+FMAP-182 & Add Completed Course Details (Performance) & Staff & 8 \\
+\rowcolor{agilelightgray}
+FMAP-185 & Admin Performance Report Extraction & Staff & 8 \\
+FMAP-190 & Delete Sent Messages & Community & 3 \\
+\rowcolor{agilelightgray}
+FMAP-191 & Conduct Video Meetings Inside System & Community & 3 \\
+\end{longtable}
+}
+
+\newpage
+\section{Minimum Viable Product (MVP)}
+
+\subsection{MVP Definition and Rationale}
+
+\begin{tcolorbox}[notebox]
+The \textbf{Minimum Viable Product} is the smallest deployable increment of the system that delivers real value to all primary stakeholders and validates the core concept. The MVP scope is defined by all \textbf{Must Have} items from the MoSCoW analysis.
+\end{tcolorbox}
+
+\vspace{4pt}
+
+\begin{tcolorbox}[enhanced,colback=agileblue!4,colframe=agileblue,boxrule=1pt,arc=5pt,title={\textbf{[1] Facilities Module MVP}},fonttitle=\bfseries\color{white},attach boxed title to top left={yshift=-3mm,xshift=6mm},boxed title style={colback=agileblue,arc=3pt}]
+\subsubsection*{Must Have (10 items)}
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item Report Broken Equipment in a Classroom \hfill\sprintbadge{1}
+\item Request Equipment Allocation for Department \hfill\sprintbadge{1}
+\item Filter Rooms by Capacity and Equipment \hfill\sprintbadge{1}
+\item Request an Official Sealed Transcript \hfill\sprintbadge{1}
+\item Request Access to Licensed Software \hfill\sprintbadge{1}
+\item Update Student Personal Information \hfill\sprintbadge{1}
+\item Reserve a Classroom \hfill\sprintbadge{1}
+\item Update or Cancel an Existing Booking \hfill\sprintbadge{1}
+\item Submit an Admission Application Online \hfill\sprintbadge{1}
+\item Process and Digitally Sign Official Transcripts \hfill\sprintbadge{1}
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{4pt}
+
+\begin{tcolorbox}[enhanced,colback=agilecyan!5,colframe=agilecyan,boxrule=1pt,arc=5pt,title={\textbf{[2] Curriculum Module MVP}},fonttitle=\bfseries\color{white},attach boxed title to top left={yshift=-3mm,xshift=6mm},boxed title style={colback=agilecyan,arc=3pt}]
+\subsubsection*{Must Have (10 items)}
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item Search and Filter the Course Catalog \hfill\sprintbadge{1}
+\item Create a New Course \hfill\sprintbadge{1}
+\item Enroll in a Selected Course \hfill\sprintbadge{1}
+\item View the List of Active Courses \hfill\sprintbadge{1}
+\item Create a New Assignment with Deadlines \hfill\sprintbadge{1}
+\item Securely View Final Grades and Feedback \hfill\sprintbadge{1}
+\item Upload and Submit Assignment Documents \hfill\sprintbadge{1}
+\item Grade an Assignment and Provide Feedback \hfill\sprintbadge{1}
+\item Student Accesses and Downloads Materials \hfill\sprintbadge{1}
+\item Professor Uploads Digital Course Materials \hfill\sprintbadge{1}
+\end{itemize}
+
+\subsubsection*{Should Have (6 items)}
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item Update Existing Course Details \hfill\sprintbadge{2}
+\item System Validation of Course Prerequisites \hfill\sprintbadge{2}
+\item View Upcoming Assignment Deadlines \hfill\sprintbadge{2}
+\item View the Dashboard of Student Submissions \hfill\sprintbadge{2}
+\item IT Admin Configures External LMS Connection \hfill\sprintbadge{2}
+\item System Automatically Syncs the Student Roster \hfill\sprintbadge{2}
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{4pt}
+
+\begin{tcolorbox}[enhanced,colback=agilegreen!5,colframe=agilegreen,boxrule=1pt,arc=5pt,title={\textbf{[3] Staff Module MVP}},fonttitle=\bfseries\color{white},attach boxed title to top left={yshift=-3mm,xshift=6mm},boxed title style={colback=agilegreen,arc=3pt}]
+\subsubsection*{Must Have (3 items)}
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item View Centralized Staff Directory \hfill\sprintbadge{1}
+\item Manage Course Duties and Responsibilities \hfill\sprintbadge{1}
+\item Submit and Manage Leave Requests \hfill\sprintbadge{1}
+\end{itemize}
+
+\subsubsection*{Should Have (1 item)}
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item View Payslips and Compensation \hfill\sprintbadge{2}
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{4pt}
+
+\begin{tcolorbox}[enhanced,colback=agileorange!8,colframe=agileorange,boxrule=1pt,arc=5pt,title={\textbf{[4] Community Module MVP}},fonttitle=\bfseries\color{white},attach boxed title to top left={yshift=-3mm,xshift=6mm},boxed title style={colback=agileorange,arc=3pt}]
+\subsubsection*{Must Have (10 items)}
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item Account Creation for Parent \hfill\sprintbadge{1}
+\item Registration \& Login for Student \hfill\sprintbadge{1}
+\item View Available Time Slots for Student \hfill\sprintbadge{1}
+\item Create Announcements for Staff Member \hfill\sprintbadge{1}
+\item Reply to Messages for Professor \hfill\sprintbadge{1}
+\item Secure Login for Parent \hfill\sprintbadge{1}
+\item View Announcements for User \hfill\sprintbadge{1}
+\item Send Messages for Student \hfill\sprintbadge{1}
+\item Send Messages for Parent \hfill\sprintbadge{1}
+\item Manage Availability for Professor \hfill\sprintbadge{1}
+\end{itemize}
+
+\subsubsection*{Should Have (6 items)}
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item View Child Profile for Parent \hfill\sprintbadge{2}
+\item Schedule Meetings for Student \hfill\sprintbadge{2}
+\item View Student Profiles for Professor \hfill\sprintbadge{2}
+\item View Upcoming Events for User \hfill\sprintbadge{2}
+\item Cancel Meetings for Student \hfill\sprintbadge{2}
+\item Message Notifications for User \hfill\sprintbadge{2}
+\end{itemize}
+
+\subsubsection*{Won't Have (2 items)}
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item Delete Sent Messages
+\item Conduct Video Meetings Inside System
+\end{itemize}
+\end{tcolorbox}
+
+\curlysep
+
+\subsection{MVP Summary Statistics}
+
+\vspace{4pt}
+\begin{center}
+\begin{tabular}{@{}>{\bfseries\color{agileblue}}L{0.24\textwidth}C{0.15\textwidth}C{0.15\textwidth}C{0.15\textwidth}@{}}
+\toprule
+\rowcolor{agileblue!10}
+\textbf{Module} & \textbf{\color{mustcolor}Must} & \textbf{\color{shouldcolor}Should} & \textbf{Total} \\
+\midrule
+Facilities & 10 & 0 & 10 \\
+\rowcolor{agilelightgray}
+Curriculum & 10 & 6 & 16 \\
+Staff & 3 & 1 & 4 \\
+\rowcolor{agilelightgray}
+Community & 10 & 6 & 16 \\
+\midrule
+\rowcolor{agileblue!8}
+\textbf{Total} & \textbf{33} & \textbf{13} & \textbf{46} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\ensurecontentspace{10\baselineskip}
+\newpage
+\section{Project Epics}
+
+\begin{tcolorbox}[notebox]
+Epics represent the largest user stories that span multiple sprints. The UMS is decomposed into four modules, each with 2--4 core epics that drive the backlog structure.
+\end{tcolorbox}
+
+\vspace{4pt}
+
+{\small
+\begin{longtable}{@{}>{\color{agileblue}\bfseries}L{0.28\textwidth}M{0.15\textwidth}L{0.49\textwidth}@{}}
+\toprule
+\rowcolor{agileblue!10}
+\textbf{Epic Name} & \textbf{Module} & \textbf{Description} \\
+\midrule
+\endfirsthead
+\rowcolor{agileblue!10}
+\textbf{Epic Name} & \textbf{Module} & \textbf{Description} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Classroom and Laboratory Management & Facilities & System for scheduling, booking, and tracking classroom and lab usage. \\
+\rowcolor{agilelightgray}
+Administrative Office Automation & Facilities & Digitize and automate paper-based administrative processes. \\
+Resource Allocation & Facilities & Functionality to allocate and track various institutional resources. \\
+\rowcolor{agilelightgray}
+Assessment and Evaluation System & Curriculum & Assignment creation, submission, grading, and feedback delivery. \\
+Course Catalog \& Registration Management & Curriculum & Course discovery, enrollment, and catalog management. \\
+\rowcolor{agilelightgray}
+Digital Learning and LMS Integration & Curriculum & Multimedia content delivery and third-party LMS synchronization. \\
+Professor and Teaching Assistant Management & Staff & Centralized staff directory and course duties management. \\
+\rowcolor{agilelightgray}
+Performance Tracking & Staff & Completion tracking and performance review data collection. \\
+Payroll and Human Resources Integration & Staff & Payslip access, leave request management, and benefits tracking. \\
+\rowcolor{agilelightgray}
+Meeting Scheduling & Community & Scheduling and management of student--professor meeting slots. \\
+User Access \& Profiles & Community & Account management, authentication, and user profile information. \\
+\rowcolor{agilelightgray}
+Messaging System & Community & Direct communication between users (student, professor, parent). \\
+Announcements \& Events & Community & System-wide announcements and event notifications. \\
+\end{longtable}
+}
+
+\sectionsep
+
+\newpage
+\section{Jira Project Board}
+
+\begin{tcolorbox}[dodbox,title={Jira Backlog Link}]
+All backlog items described in this document have been created in the team's Jira project under the \textbf{FMAP} project key. Each item includes the user story description, acceptance criteria, MoSCoW priority label, story points estimate, and sprint assignment.
+
+\vspace{8pt}
+\begin{center}
+\texttt{https://ziyadelnemr90.atlassian.net/jira/software/c/projects/FMAP/boards/35}
+\end{center}
+\end{tcolorbox}
+
+\newpage
+\section{User Story Splitting}
+
+\subsection{Why We Split User Stories}
+
+\begin{tcolorbox}[notebox]
+Large user stories (Epics) cannot be delivered within a single sprint. The team applied recognized splitting patterns to break large stories into independently deliverable, testable increments, each satisfying the INVEST criteria.
+\end{tcolorbox}
+
+\vspace{8pt}
+\begin{tcolorbox}[enhanced,colback=agileaccent!8,colframe=agileaccent,boxrule=1pt,arc=4pt,title={\textbf{INVEST Criteria}},fonttitle=\bfseries\color{white},attach boxed title to top left={yshift=-3mm,xshift=6mm},boxed title style={colback=agileaccent,arc=3pt}]
+Each split story must be:\quad\textbf{I}ndependent $\bullet$ \textbf{N}egotiable $\bullet$ \textbf{V}aluable $\bullet$ \textbf{E}stimable $\bullet$ \textbf{S}mall $\bullet$ \textbf{T}estable
+\end{tcolorbox}
+
+\curlysep
+
+\subsection{Splitting Techniques Applied}
+
+The team applied five core splitting techniques, each demonstrated with examples from the project backlog and sourced directly from the Curriculum, Facilities, and Staff module documentation.
+
+\subsubsection{Technique 1 --- Split by Role-Based Personas}
+
+Split an epic into distinct features based on different user personas with conflicting goals. Each persona gets a focused feature that serves their specific workflow.
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example: Course Catalog Management (Curriculum Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Original Epic:} \textit{``As a user, I want to manage and access the course catalog.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{Feature A (Admin Persona):} Course Catalog Administration
+  \begin{itemize}[itemsep=1pt]
+    \item \textbf{FMAP-133} --- Create a new course \mustbadge
+    \item \textbf{FMAP-137} --- View the list of active courses \mustbadge
+    \item \textbf{FMAP-131} --- Update existing course details \shouldbadge
+  \end{itemize}
+\item \textbf{Feature B (Student Persona):} Student Registration Portal
+  \begin{itemize}[itemsep=1pt]
+    \item \textbf{FMAP-132} --- Search and filter the course catalog \mustbadge
+    \item \textbf{FMAP-135} --- Enroll in a selected course \mustbadge
+  \end{itemize}
+\end{enumerate}
+\textit{The epic naturally serves two completely different user personas (admin building curriculum vs. student consuming it), so it is split into two distinct features, each optimized for their workflow.}
+\end{tcolorbox}
+
+\vspace{10pt}
+\subsubsection{Technique 2 --- Split by Workflow Steps}
+
+Decompose a user journey into sequential phases, creating one story per phase so each can be developed and tested independently.
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example 2a: Transcript Management (Facilities Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Original Epic:} \textit{``As a student, I want to request, track, and receive an official transcript.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{FMAP-196} --- Student \textit{requests} an official sealed transcript \mustbadge
+\item \textbf{FMAP-202} --- Admin \textit{processes} and digitally signs the transcript \mustbadge
+\item \textbf{FMAP-198} --- Registrar \textit{updates} student information prior to generation \mustbadge
+\end{enumerate}
+\textit{Each step is testable in isolation and delivers value to a distinct user role.}
+\end{tcolorbox}
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example 2b: Performance Tracking (Staff Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Original Epic:} \textit{``As a professor, I want to submit performance data for annual review.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{FMAP-182} --- \textit{Submission Phase}: Add completed course details \mustbadge
+\item \textbf{FMAP-185} --- \textit{Report Phase}: Admin extracts performance report for review \wontbadge
+\end{enumerate}
+\textit{Workflow split into submission phase (faculty action) and reporting phase (admin action).}
+\end{tcolorbox}
+
+\vspace{10pt}
+\subsubsection{Technique 3 --- Split by Data Operations (CRUD)}
+
+Separate Create, Read, Update, and Delete operations into individual stories, each with distinct complexity and priority.
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example 3a: Course Catalog (Curriculum Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Original Epic:} \textit{``As an Admin, I want to fully manage the course catalog.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{FMAP-133} --- \textit{Create}: Create a new course \mustbadge
+\item \textbf{FMAP-137} --- \textit{Read}: View the list of active courses \mustbadge
+\item \textbf{FMAP-131} --- \textit{Update}: Update existing course details \shouldbadge
+\item \textbf{FMAP-130} --- \textit{Delete}: Archive a retired course \wontbadge
+\end{enumerate}
+\textit{Core operations (Create, Read) are prioritized first; complex operations (Update, Delete) follow.}
+\end{tcolorbox}
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example 3b: Staff Directory (Staff Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Feature:} \textit{``Staff directory and role management.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{FMAP-184} --- \textit{Read Only}: View centralized staff directory \mustbadge
+\item \textbf{FMAP-186} --- \textit{Read \& Write}: Manage course duties and responsibilities \mustbadge
+\end{enumerate}
+\textit{Data Operations applied at varying complexity levels: read-only access is separate from read-write management.}
+\end{tcolorbox}
+
+\vspace{10pt}
+\subsubsection{Technique 4 --- Split by Business Rules}
+
+Deliver core business logic first; add validation and complex rules in subsequent stories to incrementally build sophistication.
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example: Course Enrollment (Curriculum Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Original Epic:} \textit{``As a student, I want to find and enroll in courses.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{FMAP-132} --- \textit{Core Logic}: Search and filter the course catalog \mustbadge
+\item \textbf{FMAP-135} --- \textit{Enrollment}: Enroll in a selected course \mustbadge
+\item \textbf{FMAP-134} --- \textit{Validation}: System validation of course prerequisites \shouldbadge
+\item \textbf{FMAP-136} --- \textit{Enhancement}: View remaining course capacity/seats \couldbadge
+\end{enumerate}
+\textit{Basic search and enrollment are released first; prerequisite validation and capacity checks are added as subsequent enhancements.}
+\end{tcolorbox}
+
+\vspace{10pt}
+\subsubsection{Technique 5 --- Split by Simple vs. Complex Implementation}
+
+Isolate risky or complex features by splitting them into a simple, internal-only version first, then adding complex integrations in subsequent stories.
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example 5a: Content Delivery (Curriculum Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Original Epic:} \textit{``As a professor and student, I want to access and manage learning materials online.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{Simple Path (Internal):}
+  \begin{itemize}[itemsep=1pt]
+    \item Upload and store course materials internally
+    \item Students access and download materials
+  \end{itemize}
+\item \textbf{Complex Path (External Integration):}
+  \begin{itemize}[itemsep=1pt]
+    \item Configure and synchronize with external LMS
+    \item Handle real-time data sync and legacy content migration
+  \end{itemize}
+\end{enumerate}
+\textit{Simple, low-risk internal features are delivered first; complex external integrations are added in later sprints.}
+\end{tcolorbox}
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example 5b: HR Benefits (Staff Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Feature:} \textit{``HR benefits and payroll management.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{FMAP-187} --- \textit{Simple}: View benefits summary (static page) \couldbadge
+\item \textbf{FMAP-188} --- \textit{Complex}: View payslips with secure access control \shouldbadge
+\end{enumerate}
+\textit{Simple, static benefits view is quick to deliver; complex payroll with security rules follows.}
+\end{tcolorbox}
+
+\curlysep
+\subsection{Splitting Technique Summary}
+
+\vspace{8pt}
+\begin{center}
+\begin{tabular}{@{}>{\bfseries\color{agileblue}}L{0.25\textwidth}L{0.38\textwidth}L{0.29\textwidth}@{}}
+\toprule
+\rowcolor{agileblue!10}
+\textbf{Technique} & \textbf{Best Applied When} & \textbf{Example in Project} \\
+\midrule
+Role-Based Personas & Different actors with conflicting goals & Course catalog management \\
+\rowcolor{agilelightgray}
+Workflow Steps & Sequential multi-phase user journey & Transcript, Performance tracking \\
+Data Operations (CRUD) & Full data management lifecycle & Course catalog, Staff directory \\
+\rowcolor{agilelightgray}
+Business Rules & Core logic before validation rules & Course enrollment \\
+\rowcolor{agilelightgray}
+Simple vs. Complex & Risk isolation before complex integration & Content delivery, HR benefits \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\newpage
+\section{Definition of Done (DoD)}
+
+\begin{tcolorbox}[notebox]
+The \textbf{Definition of Done} is a shared team agreement defining the minimum quality standards a backlog item must meet before it can be called ``done.'' It ensures consistency, reduces rework, and maintains a potentially shippable increment at the end of every sprint.
+\end{tcolorbox}
+
+\subsection{Code \& Implementation}
+
+\begin{tcolorbox}[dodbox]
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item All acceptance criteria listed in the Jira story are implemented and verified by the developer.
+\item Code committed to the team Git repository on a feature branch: \texttt{feature/FMAP-XXX-description}.
+\item Pull Request raised, peer-reviewed, and approved by at least one other team member before merging.
+\item Code self-reviewed: debug logs removed, non-obvious logic commented, no dead code.
+\end{itemize}
+\end{tcolorbox}
+
+\subsection{Testing}
+
+\begin{tcolorbox}[dodbox]
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item Feature manually tested on both desktop and mobile viewports.
+\item Security-sensitive stories (auth, grades, payroll) include a negative test: unauthorized access must return an appropriate error response.
+\end{itemize}
+\end{tcolorbox}
+
+\subsection{Documentation \& Jira}
+
+\begin{tcolorbox}[dodbox]
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item Jira ticket moved to \textbf{Done} status only after all other DoD criteria are met.
+\item API changes documented in the project README or API specification file.
+\item Acceptance criteria in the Jira ticket checked off or commented with evidence (screenshot or test result).
+\item Git commit messages reference the Jira ticket ID (e.g., \texttt{feat(FMAP-199): add classroom reservation endpoint}).
+\end{itemize}
+\end{tcolorbox}
+
+\subsection{Review \& Sprint Gate}
+
+\begin{tcolorbox}[dodbox]
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item Product Owner has accepted the story as meeting the stated acceptance criteria.
+\item Feature integrated into the main build without breaking any existing functionality.
+\item No hardcoded credentials, API keys, or sensitive data present in the codebase.
+\end{itemize}
+\end{tcolorbox}
+
+
+\newpage
+\section{Sprint Plan Overview}
+
+This section details the first two-week sprint, containing the foundational features across all modules essential for MVP delivery.
+
+\vspace{10pt}
+\begin{tcolorbox}[enhanced,colback=agileaccent!10,colframe=agileaccent,boxrule=1.5pt,arc=5pt,title={\textbf{Sprint 1 --- Foundation (Weeks 1--2)}},fonttitle=\bfseries\color{white},attach boxed title to top left={yshift=-3mm,xshift=6mm},boxed title style={colback=agileaccent,arc=3pt}]
+\textit{Goal: Core curriculum functionality --- course management, assignments, grading, student registration, and meeting scheduling.}
+\vspace{6pt}
+
+\begin{tabular}{@{}>{\color{agileaccent}\bfseries\small}m{0.13\textwidth}m{0.50\textwidth}m{0.17\textwidth}m{0.14\textwidth}@{}}
+\toprule
+\textbf{ID} & \textbf{Story Title} & \textbf{Module} & \textbf{Points} \\
+\midrule
+FMAP-133 & Create a new course & Curriculum & 3 \\
+FMAP-137 & View the list of active courses & Curriculum & 3 \\
+FMAP-135 & Enroll in a selected course & Curriculum & 3 \\
+FMAP-141 & Upload and submit assignment documents & Curriculum & 3 \\
+FMAP-147 & Grade an assignment and provide feedback & Curriculum & 3 \\
+FMAP-160 & Registration \& Login for Student & Community & 5 \\
+FMAP-163 & View Available Time Slots for Student & Community & 3 \\
+FMAP-178 & Manage Availability for Professor & Community & 5 \\
+FMAP-195 & Filter Rooms by Capacity and Equipment & Facilities & 5 \\
+\bottomrule
+\end{tabular}
+
+\vspace{8pt}
+\begin{center}
+\textbf{\color{agileaccent}Sprint 1 Total Story Points: 33 SP}
+\end{center}
+\end{tcolorbox}
+
+\vspace{12pt}
+\subsection{Sprint 1 Team Roles}
+
+\begin{tcolorbox}[enhanced,colback=agileblue!5,colframe=agileblue,boxrule=1.5pt,arc=5pt]
+\begin{tabular}{@{}>{\bfseries\color{agileblue}}L{0.25\textwidth}L{0.70\textwidth}@{}}
+\toprule
+\rowcolor{agileblue!10}
+\textbf{Role} & \textbf{Team Member} \\
+\midrule
+Product Owner & Marwan Ahmed (23p0242) \\
+\rowcolor{agilelightgray}
+Scrum Master & Youssef Haddad (23p0113) \\
+Developer & Youssef Tarek (23p0177) \\
+\rowcolor{agilelightgray}
+Developer & Ziyad Elnemr (23p0013) \\
+Developer & Loay Khaled (23p0340) \\
+\rowcolor{agilelightgray}
+Developer & Ahmed Sadik (23p0140) \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+
+
+
+
+% FINAL PAGE
+\newpage
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+\begin{tikzpicture}
+\fill[agileblue,rounded corners=12pt](-8cm,-3.8cm)rectangle(8cm,3.8cm);
+\node[color=white,font=\Huge\bfseries] at (0,0) {Thank You};
+\end{tikzpicture}
+\end{center}
+\vspace*{\fill}
+
+\end{document}
