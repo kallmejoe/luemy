@@ -35,7 +35,7 @@ const fetchStaff = async () => {
         headers: {
           Authorization: `Bearer ${token.value}`,
         },
-      }
+      },
     );
 
     if (res.success && res.staff) {
@@ -81,7 +81,9 @@ onMounted(() => {
   <div class="staff-directory-page">
     <div class="staff-directory-header">
       <h1 class="staff-directory-title">Academic Staff Directory</h1>
-      <p class="staff-directory-subtitle">Find instructor contact details, assigned courses, and office hours.</p>
+      <p class="staff-directory-subtitle">
+        Find instructor contact details, assigned courses, and office hours.
+      </p>
     </div>
 
     <div class="search-wrapper">
@@ -95,17 +97,25 @@ onMounted(() => {
 
     <div v-if="loading" class="state-card">Loading staff directory...</div>
 
-    <div v-else-if="staff.length === 0" class="state-card">No academic staff profiles are available yet.</div>
+    <div v-else-if="staff.length === 0" class="state-card">
+      No academic staff profiles are available yet.
+    </div>
 
     <div v-else-if="filteredStaff.length === 0" class="state-card">
       No staff profiles match your search.
     </div>
 
     <div v-else class="staff-grid">
-      <article v-for="member in filteredStaff" :key="member.id" class="staff-card">
+      <article
+        v-for="member in filteredStaff"
+        :key="member.id"
+        class="staff-card"
+      >
         <header class="staff-card-header">
           <h2 class="staff-name">{{ member.name }}</h2>
-          <p class="staff-department">{{ member.department || "Department not specified" }}</p>
+          <p class="staff-department">
+            {{ member.department || "Department not specified" }}
+          </p>
         </header>
 
         <section class="staff-section">
@@ -117,7 +127,9 @@ onMounted(() => {
         <section class="staff-section">
           <h3>Assigned Courses</h3>
           <ul v-if="member.assignedCourses.length">
-            <li v-for="course in member.assignedCourses" :key="course">{{ course }}</li>
+            <li v-for="course in member.assignedCourses" :key="course">
+              {{ course }}
+            </li>
           </ul>
           <p v-else>No assigned courses.</p>
         </section>
@@ -125,7 +137,10 @@ onMounted(() => {
         <section class="staff-section">
           <h3>Office Hours</h3>
           <ul v-if="member.officeHours.length">
-            <li v-for="slot in member.officeHours" :key="`${slot.day}-${slot.start}-${slot.end}`">
+            <li
+              v-for="slot in member.officeHours"
+              :key="`${slot.day}-${slot.start}-${slot.end}`"
+            >
               {{ slot.day }}: {{ slot.start }} - {{ slot.end }}
             </li>
           </ul>
@@ -138,6 +153,7 @@ onMounted(() => {
 
 <style scoped>
 .staff-directory-page {
+  margin: 10px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -164,10 +180,15 @@ onMounted(() => {
 
 .search-wrapper {
   display: flex;
+  min-width: 0;
+  padding: 0 0.5rem;
 }
 
 .search-input {
+  box-sizing: border-box;
   width: 100%;
+  min-width: 0;
+  margin: 0 auto;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--background);
