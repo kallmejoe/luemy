@@ -86,7 +86,7 @@ interface Emits {
   (e: "cancel"): void
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const formData = ref({
@@ -100,7 +100,7 @@ const error = ref("")
 const success = ref("")
 
 watch(
-  (props) => props.course,
+  () => props.course,
   (newCourse) => {
     if (newCourse) {
       formData.value = {
