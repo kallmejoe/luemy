@@ -166,7 +166,7 @@ const isPastDue = (dateString: string) => {
             <textarea
               id="assignment-description"
               v-model="assignmentForm.description"
-            ></textarea>
+            />
           </div>
 
           <div class="form-row">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useUser } from '@core/composables/useUser'
 import { useAuth } from '@core/composables/useAuth'
 import UiAlert from '@core/components/ui/alert/Alert.vue'
@@ -23,7 +23,7 @@ interface Errors {
 }
 
 const user = useUser()
-const { refreshUser } = useAuth()
+const { refreshUser, token } = useAuth()
 
 const isEditing = ref(false)
 const isLoading = ref(false)
@@ -31,13 +31,25 @@ const generalError = ref('')
 const successMessage = ref('')
 
 const formData = ref<FormData>({
-  name: user.value?.name || '',
-  email: user.value?.email || '',
+  name: '',
+  email: '',
   currentPassword: '',
   newPassword: ''
 })
 
 const errors = ref<Errors>({})
+
+// Watch user changes and update form
+watch(
+  () => user.value,
+  (newUser) => {
+    if (newUser && !isEditing.value) {
+      formData.value.name = newUser.name
+      formData.value.email = newUser.email
+    }
+  },
+  { deep: true }
+)
 
 const initials = computed(() => {
   if (!user.value?.name) return '?'
@@ -72,51 +84,67 @@ function formatRole(role: string | undefined): string {
   return role.charAt(0).toUpperCase() + role.slice(1)
 }
 
-function validateField(field: keyof Errors & keyof FormData): void {
-  errors.value[field] = undefined
-
-  if (field === 'name') {
-    const nameValue = formData.value.name.trim()
-    if (!nameValue) {
-      errors.value.name = 'Name is required'
-    } else if (nameValue.length < 2) {
-      errors.value.name = 'Name must be at least 2 characters'
-    } else if (nameValue.length > 100) {
-      errors.value.name = 'Name must not exceed 100 characters'
-    } else if (!/^[a-zA-Z\s'-]+$/.test(nameValue)) {
-      errors.value.name = 'Name can only contain letters, spaces, hyphens, or apostrophes'
-    }
-  } else if (field === 'email') {
-    const emailValue = formData.value.email.trim()
-    if (!emailValue) {
-      errors.value.email = 'Email is required'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
-      errors.value.email = 'Invalid email format'
-    }
-  } else if (field === 'newPassword') {
-    const newPwd = formData.value.newPassword
-    const currentPwd = formData.value.currentPassword
-    if (newPwd && !currentPwd) {
-      errors.value.newPassword = 'Current password is required to set a new password'
-    } else if (newPwd && newPwd.length < 8) {
-      errors.value.newPassword = 'Password must be at least 8 characters'
-    }
-  } else if (field === 'currentPassword') {
-    const currentPwd = formData.value.currentPassword
-    const newPwd = formData.value.newPassword
-    if (newPwd && !currentPwd) {
-      errors.value.currentPassword = 'Current password is required'
-    }
+function validateName(nameValue: string): string | null {
+  const trimmed = nameValue.trim()
+  if (!trimmed) return 'Name is required'
+  if (trimmed.length < 2) return 'Name must be at least 2 characters'
+  if (trimmed.length > 100) return 'Name must not exceed 100 characters'
+  if (!/^[a-zA-Z\s'-]+$/.test(trimmed)) {
+    return 'Name can only contain letters, spaces, hyphens, or apostrophes'
   }
+  return null
 }
 
-function validateAllFields(): boolean {
-  validateField('name')
-  validateField('email')
-  if (formData.value.newPassword) {
-    validateField('currentPassword')
-    validateField('newPassword')
+function validateEmail(emailValue: string): string | null {
+  const trimmed = emailValue.trim()
+  if (!trimmed) return 'Email is required'
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+    return 'Invalid email format'
   }
+  return null
+}
+
+function validatePassword(newPwd: string, currentPwd: string): { newPwd: string | null; currentPwd: string | null } {
+  const result = { newPwd: null as string | null, currentPwd: null as string | null }
+
+  if (newPwd) {
+    if (!currentPwd) {
+      result.currentPwd = 'Current password is required to set a new password'
+    }
+    if (newPwd.length < 8) {
+      result.newPwd = 'Password must be at least 8 characters'
+    }
+  }
+
+  return result
+}
+
+function clearErrors(): void {
+  errors.value = {}
+}
+
+function validateForm(): boolean {
+  clearErrors()
+
+  // Validate name
+  const nameError = validateName(formData.value.name)
+  if (nameError) {
+    errors.value.name = nameError
+  }
+
+  // Validate email
+  const emailError = validateEmail(formData.value.email)
+  if (emailError) {
+    errors.value.email = emailError
+  }
+
+  // Validate passwords if user is changing password
+  if (formData.value.newPassword || formData.value.currentPassword) {
+    const pwdErrors = validatePassword(formData.value.newPassword, formData.value.currentPassword)
+    if (pwdErrors.newPwd) errors.value.newPassword = pwdErrors.newPwd
+    if (pwdErrors.currentPwd) errors.value.currentPassword = pwdErrors.currentPwd
+  }
+
   return Object.keys(errors.value).length === 0
 }
 
@@ -129,26 +157,38 @@ function toggleEdit(): void {
       currentPassword: '',
       newPassword: ''
     }
-    errors.value = {}
+    clearErrors()
     generalError.value = ''
     successMessage.value = ''
+  } else {
+    // Initialize form with current user data when opening
+    formData.value = {
+      name: user.value?.name || '',
+      email: user.value?.email || '',
+      currentPassword: '',
+      newPassword: ''
+    }
   }
   isEditing.value = !isEditing.value
 }
 
 async function handleSubmit(): Promise<void> {
-  if (!validateAllFields()) {
+  generalError.value = ''
+  successMessage.value = ''
+
+  if (!validateForm()) {
     generalError.value = 'Please fix the errors above'
     return
   }
 
   isLoading.value = true
-  generalError.value = ''
-  successMessage.value = ''
 
   try {
     const response = await $fetch('/api/user', {
       method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token.value}`
+      },
       body: {
         name: formData.value.name.trim(),
         email: formData.value.email.trim(),
@@ -170,6 +210,7 @@ async function handleSubmit(): Promise<void> {
         currentPassword: '',
         newPassword: ''
       }
+      clearErrors()
 
       // Close edit mode after 2 seconds
       setTimeout(() => {
@@ -254,9 +295,6 @@ async function handleSubmit(): Promise<void> {
             type="text"
             placeholder="Enter your full name"
             required
-            minlength="2"
-            maxlength="100"
-            @blur="validateField('name')"
           />
           <span v-if="errors.name" class="error-text">{{ errors.name }}</span>
           <span v-else class="hint-text">2-100 characters, letters, spaces, hyphens, or apostrophes only</span>
@@ -271,7 +309,6 @@ async function handleSubmit(): Promise<void> {
             type="email"
             placeholder="Enter your email"
             required
-            @blur="validateField('email')"
           />
           <span v-if="errors.email" class="error-text">{{ errors.email }}</span>
           <span v-else class="hint-text">We'll send updates to this address</span>
@@ -290,7 +327,6 @@ async function handleSubmit(): Promise<void> {
               v-model="formData.currentPassword"
               type="password"
               placeholder="Enter current password"
-              @blur="validateField('currentPassword')"
             />
             <span v-if="errors.currentPassword" class="error-text">{{ errors.currentPassword }}</span>
           </div>
@@ -303,7 +339,6 @@ async function handleSubmit(): Promise<void> {
               v-model="formData.newPassword"
               type="password"
               placeholder="Enter new password"
-              @blur="validateField('newPassword')"
             />
             <span v-if="errors.newPassword" class="error-text">{{ errors.newPassword }}</span>
             <span v-else class="hint-text">Minimum 8 characters</span>

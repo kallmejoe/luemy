@@ -17,7 +17,7 @@ export const useTheme = () => {
    * Automatically respects system preference via @media (prefers-color-scheme)
    */
   const isDark = computed(() => {
-    if (process.client) {
+    if (import.meta.client) {
       return document.documentElement.classList.contains('dark')
     }
     return false
@@ -27,7 +27,7 @@ export const useTheme = () => {
    * Toggle theme between light and dark mode
    */
   const toggleTheme = () => {
-    if (process.client) {
+    if (import.meta.client) {
       document.documentElement.classList.toggle('dark')
     }
   }
@@ -36,7 +36,7 @@ export const useTheme = () => {
    * Set theme explicitly
    */
   const setTheme = (mode: 'light' | 'dark') => {
-    if (process.client) {
+    if (import.meta.client) {
       if (mode === 'dark') {
         document.documentElement.classList.add('dark')
       } else {
