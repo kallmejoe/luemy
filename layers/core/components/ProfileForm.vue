@@ -1,171 +1,12 @@
-<template>
-  <div class="profile-form">
-    <form @submit.prevent="handleSubmit">
-      <!-- Display Mode -->
-      <div v-if="!isEditing" class="view-mode">
-        <div class="profile-header">
-          <div class="avatar">{{ initials }}</div>
-          <div class="header-content">
-            <h1>{{ user?.name }}</h1>
-            <p class="email">{{ user?.email }}</p>
-          </div>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="toggleEdit"
-          >
-            Edit Profile
-          </button>
-        </div>
-
-        <div class="info-grid">
-          <div class="info-card">
-            <label>Name</label>
-            <p>{{ user?.name }}</p>
-          </div>
-          <div class="info-card">
-            <label>Email</label>
-            <p>{{ user?.email }}</p>
-          </div>
-          <div class="info-card">
-            <label>Role</label>
-            <p class="role-badge" :class="`role-${user?.role}`">{{ formatRole(user?.role) }}</p>
-          </div>
-          <div class="info-card">
-            <label>User ID</label>
-            <p>#{{ user?.id }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Edit Mode -->
-      <div v-else class="edit-mode">
-        <div class="edit-header">
-          <h2>Edit Profile</h2>
-          <button
-            type="button"
-            class="btn-close"
-            aria-label="Close"
-            @click="toggleEdit"
-          >
-            ✕
-          </button>
-        </div>
-
-        <!-- Name Field -->
-        <div class="form-group">
-          <label for="name">Name</label>
-          <input
-            id="name"
-            v-model="formData.name"
-            type="text"
-            placeholder="Enter your full name"
-            required
-            minlength="2"
-            maxlength="100"
-            @blur="validateField('name')"
-          >
-          <span v-if="errors.name" class="error-message">{{ errors.name }}</span>
-          <span v-else class="hint-text">2-100 characters, letters, spaces, hyphens, or apostrophes only</span>
-        </div>
-
-        <!-- Email Field -->
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            id="email"
-            v-model="formData.email"
-            type="email"
-            placeholder="Enter your email"
-            required
-            @blur="validateField('email')"
-          >
-          <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
-          <span v-else class="hint-text">We'll send updates to this address</span>
-        </div>
-
-        <!-- Password Section -->
-        <div class="form-section">
-          <h3>Change Password</h3>
-          <p class="section-hint">Leave blank if you don't want to change your password</p>
-
-          <!-- Current Password -->
-          <div class="form-group">
-            <label for="currentPassword">Current Password</label>
-            <input
-              id="currentPassword"
-              v-model="formData.currentPassword"
-              type="password"
-              placeholder="Enter current password"
-              @blur="validateField('currentPassword')"
-            >
-            <span v-if="errors.currentPassword" class="error-message">{{ errors.currentPassword }}</span>
-          </div>
-
-          <!-- New Password -->
-          <div class="form-group">
-            <label for="newPassword">New Password</label>
-            <input
-              id="newPassword"
-              v-model="formData.newPassword"
-              type="password"
-              placeholder="Enter new password"
-              @blur="validateField('newPassword')"
-            >
-            <span v-if="errors.newPassword" class="error-message">{{ errors.newPassword }}</span>
-            <span v-else class="hint-text">Minimum 8 characters</span>
-          </div>
-
-          <!-- Password Strength Indicator -->
-          <div v-if="formData.newPassword" class="password-strength">
-            <div class="strength-bar">
-              <div 
-                class="strength-fill" 
-                :style="{ width: passwordStrength + '%', backgroundColor: getPasswordStrengthColor() }"
-              />
-            </div>
-            <span class="strength-text">{{ passwordStrengthText }}</span>
-          </div>
-        </div>
-
-        <!-- Error Messages -->
-        <div v-if="generalError" class="error-alert">
-          <span>{{ generalError }}</span>
-        </div>
-
-        <!-- Success Message -->
-        <div v-if="successMessage" class="success-alert">
-          <span>{{ successMessage }}</span>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="form-actions">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            :disabled="isLoading"
-            @click="toggleEdit"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            :disabled="isLoading"
-          >
-            <span v-if="!isLoading">Save Changes</span>
-            <span v-else>Saving...</span>
-          </button>
-        </div>
-      </div>
-    </form>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useUser } from '@core/composables/useUser'
 import { useAuth } from '@core/composables/useAuth'
+import UiAlert from '@core/components/ui/alert/Alert.vue'
+import UiAlertDescription from '@core/components/ui/alert/AlertDescription.vue'
+import UiButton from '@core/components/ui/Button.vue'
+import UiInput from '@core/components/ui/Input.vue'
+import UiLabel from '@core/components/ui/Label.vue'
 
 interface FormData {
   name: string
@@ -229,13 +70,6 @@ const passwordStrengthText = computed(() => {
 function formatRole(role: string | undefined): string {
   if (!role) return 'Unknown'
   return role.charAt(0).toUpperCase() + role.slice(1)
-}
-
-function getPasswordStrengthColor(): string {
-  if (passwordStrength.value <= 25) return '#ef4444'
-  if (passwordStrength.value <= 50) return '#f97316'
-  if (passwordStrength.value <= 75) return '#eab308'
-  return '#22c55e'
 }
 
 function validateField(field: keyof Errors & keyof FormData): void {
@@ -325,10 +159,10 @@ async function handleSubmit(): Promise<void> {
 
     if (response.success) {
       successMessage.value = response.message || 'Profile updated successfully'
-      
+
       // Refresh user data
       await refreshUser()
-      
+
       // Reset form
       formData.value = {
         name: user.value?.name || '',
@@ -336,7 +170,7 @@ async function handleSubmit(): Promise<void> {
         currentPassword: '',
         newPassword: ''
       }
-      
+
       // Close edit mode after 2 seconds
       setTimeout(() => {
         isEditing.value = false
@@ -361,31 +195,175 @@ async function handleSubmit(): Promise<void> {
 }
 </script>
 
+<template>
+  <div class="profile-container">
+    <!-- View Mode -->
+    <div v-if="!isEditing" class="view-mode">
+      <div class="profile-header">
+        <div class="avatar">{{ initials }}</div>
+        <div class="header-content">
+          <h1>{{ user?.name }}</h1>
+          <p class="email">{{ user?.email }}</p>
+        </div>
+        <UiButton @click="toggleEdit">Edit Profile</UiButton>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <label>Name</label>
+          <p>{{ user?.name }}</p>
+        </div>
+        <div class="info-card">
+          <label>Email</label>
+          <p>{{ user?.email }}</p>
+        </div>
+        <div class="info-card">
+          <label>Role</label>
+          <p class="role-badge" :class="`role-${user?.role}`">{{ formatRole(user?.role) }}</p>
+        </div>
+        <div class="info-card">
+          <label>User ID</label>
+          <p>#{{ user?.id }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Mode -->
+    <div v-else class="edit-mode">
+      <div class="edit-header">
+        <h2>Edit Profile</h2>
+      </div>
+
+      <form class="form" @submit.prevent="handleSubmit">
+        <!-- Error Alert -->
+        <UiAlert v-if="generalError" variant="destructive">
+          <UiAlertDescription>{{ generalError }}</UiAlertDescription>
+        </UiAlert>
+
+        <!-- Success Alert -->
+        <UiAlert v-if="successMessage" variant="default">
+          <UiAlertDescription>{{ successMessage }}</UiAlertDescription>
+        </UiAlert>
+
+        <!-- Name Field -->
+        <div class="field">
+          <UiLabel for="name">Name</UiLabel>
+          <UiInput
+            id="name"
+            v-model="formData.name"
+            type="text"
+            placeholder="Enter your full name"
+            required
+            minlength="2"
+            maxlength="100"
+            @blur="validateField('name')"
+          />
+          <span v-if="errors.name" class="error-text">{{ errors.name }}</span>
+          <span v-else class="hint-text">2-100 characters, letters, spaces, hyphens, or apostrophes only</span>
+        </div>
+
+        <!-- Email Field -->
+        <div class="field">
+          <UiLabel for="email">Email</UiLabel>
+          <UiInput
+            id="email"
+            v-model="formData.email"
+            type="email"
+            placeholder="Enter your email"
+            required
+            @blur="validateField('email')"
+          />
+          <span v-if="errors.email" class="error-text">{{ errors.email }}</span>
+          <span v-else class="hint-text">We'll send updates to this address</span>
+        </div>
+
+        <!-- Password Section -->
+        <div class="password-section">
+          <h3>Change Password</h3>
+          <p class="section-hint">Leave blank if you don't want to change your password</p>
+
+          <!-- Current Password -->
+          <div class="field">
+            <UiLabel for="currentPassword">Current Password</UiLabel>
+            <UiInput
+              id="currentPassword"
+              v-model="formData.currentPassword"
+              type="password"
+              placeholder="Enter current password"
+              @blur="validateField('currentPassword')"
+            />
+            <span v-if="errors.currentPassword" class="error-text">{{ errors.currentPassword }}</span>
+          </div>
+
+          <!-- New Password -->
+          <div class="field">
+            <UiLabel for="newPassword">New Password</UiLabel>
+            <UiInput
+              id="newPassword"
+              v-model="formData.newPassword"
+              type="password"
+              placeholder="Enter new password"
+              @blur="validateField('newPassword')"
+            />
+            <span v-if="errors.newPassword" class="error-text">{{ errors.newPassword }}</span>
+            <span v-else class="hint-text">Minimum 8 characters</span>
+          </div>
+
+          <!-- Password Strength Indicator -->
+          <div v-if="formData.newPassword" class="password-strength">
+            <div class="strength-bar">
+              <div
+                class="strength-fill"
+                :style="{ width: passwordStrength + '%' }"
+              />
+            </div>
+            <span class="strength-text">{{ passwordStrengthText }}</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <UiButton
+            :disabled="isLoading"
+            type="button"
+            variant="outline"
+            @click="toggleEdit"
+          >
+            Cancel
+          </UiButton>
+          <UiButton
+            type="submit"
+            :disabled="isLoading"
+          >
+            <span v-if="!isLoading">Save Changes</span>
+            <span v-else>Saving...</span>
+          </UiButton>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+
 <style scoped>
-.profile-form {
+.profile-container {
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
 }
 
 /* View Mode */
 .view-mode {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: 1.5rem;
 }
 
 .profile-header {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-lg);
-  background: var(--color-base);
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
@@ -394,8 +372,8 @@ form {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: var(--color-primary);
-  color: white;
+  background: var(--primary);
+  color: var(--primary-foreground);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -410,27 +388,26 @@ form {
 }
 
 .header-content h1 {
-  margin: 0 0 var(--spacing-xs) 0;
+  margin: 0 0 0.25rem 0;
   font-size: 1.875rem;
   font-weight: 700;
-  color: var(--color-text);
 }
 
 .header-content .email {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--color-text-secondary);
+  color: var(--muted-foreground);
 }
 
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
 }
 
 .info-card {
-  padding: var(--spacing-md);
-  background: var(--color-base);
+  padding: 1rem;
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
@@ -439,22 +416,21 @@ form {
   display: block;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: 0.5rem;
 }
 
 .info-card p {
   margin: 0;
   font-size: 1rem;
-  color: var(--color-text);
   word-break: break-word;
 }
 
 .role-badge {
   display: inline-block;
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: 0.25rem 0.5rem;
   border-radius: 9999px;
   font-size: 0.875rem;
   font-weight: 600;
@@ -478,133 +454,87 @@ form {
 
 /* Edit Mode */
 .edit-mode {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  padding: var(--spacing-lg);
-  background: var(--color-base);
+  padding: 1.5rem;
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
 
 .edit-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 1.5rem;
   border-bottom: 1px solid var(--border);
-  padding-bottom: var(--spacing-md);
+  padding-bottom: 1rem;
 }
 
 .edit-header h2 {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-text);
 }
 
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius);
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.btn-close:hover {
-  background: var(--color-accent);
-  color: var(--color-text);
-}
-
-/* Form Groups */
-.form-group {
+/* Form */
+.form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: 1rem;
 }
 
-.form-group label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--color-text);
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-.form-group input {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--border);
+.field input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--input);
   border-radius: var(--radius);
-  background: var(--color-background);
-  color: var(--color-text);
+  background: var(--background);
+  color: var(--foreground);
   font-size: 0.875rem;
-  font-family: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.form-group input::placeholder {
-  color: var(--color-text-secondary);
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.form-group input:disabled {
-  background: var(--color-disabled);
-  cursor: not-allowed;
-}
-
-.error-message {
+.error-text {
   font-size: 0.75rem;
-  color: #ef4444;
+  color: var(--destructive);
   font-weight: 500;
 }
 
 .hint-text {
   font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  color: var(--muted-foreground);
 }
 
-/* Form Section */
-.form-section {
+/* Password Section */
+.password-section {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  background: var(--color-background);
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--background);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
 
-.form-section h3 {
+.password-section h3 {
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-text);
 }
 
 .section-hint {
   margin: 0;
   font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  color: var(--muted-foreground);
 }
 
 /* Password Strength */
 .password-strength {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-sm);
-  background: var(--color-base);
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background: var(--card);
   border-radius: var(--radius);
 }
 
@@ -619,80 +549,25 @@ form {
 .strength-fill {
   height: 100%;
   transition: width 0.3s, background-color 0.3s;
+  background: linear-gradient(90deg, #ef4444, #f97316, #eab308, #22c55e);
 }
 
 .strength-text {
   font-size: 0.75rem;
   font-weight: 500;
-  color: var(--color-text-secondary);
-}
-
-/* Alerts */
-.error-alert,
-.success-alert {
-  padding: var(--spacing-md);
-  border-radius: var(--radius);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.error-alert {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.success-alert {
-  background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
-  border: 1px solid rgba(34, 197, 94, 0.2);
-}
-
-/* Buttons */
-.btn {
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: none;
-  border-radius: var(--radius);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-  font-family: inherit;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  background: var(--color-primary);
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: var(--color-primary-dark, #2563eb);
-}
-
-.btn-secondary {
-  background: var(--color-secondary);
-  color: var(--color-text);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: var(--color-secondary-hover);
+  color: var(--muted-foreground);
 }
 
 /* Form Actions */
 .form-actions {
   display: flex;
-  gap: var(--spacing-md);
+  gap: 1rem;
   justify-content: flex-end;
-  padding-top: var(--spacing-md);
+  padding-top: 1rem;
   border-top: 1px solid var(--border);
 }
 
-.form-actions .btn {
+.form-actions button {
   min-width: 120px;
 }
 
@@ -703,10 +578,6 @@ form {
     text-align: center;
   }
 
-  .profile-header .btn {
-    width: 100%;
-  }
-
   .info-grid {
     grid-template-columns: 1fr;
   }
@@ -715,18 +586,16 @@ form {
     flex-direction: column;
   }
 
-  .form-actions .btn {
+  .form-actions button {
     width: 100%;
   }
 
-  .edit-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-md);
+  .edit-mode {
+    padding: 1rem;
   }
 
-  .btn-close {
-    align-self: flex-end;
+  .password-section {
+    padding: 0.75rem;
   }
 }
 </style>
