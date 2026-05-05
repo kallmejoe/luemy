@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import UiButton from "@core/components/ui/Button.vue";
+import CourseSearchFilter from "@core/components/CourseSearchFilter.vue";
+
+interface Course {
+  id: number
+  name: string
+  professor_name: string
+  active: boolean
+}
 
 definePageMeta({
   middleware: ["auth"],
@@ -8,15 +16,15 @@ definePageMeta({
 
 const token = useCookie("token");
 
-const courses = ref<any[]>([]);
+const courses = ref<Course[]>([]);
 const activeCourseIds = ref<number[]>([]);
-const selectedCourseIds = ref<number[]>([]);
+const filteredCourses = ref<Course[]>([]);
 
 const fetchCourses = async () => {
   try {
     const res = await $fetch("/api/courses/list-courses");
     if (res.success) {
-      courses.value = res.courses.filter((course: any) => course.active);
+      courses.value = res.courses.filter((course: Course) => course.active);
     }
   } catch (error) {
     console.error(error);
@@ -32,7 +40,7 @@ const fetchActiveCourses = async () => {
     });
 
     if (res.success) {
-      activeCourseIds.value = res.courses.map((course: any) => course.id);
+      activeCourseIds.value = res.courses.map((course: Course) => course.id);
     }
   } catch (error) {
     console.error(error);
@@ -69,13 +77,28 @@ const handleEnrollment = async (courseId: number) => {
 
 const isEnrolled = (courseId: number) =>
   activeCourseIds.value.includes(courseId);
+
+const handleFilterChange = (filtered: Course[]) => {
+  filteredCourses.value = filtered;
+};
 </script>
 
 <template>
   <div class="enrollment-page">
+    <div class="page-header">
+      <h1>Browse Courses</h1>
+      <p>Search and filter available courses to find what you want to study</p>
+    </div>
+
+    <CourseSearchFilter
+      :courses="courses"
+      :enrolled-course-ids="activeCourseIds"
+      @filter-change="handleFilterChange"
+    />
+
     <div class="course-list">
       <div
-        v-for="course in courses"
+        v-for="course in filteredCourses.length > 0 ? filteredCourses : courses"
         :key="course.id"
         class="course-card"
         :class="{ enrolled: isEnrolled(course.id) }"
@@ -97,6 +120,10 @@ const isEnrolled = (courseId: number) =>
           </div>
         </div>
       </div>
+
+      <div v-if="(filteredCourses.length > 0 ? filteredCourses : courses).length === 0" class="no-results">
+        <p>No courses found. Try adjusting your search or filters.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -106,6 +133,24 @@ const isEnrolled = (courseId: number) =>
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+}
+
+.page-header {
+  margin-bottom: var(--spacing-md);
+}
+
+.page-header h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-sm) 0;
+  color: var(--foreground);
+}
+
+.page-header p {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.95rem;
 }
 
 .page-title {
@@ -209,6 +254,19 @@ const isEnrolled = (courseId: number) =>
 
 .view-link:hover {
   opacity: 0.9;
+}
+
+.no-results {
+  padding: var(--spacing-xl) var(--spacing-lg);
+  text-align: center;
+  color: var(--muted-foreground);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--muted);
+}
+
+.no-results p {
+  margin: 0;
 }
 
 @media (max-width: 640px) {
