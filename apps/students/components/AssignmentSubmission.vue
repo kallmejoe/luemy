@@ -18,8 +18,8 @@
         <button
           type="button"
           class="btn btn-clear"
-          @click="handleClear"
           :disabled="isSubmitting"
+          @click="handleClear"
         >
           Clear
         </button>

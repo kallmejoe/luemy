@@ -1,6 +1,6 @@
 export default defineNuxtPlugin((nuxtApp) => {
   // Server-side only plugin
-  if (process.server) {
+  if (import.meta.server) {
     nuxtApp.hook('vue:error', (error) => {
       // Suppress Vue Router warnings about API route 404s
       if (error.message && error.message.includes('No match found for location')) {

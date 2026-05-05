@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { useUser } from "@core/composables/useUser";
+import UiButton from "@core/components/ui/Button.vue";
+
 definePageMeta({
   middleware: ["auth"],
 });
-
-import { useUser } from "@core/composables/useUser";
-import UiButton from "@core/components/ui/Button.vue";
 
 const user = useUser();
 

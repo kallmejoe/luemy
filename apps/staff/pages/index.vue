@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { useAuth } from '@core/composables/useAuth'
+import SignupForm from '@core/components/SignupForm.vue'
+
 definePageMeta({
   layout: 'auth'
 })
-
-import { useAuth } from '@core/composables/useAuth'
-import SignupForm from '@core/components/SignupForm.vue'
 
 const { isAuthenticated } = useAuth()
 const router = useRouter()

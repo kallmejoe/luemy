@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// eslint-disable-next-line vue/multi-word-component-names
+ 
 import LoginForm from '@core/components/LoginForm.vue';
 import { useAuth } from '@core/composables/useAuth';
 

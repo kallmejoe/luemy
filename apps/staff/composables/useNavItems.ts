@@ -7,5 +7,6 @@ export const useNavItems = (): NavItem[] => {
     { id: 'dashboard', href: '/dashboard', label: 'Dashboard' },
     { id: 'students', href: '/students', label: 'Students' },
     { id: 'courses', href: '/courses', label: 'Courses' },
+    { id: 'profile', href: '/profile', label: 'Profile' },
   ]
 }

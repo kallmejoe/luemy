@@ -124,7 +124,7 @@ async function createCourse() {
             <textarea
               id="course-description"
               v-model="courseForm.description"
-            ></textarea>
+            />
           </div>
 
           <div class="form-field form-field--checkbox">

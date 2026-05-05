@@ -133,8 +133,8 @@ const handleSubmissionComplete = async (event: any) => {
 
         <button 
           v-if="submission.status === 'Pending' || submission.status === 'Submitted'"
-          @click="showSubmissionForm = !showSubmissionForm"
           class="btn btn-secondary"
+          @click="showSubmissionForm = !showSubmissionForm"
         >
           {{ showSubmissionForm ? '✕ Cancel' : '✎ Edit' }}
         </button>

@@ -60,8 +60,15 @@ export const useAuth = () => {
       }
 
       return { success: false, message: response.message || 'Login failed' };
-    } catch (err: any) {
-      return { success: false, message: err.data?.message || err.message || 'Login failed' };
+    } catch (err) {
+      interface ErrorResponse {
+        data?: {
+          message?: string
+        }
+        message?: string
+      }
+      const error = err as ErrorResponse
+      return { success: false, message: error?.data?.message || error?.message || 'Login failed' };
     }
   }
 
@@ -69,6 +76,25 @@ export const useAuth = () => {
     token.value = null;
     user.value = null;
     navigateTo('/login');
+  }
+
+  async function refreshUser(): Promise<void> {
+    try {
+      const response = await $fetch<{ success: boolean; user?: User }>(
+        '/api/auth/me',
+        {
+          headers: {
+            Authorization: `Bearer ${token.value}`
+          }
+        }
+      );
+
+      if (response.success && response.user) {
+        user.value = response.user;
+      }
+    } catch (err) {
+      console.error('Failed to refresh user:', err);
+    }
   }
 
   function isAuthenticated(): boolean {
@@ -86,6 +112,7 @@ export const useAuth = () => {
     token,
     login,
     logout,
+    refreshUser,
     isAuthenticated,
     hasRole
   };

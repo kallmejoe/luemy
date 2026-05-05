@@ -16,7 +16,7 @@
         ]"
       >
         <div class="assignment-left">
-          <div class="status-indicator" :class="`status-dot-${getStatusClass(assignment.submission?.status)}`"></div>
+          <div class="status-indicator" :class="`status-dot-${getStatusClass(assignment.submission?.status)}`"/>
           <div class="assignment-info">
             <h4 class="assignment-title">{{ assignment.title }}</h4>
             <p v-if="assignment.description" class="assignment-description">

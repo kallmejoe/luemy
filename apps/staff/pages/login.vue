@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { useAuth } from '@core/composables/useAuth'
+
 definePageMeta({
   layout: 'auth'
 })
-
-import { useAuth } from '@core/composables/useAuth'
 
 const { isAuthenticated } = useAuth()
 const router = useRouter()
