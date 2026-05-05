@@ -1,3 +1,26 @@
+<script setup lang="ts">
+import EditCourseForm from "@core/components/EditCourseForm.vue"
+import { ref, onMounted } from "vue"
+import { useRouter, useRoute } from "vue-router"
+
+definePageMeta({
+  middleware: ["auth"]
+})
+
+interface Course {
+  id: number
+  name: string
+  description: string
+  active: number
+  professor_id: number
+  created_at: string
+}
+
+const router = useRouter()
+const route = useRoute()
+const token = useCookie("token")
+</script>
+
 <template>
   <div class="edit-course-page">
     <div class="page-header">
@@ -29,31 +52,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted } from "vue"
-import { useRouter, useRoute } from "vue-router"
-
-definePageMeta({
-  middleware: ["auth"]
-})
-
-interface Course {
-  id: number
-  name: string
-  description: string
-  active: number
-  professor_id: number
-  created_at: string
-}
-
-const router = useRouter()
-const route = useRoute()
-const token = useCookie("token")
-
-const course = ref<Course | null>(null)
-const isLoadingCourse = ref(true)
-const courseLoadError = ref("")
 const isSubmitting = ref(false)
 
 const courseId = route.params.id as string
