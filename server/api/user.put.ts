@@ -1,5 +1,5 @@
 import { jwtVerify } from 'jose'
-import { hash } from 'bcrypt'
+import { hash, compare } from 'bcrypt'
 
 interface User {
   id: number
@@ -107,8 +107,7 @@ export default defineEventHandler(async (event) => {
       }
 
       // Verify current password
-      const bcrypt = await import('bcrypt')
-      const isPasswordValid = await bcrypt.compare(currentPassword, currentUser.password)
+      const isPasswordValid = await compare(currentPassword, currentUser.password)
 
       if (!isPasswordValid) {
         setResponseStatus(event, 401)
