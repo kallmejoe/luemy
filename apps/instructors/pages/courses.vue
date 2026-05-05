@@ -1,25 +1,27 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted } from "vue"
+import { useRouter } from "vue-router"
 
 definePageMeta({
   middleware: ["auth"],
-});
+})
 
-const token = useCookie("token");
+const token = useCookie("token")
+const router = useRouter()
 
-const courses = ref<any[]>([]);
-const myCourseIds = ref<number[]>([]);
+const courses = ref<any[]>([])
+const myCourseIds = ref<number[]>([])
 
 const fetchCourses = async () => {
   try {
-    const res = await $fetch("/api/courses/list-courses");
+    const res = await $fetch("/api/courses/list-courses")
     if (res.success) {
-      courses.value = res.courses;
+      courses.value = res.courses
     }
   } catch (error) {
-    console.error(error);
+    console.error(error)
   }
-};
+}
 
 const fetchMyCourses = async () => {
   try {
@@ -27,21 +29,30 @@ const fetchMyCourses = async () => {
       headers: {
         Authorization: `Bearer ${token.value}`,
       },
-    });
+    })
 
     if (res.success) {
-      myCourseIds.value = res.courses.map((course: any) => course.id);
+      myCourseIds.value = res.courses.map((course: any) => course.id)
     }
   } catch (error) {
-    console.error(error);
+    console.error(error)
   }
-};
+}
 
 onMounted(async () => {
-  await Promise.all([fetchCourses(), fetchMyCourses()]);
-});
+  await Promise.all([fetchCourses(), fetchMyCourses()])
+})
 
-const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId);
+const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId)
+
+const handleCourseClick = (courseId: number) => {
+  router.push(`/course/${courseId}`)
+}
+
+const handleEditClick = (courseId: number, event: Event) => {
+  event.stopPropagation()
+  router.push(`/edit-course/${courseId}`)
+}
 </script>
 
 <template>
@@ -59,6 +70,7 @@ const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId);
         :key="course.id"
         class="course-card"
         :class="{ teaching: isTeaching(course.id) }"
+        @click="handleCourseClick(course.id)"
       >
         <div class="course-row">
           <div class="course-indicator">
@@ -75,13 +87,13 @@ const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId);
           </div>
 
           <div v-if="isTeaching(course.id)" class="course-actions">
-            <NuxtLink
-              :to="`/edit-course/${course.id}`"
+            <button
               class="btn btn--edit"
               title="Edit course"
+              @click="handleEditClick(course.id, $event)"
             >
               Edit
-            </NuxtLink>
+            </button>
           </div>
         </div>
       </div>
@@ -129,7 +141,7 @@ const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId);
   padding: 1rem;
   background: var(--color-surface, white);
   transition: all 0.2s ease;
-  cursor: default;
+  cursor: pointer;
 }
 
 .course-card:hover {
@@ -219,6 +231,7 @@ const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId);
   border: none;
   background: var(--color-primary, #3b82f6);
   color: white;
+  font-family: inherit;
 }
 
 .btn:hover {
