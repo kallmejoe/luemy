@@ -1,58 +1,119 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import UiButton from '@core/components/ui/Button.vue'
-import { useUser } from '@core/composables/useUser'
-import { useAuth } from '@core/composables/useAuth'
+import { ref } from "vue";
+import UiButton from "@core/components/ui/Button.vue";
+import { useUser } from "@core/composables/useUser";
+import { useAuth } from "@core/composables/useAuth";
 
 definePageMeta({
-  middleware: ['auth']
-})
+  middleware: ["auth"],
+});
 
-const user = useUser()
-const { logout, token } = useAuth()
+const user = useUser();
+const { token } = useAuth();
 
-const showCreateCourseModal = ref(false)
+const showCreateCourseModal = ref(false);
+const showAddTimeSlotModal = ref(false);
 
 const courseForm = ref({
-  name: '',
-  description: '',
-  active: true
-})
+  name: "",
+  description: "",
+  active: true,
+});
 
-const creatingCourse = ref(false)
-const createCourseError = ref('')
+const creatingCourse = ref(false);
+const createCourseError = ref("");
+
+const timeSlotForm = ref({
+  day: "Monday",
+  start: "",
+  end: "",
+});
+
+const creatingTimeSlot = ref(false);
+const createTimeSlotError = ref("");
+const createTimeSlotSuccess = ref("");
 
 async function createCourse() {
-  creatingCourse.value = true
-  createCourseError.value = ''
+  creatingCourse.value = true;
+  createCourseError.value = "";
 
   try {
-    const response = await $fetch('/api/courses', {
-      method: 'POST',
+    const response = await $fetch("/api/courses", {
+      method: "POST",
       headers: {
-        Authorization: `Bearer ${token.value}`
+        Authorization: `Bearer ${token.value}`,
       },
       body: {
         name: courseForm.value.name,
         description: courseForm.value.description,
-        active: courseForm.value.active
-      }
-    })
+        active: courseForm.value.active,
+      },
+    });
 
     if (response.success) {
-      showCreateCourseModal.value = false
+      showCreateCourseModal.value = false;
       courseForm.value = {
-        name: '',
-        description: '',
-        active: true
-      }
+        name: "",
+        description: "",
+        active: true,
+      };
     } else {
-      createCourseError.value = response.message || 'Failed to create course'
+      createCourseError.value = response.message || "Failed to create course";
     }
-  } catch (err) {
-    createCourseError.value = 'Failed to create course'
+  } catch {
+    createCourseError.value = "Failed to create course";
   } finally {
-    creatingCourse.value = false
+    creatingCourse.value = false;
+  }
+}
+
+function resetTimeSlotForm() {
+  timeSlotForm.value = {
+    day: "Monday",
+    start: "",
+    end: "",
+  };
+}
+
+function closeTimeSlotModal() {
+  showAddTimeSlotModal.value = false;
+  createTimeSlotError.value = "";
+  resetTimeSlotForm();
+}
+
+async function createTimeSlot() {
+  creatingTimeSlot.value = true;
+  createTimeSlotError.value = "";
+  createTimeSlotSuccess.value = "";
+
+  try {
+    const response = await $fetch<{ success: boolean; message?: string }>(
+      "/api/staff/office-hours",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+        body: {
+          day: timeSlotForm.value.day,
+          start: timeSlotForm.value.start,
+          end: timeSlotForm.value.end,
+        },
+      },
+    );
+
+    if (response.success) {
+      closeTimeSlotModal();
+      createTimeSlotSuccess.value = "Time slot added successfully.";
+    } else {
+      createTimeSlotError.value = response.message || "Failed to add time slot";
+    }
+  } catch (error: unknown) {
+    const fetchError = error as { data?: { message?: string } };
+    createTimeSlotError.value =
+      fetchError.data?.message || "Failed to add time slot";
+  } finally {
+    creatingTimeSlot.value = false;
   }
 }
 </script>
@@ -61,7 +122,9 @@ async function createCourse() {
   <div class="dashboard">
     <div class="dashboard-header">
       <h1 class="dashboard-title">Instructor Dashboard</h1>
-      <p class="dashboard-welcome">Welcome back, <strong>{{ user?.name }}</strong></p>
+      <p class="dashboard-welcome">
+        Welcome back, <strong>{{ user?.name }} 👋</strong>
+      </p>
     </div>
 
     <div class="dashboard-grid">
@@ -73,12 +136,18 @@ async function createCourse() {
 
       <div class="dashboard-card dashboard-card--action">
         <h2>Quick Actions</h2>
+        <p v-if="createTimeSlotSuccess" class="success-message">
+          {{ createTimeSlotSuccess }}
+        </p>
         <div class="action-buttons">
           <UiButton @click="showCreateCourseModal = true">
             Create Course
           </UiButton>
-          <UiButton variant="outline" @click="navigateTo('/assignments')">
+          <UiButton @click="navigateTo('/assignments')">
             Manage Assignments
+          </UiButton>
+          <UiButton @click="showAddTimeSlotModal = true">
+            Add Time Slot
           </UiButton>
         </div>
       </div>
@@ -116,7 +185,7 @@ async function createCourse() {
               v-model="courseForm.name"
               type="text"
               required
-            >
+            />
           </div>
 
           <div class="form-field">
@@ -128,7 +197,12 @@ async function createCourse() {
           </div>
 
           <div class="form-field form-field--checkbox">
-            <input id="course-active" v-model="courseForm.active" type="checkbox" name="active">
+            <input
+              id="course-active"
+              v-model="courseForm.active"
+              type="checkbox"
+              name="active"
+            />
             <label for="course-active">Active</label>
           </div>
 
@@ -146,7 +220,86 @@ async function createCourse() {
               class="btn-primary"
               :disabled="creatingCourse"
             >
-              {{ creatingCourse ? 'Creating...' : 'Create Course' }}
+              {{ creatingCourse ? "Creating..." : "Create Course" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div
+      v-if="showAddTimeSlotModal"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="add-time-slot-title"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="add-time-slot-title">Add Availability Time Slot</h2>
+          <button
+            type="button"
+            aria-label="Close dialog"
+            class="modal-close"
+            @click="closeTimeSlotModal"
+          >
+            x
+          </button>
+        </div>
+
+        <form class="modal-form" @submit.prevent="createTimeSlot">
+          <div v-if="createTimeSlotError" class="error-message">
+            {{ createTimeSlotError }}
+          </div>
+
+          <div class="form-field">
+            <label for="slot-day">Day</label>
+            <select id="slot-day" v-model="timeSlotForm.day" required>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+              <option value="Sunday">Sunday</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="slot-start">Start Time</label>
+            <input
+              id="slot-start"
+              v-model="timeSlotForm.start"
+              type="time"
+              required
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="slot-end">End Time</label>
+            <input
+              id="slot-end"
+              v-model="timeSlotForm.end"
+              type="time"
+              required
+            />
+          </div>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              @click="closeTimeSlotModal"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              class="btn-primary"
+              :disabled="creatingTimeSlot"
+            >
+              {{ creatingTimeSlot ? "Adding..." : "Add Time Slot" }}
             </button>
           </div>
         </form>
@@ -200,6 +353,15 @@ async function createCourse() {
 .dashboard-card p {
   margin: 0.25rem 0;
   color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.success-message {
+  margin: 0 0 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-foreground);
   font-size: 0.875rem;
 }
 
@@ -285,7 +447,9 @@ async function createCourse() {
 .form-field input[type="text"],
 .form-field input[type="email"],
 .form-field input[type="password"],
-.form-field textarea {
+.form-field textarea,
+.form-field select,
+.form-field input[type="time"] {
   padding: 0.5rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
