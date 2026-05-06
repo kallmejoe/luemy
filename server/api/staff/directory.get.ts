@@ -77,22 +77,36 @@ export default defineEventHandler(async (event) => {
       )
       .all() as OfficeHourRow[];
 
+    const coursesByProfessor = new Map<number, string[]>();
+    for (const course of courses) {
+      const assignedCourses = coursesByProfessor.get(course.professor_id) ?? [];
+      assignedCourses.push(course.name);
+      coursesByProfessor.set(course.professor_id, assignedCourses);
+    }
+
+    const officeHoursByProfessor = new Map<
+      number,
+      { day: string; start: string; end: string }[]
+    >();
+    for (const slot of officeHours) {
+      const professorOfficeHours =
+        officeHoursByProfessor.get(slot.professor_id) ?? [];
+      professorOfficeHours.push({
+        day: slot.day_of_week,
+        start: slot.start_time,
+        end: slot.end_time,
+      });
+      officeHoursByProfessor.set(slot.professor_id, professorOfficeHours);
+    }
+
     const staffWithDetails = staff.map((member) => ({
       id: member.id,
       name: member.name,
       email: member.email,
       department: member.department,
       phone: member.phone,
-      assignedCourses: courses
-        .filter((course) => course.professor_id === member.id)
-        .map((course) => course.name),
-      officeHours: officeHours
-        .filter((slot) => slot.professor_id === member.id)
-        .map((slot) => ({
-          day: slot.day_of_week,
-          start: slot.start_time,
-          end: slot.end_time,
-        })),
+      assignedCourses: coursesByProfessor.get(member.id) ?? [],
+      officeHours: officeHoursByProfessor.get(member.id) ?? [],
     }));
 
     return {
