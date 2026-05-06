@@ -1,25 +1,27 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted } from "vue"
+import { useRouter } from "vue-router"
 
 definePageMeta({
   middleware: ["auth"],
-});
+})
 
-const token = useCookie("token");
+const token = useCookie("token")
+const router = useRouter()
 
-const courses = ref<any[]>([]);
-const myCourseIds = ref<number[]>([]);
+const courses = ref<any[]>([])
+const myCourseIds = ref<number[]>([])
 
 const fetchCourses = async () => {
   try {
-    const res = await $fetch("/api/courses/list-courses");
+    const res = await $fetch("/api/courses/list-courses")
     if (res.success) {
-      courses.value = res.courses;
+      courses.value = res.courses
     }
   } catch (error) {
-    console.error(error);
+    console.error(error)
   }
-};
+}
 
 const fetchMyCourses = async () => {
   try {
@@ -27,21 +29,30 @@ const fetchMyCourses = async () => {
       headers: {
         Authorization: `Bearer ${token.value}`,
       },
-    });
+    })
 
     if (res.success) {
-      myCourseIds.value = res.courses.map((course: any) => course.id);
+      myCourseIds.value = res.courses.map((course: any) => course.id)
     }
   } catch (error) {
-    console.error(error);
+    console.error(error)
   }
-};
+}
 
 onMounted(async () => {
-  await Promise.all([fetchCourses(), fetchMyCourses()]);
-});
+  await Promise.all([fetchCourses(), fetchMyCourses()])
+})
 
-const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId);
+const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId)
+
+const handleCourseClick = (courseId: number) => {
+  router.push(`/course/${courseId}`)
+}
+
+const handleEditClick = (courseId: number, event: Event) => {
+  event.stopPropagation()
+  router.push(`/edit-course/${courseId}`)
+}
 </script>
 
 <template>
@@ -59,6 +70,7 @@ const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId);
         :key="course.id"
         class="course-card"
         :class="{ teaching: isTeaching(course.id) }"
+        @click="handleCourseClick(course.id)"
       >
         <div class="course-row">
           <div class="course-indicator">
@@ -72,6 +84,16 @@ const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId);
               <h3>{{ course.name }}</h3>
             </div>
             <p v-if="course.professor_name">{{ course.professor_name }}</p>
+          </div>
+
+          <div v-if="isTeaching(course.id)" class="course-actions">
+            <button
+              class="btn btn--edit"
+              title="Edit course"
+              @click="handleEditClick(course.id, $event)"
+            >
+              Edit
+            </button>
           </div>
         </div>
       </div>
@@ -119,7 +141,7 @@ const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId);
   padding: 1rem;
   background: var(--color-surface, white);
   transition: all 0.2s ease;
-  cursor: default;
+  cursor: pointer;
 }
 
 .course-card:hover {
@@ -134,7 +156,7 @@ const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId);
 
 .course-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 1rem;
   list-style: none;
   padding: 0;
@@ -146,6 +168,13 @@ const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.course-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-left: auto;
 }
 
 .course-info {
@@ -184,6 +213,34 @@ const isTeaching = (courseId: number) => myCourseIds.value.includes(courseId);
 }
 
 .badge--teaching {
+  background: var(--color-primary, #3b82f6);
+  color: white;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: var(--color-primary, #3b82f6);
+  color: white;
+  font-family: inherit;
+}
+
+.btn:hover {
+  background: var(--color-primary-dark, #2563eb);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn--edit {
   background: var(--color-primary, #3b82f6);
   color: white;
 }

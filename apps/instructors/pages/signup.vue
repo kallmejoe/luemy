@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import SignupForm from '@core/components/SignupForm.vue'
-import { useAuth } from '@core/composables/useAuth'
+import SignupForm from "@core/components/SignupForm.vue"
+import { useAuth } from "@core/composables/useAuth"
 
 definePageMeta({
-  layout: 'auth'
+  layout: "auth"
 })
 
 const { isAuthenticated } = useAuth()
@@ -11,7 +11,7 @@ const router = useRouter()
 
 onMounted(() => {
   if (isAuthenticated()) {
-    router.push('/dashboard')
+    router.push("/dashboard")
   }
 })
 </script>
@@ -20,8 +20,8 @@ onMounted(() => {
   <div class="auth-page">
     <div class="auth-card">
       <h1 class="auth-title">Create account</h1>
-      <p class="auth-subtitle">Sign up as a student</p>
-      <SignupForm role="student" />
+      <p class="auth-subtitle">Sign up as an instructor</p>
+      <SignupForm role="professor" />
       <p class="auth-link">
         Already have an account? <NuxtLink to="/login">Log in</NuxtLink>
       </p>

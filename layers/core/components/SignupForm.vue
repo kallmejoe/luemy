@@ -7,7 +7,7 @@ import UiInput from '@core/components/ui/Input.vue'
 import UiLabel from '@core/components/ui/Label.vue'
 
 const props = defineProps<{
-  role: 'student' | 'professor' | 'instructor'
+  role: 'student' | 'professor' | 'admin'
 }>()
 
 const email = ref('')
@@ -36,8 +36,10 @@ async function handleSubmit() {
     } else {
       error.value = response.message || 'Signup failed'
     }
-  } catch (err: any) {
-    error.value = err.data?.message || err.message || 'Signup failed'
+  } catch (err: unknown) {
+    const errorMessage = (err as { data?: { message?: string }; message?: string })?.data?.message ||
+      (err as { message?: string })?.message || 'Signup failed'
+    error.value = String(errorMessage)
   } finally {
     loading.value = false
   }
