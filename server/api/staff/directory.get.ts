@@ -34,12 +34,19 @@ export default defineEventHandler(async (event) => {
   }
 
   const token = authHeader.substring(7);
+  let role: string | undefined;
 
   try {
-    await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    role = typeof payload.role === "string" ? payload.role : undefined;
   } catch {
     setResponseStatus(event, 401);
     return { success: false, message: "Invalid or expired token" };
+  }
+
+  if (role !== "student") {
+    setResponseStatus(event, 403);
+    return { success: false, message: "Forbidden" };
   }
 
   try {
