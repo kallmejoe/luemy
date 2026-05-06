@@ -30,7 +30,6 @@ const goToCourses = () => navigateTo("/enrollment");
           >
           <UiButton
             class="dashboard-cta"
-            variant="outline"
             @click="navigateTo('/assignments')"
             >My Assignments</UiButton
           >

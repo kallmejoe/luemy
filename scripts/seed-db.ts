@@ -30,9 +30,23 @@ try {
   // 2. Add professor info
   console.log('Adding professor info...')
   db.prepare(
-    `INSERT INTO professors_info (user_id, department) VALUES (?, ?)`
-  ).run(professorId, 'Computer Science')
+    `INSERT INTO professors_info (user_id, department, phone) VALUES (?, ?, ?)`
+  ).run(professorId, 'Computer Science', '+1-555-0101')
   console.log(`✓ Professor info added\n`)
+
+  console.log('Adding office hours...')
+  const officeHours = [
+    { day: 'Monday', start: '10:00', end: '12:00' },
+    { day: 'Wednesday', start: '14:00', end: '16:00' }
+  ]
+
+  officeHours.forEach((slot) => {
+    db.prepare(
+      `INSERT INTO professor_av_time_slots (professor_id, day_of_week, start_time, end_time)
+       VALUES (?, ?, ?, ?)`
+    ).run(professorId, slot.day, slot.start, slot.end)
+  })
+  console.log(`✓ Office hours added\n`)
 
   // 3. Create courses
   console.log('Creating courses...')

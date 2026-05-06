@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS professors_info (
     user_id INTEGER PRIMARY KEY,
     department TEXT,
+    phone TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -106,6 +107,21 @@ CREATE TABLE IF NOT EXISTS assignment_submissions (
     db.exec("ALTER TABLE assignment_grades ADD COLUMN feedback TEXT")
   } catch {
     // Column already exists on initialized databases.
+  }
+
+  try {
+    db.exec("ALTER TABLE professors_info ADD COLUMN phone TEXT")
+  } catch {
+    // Column already exists on initialized databases.
+  }
+
+  try {
+    db.exec(`
+      CREATE UNIQUE INDEX IF NOT EXISTS uq_professor_av_time_slots
+      ON professor_av_time_slots (professor_id, day_of_week, start_time, end_time)
+    `)
+  } catch {
+    // Index already exists on initialized databases.
   }
 
   console.log('[DB] Database initialized successfully')
