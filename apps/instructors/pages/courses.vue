@@ -3,14 +3,15 @@ import { ref, onMounted } from "vue"
 import { useRouter } from "vue-router"
 import UiButton from "@core/components/ui/Button.vue"
 
-definePageMeta({
-  middleware: ["auth"],
-})
+interface Course {
+  id: number
+  name: string
+  description?: string
+  professor_name?: string
+  professor_id: number
+}
 
-const token = useCookie("token")
-const router = useRouter()
-
-const courses = ref<any[]>([])
+const courses = ref<Course[]>([])
 const myCourseIds = ref<number[]>([])
 
 const fetchCourses = async () => {
@@ -33,7 +34,7 @@ const fetchMyCourses = async () => {
     })
 
     if (res.success) {
-      myCourseIds.value = res.courses.map((course: any) => course.id)
+      myCourseIds.value = res.courses.map((course: Course) => course.id)
     }
   } catch (error) {
     console.error(error)
@@ -54,15 +55,26 @@ const handleEditClick = (courseId: number, event: Event) => {
   event.stopPropagation()
   router.push(`/edit-course/${courseId}`)
 }
+
+const handleCreateCourse = () => {
+  router.push('/create-course')
+}
 </script>
 
 <template>
   <div class="courses-page">
     <div class="courses-heading">
-      <h1 class="page-title">All Courses</h1>
-      <p class="page-subtitle">
-        View available courses. Courses marked as "Teaching" are yours.
-      </p>
+      <div class="heading-content">
+        <div>
+          <h1 class="page-title">All Courses</h1>
+          <p class="page-subtitle">
+            View available courses. Courses marked as "Teaching" are yours.
+          </p>
+        </div>
+        <UiButton @click="handleCreateCourse">
+          Create Course
+        </UiButton>
+      </div>
     </div>
 
     <div class="course-list">
@@ -117,6 +129,13 @@ const handleEditClick = (courseId: number, event: Event) => {
   z-index: 5;
   padding-bottom: 0.75rem;
   background: var(--background);
+}
+
+.heading-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
 .page-title {
