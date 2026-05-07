@@ -5,7 +5,7 @@ const navItems = useNavItems()
 </script>
 
 <template>
-  <AppShell :nav-items="navItems" portal-name="Student portal">
+  <AppShell :nav-items="navItems" portal-name="Student portal" feedback-source="student">
     <slot />
   </AppShell>
 </template>

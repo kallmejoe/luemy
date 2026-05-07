@@ -103,6 +103,17 @@ CREATE TABLE IF NOT EXISTS assignment_submissions (
     FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE,
     UNIQUE(student_id, assignment_id)
 );
+
+  CREATE TABLE IF NOT EXISTS bug_feedback (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    app_source TEXT NOT NULL CHECK(app_source IN ('student', 'staff', 'instructor')),
+    subject TEXT NOT NULL,
+    details TEXT NOT NULL,
+    page_path TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
   `)
 
   try {

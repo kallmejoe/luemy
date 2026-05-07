@@ -2,6 +2,7 @@
 import {
   BookOpen,
   BookOpenCheck,
+  Bug,
   CalendarClock,
   ClipboardList,
   GraduationCap,
@@ -18,16 +19,21 @@ import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { NavItem } from '@core/composables/useNavItems'
 import UserProfile from '@core/components/UserProfile.vue'
+import FeedbackForm from '@core/components/FeedbackForm.vue'
 import { useAuth } from '@core/composables/useAuth'
+
+type AppSource = 'student' | 'staff' | 'instructor'
 
 const props = defineProps<{
   navItems: NavItem[]
   portalName?: string
+  feedbackSource: AppSource
 }>()
 
 const route = useRoute()
 const { logout } = useAuth()
 const sidebarOpen = ref(false)
+const reportModalOpen = ref(false)
 
 const icons = {
   BookOpen,
@@ -67,6 +73,19 @@ function handleLogout() {
   closeSidebar()
   logout()
 }
+
+function openReportModal() {
+  reportModalOpen.value = true
+  closeSidebar()
+}
+
+function closeReportModal() {
+  reportModalOpen.value = false
+}
+
+function handleFeedbackSubmitted() {
+  reportModalOpen.value = false
+}
 </script>
 
 <template>
@@ -92,6 +111,11 @@ function handleLogout() {
           <span>{{ item.label }}</span>
         </NuxtLink>
       </nav>
+
+      <button type="button" class="sidebar-feedback" @click="openReportModal">
+        <Bug class="sidebar-icon" aria-hidden="true" />
+        <span>Report Bug</span>
+      </button>
 
       <button type="button" class="sidebar-logout" @click="handleLogout">
         <LogOut class="sidebar-icon" aria-hidden="true" />
@@ -127,6 +151,11 @@ function handleLogout() {
           <span>{{ item.label }}</span>
         </NuxtLink>
       </nav>
+
+      <button type="button" class="sidebar-feedback" @click="openReportModal">
+        <Bug class="sidebar-icon" aria-hidden="true" />
+        <span>Report Bug</span>
+      </button>
     </aside>
 
     <section class="app-workspace">
@@ -145,6 +174,25 @@ function handleLogout() {
         <slot />
       </main>
     </section>
+
+    <div v-if="reportModalOpen" class="report-modal-backdrop" @click="closeReportModal" />
+    <div v-if="reportModalOpen" class="report-modal" role="dialog" aria-modal="true" aria-label="Report bug">
+      <div class="report-modal-header">
+        <h2>Report a bug</h2>
+        <button type="button" class="icon-button" aria-label="Close report bug popup" @click="closeReportModal">
+          <X aria-hidden="true" />
+        </button>
+      </div>
+      <p class="report-modal-subtitle">
+        Route captured automatically: {{ route.path }}
+      </p>
+      <FeedbackForm
+        :app="feedbackSource"
+        submit-label="Submit bug report"
+        title=""
+        @submitted="handleFeedbackSubmitted"
+      />
+    </div>
   </div>
 </template>
 
@@ -255,6 +303,29 @@ function handleLogout() {
   color: var(--destructive);
 }
 
+.sidebar-feedback {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-height: 2.5rem;
+  width: 100%;
+  border: 1px solid var(--sidebar-border);
+  border-radius: var(--radius-md);
+  padding: 0 var(--spacing-sm);
+  color: var(--sidebar-accent-foreground);
+  text-decoration: none;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 650;
+  background: color-mix(in oklab, var(--sidebar-accent) 68%, transparent);
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.sidebar-feedback:hover {
+  background: var(--sidebar-accent);
+}
+
 .app-workspace {
   display: flex;
   flex-direction: column;
@@ -276,6 +347,49 @@ function handleLogout() {
 .mobile-sidebar,
 .mobile-backdrop {
   display: none;
+}
+
+.report-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  background: color-mix(in oklab, var(--overlay) 82%, transparent);
+}
+
+.report-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 140;
+  width: min(36rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  background: var(--card);
+  box-shadow: var(--shadow-lg);
+}
+
+.report-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.report-modal-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--foreground);
+}
+
+.report-modal-subtitle {
+  margin: 0 0 var(--spacing-sm);
+  color: var(--muted-foreground);
+  font-size: 0.82rem;
 }
 
 .icon-button {

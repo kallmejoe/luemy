@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue"
+import UiIcon from "@core/components/ui/Icon.vue"
 import { useRouter, useRoute } from "vue-router"
 import UiButton from "@core/components/ui/Button.vue"
 
@@ -37,7 +38,7 @@ interface Student {
   name: string
   email: string
   student_id: string
-  enrollment_date: string
+  enrollment_date: string | null
   submissions: StudentSubmission[]
   stats: { total_assignments: number; submitted: number; graded: number }
 }
@@ -128,32 +129,18 @@ const formatDate = (dateString: string) =>
     day: "numeric",
   })
 
-const formatDateTime = (dateString: string) =>
-  new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
-
 const isOverdue = (dueDate: string) => new Date(dueDate) < new Date()
 
 const tabs: { key: Tab; label: string; icon: string }[] = [
-  { key: "info", label: "Course Info", icon: "ℹ" },
-  { key: "assignments", label: "Assignments", icon: "📋" },
-  { key: "students", label: "Students", icon: "👥" },
+  { key: "info", label: "Course Info", icon: "info" },
+  { key: "assignments", label: "Assignments", icon: "assignment" },
+  { key: "students", label: "Students", icon: "users" },
 ]
 
-const submissionStatusIcon = (status: string | null) => {
-  if (status === "graded") return "✓"
-  if (status === "submitted") return "📤"
-  return "—"
-}
-
 const submissionStatusClass = (status: string | null) => {
-  if (status === "graded") return "status-graded"
-  if (status === "submitted") return "status-submitted"
+  const normalizedStatus = (status || "").toLowerCase()
+  if (normalizedStatus === "graded") return "status-graded"
+  if (normalizedStatus === "submitted") return "status-submitted"
   return "status-none"
 }
 </script>
@@ -192,7 +179,7 @@ const submissionStatusClass = (status: string | null) => {
           :class="{ active: activeTab === tab.key }"
           @click="handleTabChange(tab.key)"
         >
-          <span class="tab-icon">{{ tab.icon }}</span>
+          <UiIcon :name="tab.icon" />
           <span>{{ tab.label }}</span>
         </button>
       </div>
@@ -298,7 +285,7 @@ const submissionStatusClass = (status: string | null) => {
               >
                 <span class="sub-assignment">{{ sub.assignment_title }}</span>
                 <span :class="['sub-status', submissionStatusClass(sub.status)]">
-                  {{ submissionStatusIcon(sub.status) }}
+                  <UiIcon :name="(sub.status || '').toLowerCase() === 'graded' ? 'check' : ((sub.status || '').toLowerCase() === 'submitted' ? 'upload' : 'dash')" :size="16" />
                 </span>
                 <span v-if="sub.grade !== null" class="sub-grade">
                   {{ sub.grade }}/{{ sub.max_score }}

@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
     return { success: false, message: "Invalid or expired token" };
   }
 
-  if (role !== "student") {
+  if (role !== "admin" && role !== "professor") {
     setResponseStatus(event, 403);
     return { success: false, message: "Forbidden" };
   }

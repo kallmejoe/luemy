@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from "vue"
 import { useRouter, useRoute } from "vue-router"
 import UiButton from "@core/components/ui/Button.vue"
+import UiIcon from "@core/components/ui/Icon.vue"
 
 interface Assignment {
   id: number
@@ -117,8 +118,8 @@ const submitGrade = async () => {
         Authorization: `Bearer ${token.value}`,
       },
       body: {
-        assignment_id: assignment.value?.id,
-        student_id: selectedSubmission.value.student_id,
+        assignmentId: assignment.value?.id,
+        studentId: selectedSubmission.value.student_id,
         grade: gradeForm.value.grade,
         feedback: gradeForm.value.feedback,
       },
@@ -132,7 +133,18 @@ const submitGrade = async () => {
       if (index !== -1) {
         submissions.value[index].grade = gradeForm.value.grade
         submissions.value[index].feedback = gradeForm.value.feedback
-        submissions.value[index].status = "graded"
+        const prevStatus = submissions.value[index].status || ""
+        submissions.value[index].status = "Graded"
+        // Update stats: if previous was 'Submitted', decrement submitted; increment graded
+        if (stats.value) {
+          const prev = (prevStatus || "").toLowerCase()
+          if (prev === "submitted") {
+            stats.value.submitted = Math.max(0, (stats.value.submitted || 0) - 1)
+          }
+          if (prev !== "graded") {
+            stats.value.graded = (stats.value.graded || 0) + 1
+          }
+        }
       }
       closeGradingModal()
     }
@@ -144,7 +156,7 @@ const submitGrade = async () => {
 }
 
 const getStatusColor = (status: string) => {
-  switch (status) {
+  switch (status.toLowerCase()) {
     case "graded":
       return "status-graded"
     case "submitted":
@@ -249,9 +261,11 @@ const getStatusColor = (status: string) => {
                 <h3>{{ submission.student_name }}</h3>
                 <p>{{ submission.student_email }}</p>
               </div>
+              <p class="submission-content">{{ submission.content }}</p>
               <div class="submission-meta">
                 <span :class="['status-badge', getStatusColor(submission.status)]">
-                  {{ submission.status }}
+                  <UiIcon :name="(submission.status || '').toLowerCase() === 'graded' ? 'check' : ((submission.status || '').toLowerCase() === 'submitted' ? 'upload' : 'dash')" :size="14" />
+                  <span style="margin-left:0.5rem">{{ submission.status }}</span>
                 </span>
                 <span class="submission-date">
                   Submitted {{ formatDate(submission.submission_date) }}
@@ -585,6 +599,13 @@ const getStatusColor = (status: string) => {
   margin: 0;
   font-size: 0.85rem;
   color: var(--muted-foreground);
+}
+
+.submission-content {
+  margin: 0.5rem 0 0;
+  color: var(--foreground);
+  line-height: 1.5;
+  white-space: pre-wrap;
 }
 
 .submission-meta {

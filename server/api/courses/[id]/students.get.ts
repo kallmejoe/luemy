@@ -15,6 +15,8 @@ export default defineEventHandler(async (event) => {
 
   const token = authHeader.substring(7);
 
+  let professorId: number;
+
   try {
     const verified = await jwtVerify(token, JWT_SECRET);
     const payload = verified.payload as { userId: number; email: string; role: string };
@@ -23,6 +25,8 @@ export default defineEventHandler(async (event) => {
       setResponseStatus(event, 403);
       return { success: false, message: "Forbidden" };
     }
+
+    professorId = payload.userId;
   } catch {
     setResponseStatus(event, 401);
     return { success: false, message: "Invalid token" };
@@ -36,14 +40,25 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    const course = db.prepare(
+      `SELECT id
+       FROM courses
+       WHERE id = ? AND professor_id = ?`
+     ).get(courseId, professorId);
+
+    if (!course) {
+      setResponseStatus(event, 404);
+      return { success: false, message: "Course not found" };
+    }
+
     const students = db.prepare(
-      `SELECT u.id, u.name, u.email, si.student_id, si.enrollment_date
+      `SELECT u.id, u.name, u.email
        FROM users u
        JOIN students_info si ON u.id = si.user_id
        JOIN course_enrollments ce ON ce.student_id = u.id
        WHERE ce.course_id = ?
        ORDER BY u.name ASC`
-    ).all(courseId) as Array<{ id: number; name: string; email: string; student_id: string; enrollment_date: string }>;
+    ).all(courseId) as Array<{ id: number; name: string; email: string }>;
 
     // Get all assignments for this course
     const assignments = db.prepare(
@@ -72,10 +87,15 @@ export default defineEventHandler(async (event) => {
       }>;
 
       const gradedCount = submissions.filter((s) => s.grade !== null).length;
-      const submittedCount = submissions.filter((s) => s.status === "submitted" || s.status === "graded").length;
+      const submittedCount = submissions.filter((s) => {
+        const normalizedStatus = (s.status || "").toLowerCase();
+        return normalizedStatus === "submitted" || normalizedStatus === "graded";
+      }).length;
 
       return {
         ...student,
+        student_id: String(student.id),
+        enrollment_date: null,
         submissions,
         stats: {
           total_assignments: assignments.length,
