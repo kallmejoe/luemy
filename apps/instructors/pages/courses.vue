@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { useRouter } from "vue-router"
+import { BookOpen } from 'lucide-vue-next'
 import UiButton from "@core/components/ui/Button.vue"
 
 interface Course {
@@ -74,7 +75,7 @@ const handleCreateCourse = () => {
             Manage your courses and view available offerings
           </p>
         </div>
-        <UiButton @click="handleCreateCourse" class="create-btn">
+        <UiButton class="create-btn" @click="handleCreateCourse">
           + New Course
         </UiButton>
       </div>
@@ -124,7 +125,7 @@ const handleCreateCourse = () => {
 
     <!-- Empty State -->
     <div v-if="courses.length === 0" class="empty-state">
-      <div class="empty-icon">📚</div>
+      <BookOpen class="empty-icon" />
       <h2>No courses available</h2>
       <p>Create your first course to get started</p>
       <UiButton @click="handleCreateCourse">Create Course</UiButton>
@@ -335,7 +336,9 @@ const handleCreateCourse = () => {
 }
 
 .empty-icon {
-  font-size: 4rem;
+  width: 4rem;
+  height: 4rem;
+  color: var(--muted-foreground);
   opacity: 0.5;
 }
 

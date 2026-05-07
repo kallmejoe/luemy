@@ -30,7 +30,19 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const slots = db.prepare("SELECT * FROM professor_av_time_slots WHERE professor_id = ? ORDER BY day_of_week, start_time").all(professorId)
+    const slots = db.prepare(`
+      SELECT 
+        id, 
+        professor_id, 
+        day_of_week, 
+        CAST(specific_date AS TEXT) as specific_date, 
+        start_time, 
+        end_time, 
+        hall 
+      FROM professor_av_time_slots 
+      WHERE professor_id = ? 
+      ORDER BY specific_date, start_time
+    `).all(professorId)
     return { success: true, slots }
   } catch (err) {
     console.error("[availability list] Error:", err)

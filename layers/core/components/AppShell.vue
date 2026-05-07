@@ -10,7 +10,9 @@ import {
   LibraryBig,
   LogOut,
   Menu,
+  Moon,
   PanelLeftClose,
+  Sun,
   UserRound,
   UsersRound,
   X,
@@ -21,6 +23,7 @@ import type { NavItem } from '@core/composables/useNavItems'
 import UserProfile from '@core/components/UserProfile.vue'
 import FeedbackForm from '@core/components/FeedbackForm.vue'
 import { useAuth } from '@core/composables/useAuth'
+import { useTheme } from '@core/composables/useTheme'
 
 type AppSource = 'student' | 'staff' | 'instructor'
 
@@ -32,6 +35,7 @@ const props = defineProps<{
 
 const route = useRoute()
 const { logout } = useAuth()
+const { isDark, toggleTheme } = useTheme()
 const sidebarOpen = ref(false)
 const reportModalOpen = ref(false)
 
@@ -91,8 +95,13 @@ function handleFeedbackSubmitted() {
 <template>
   <div class="app-shell">
     <aside class="app-sidebar" aria-label="Primary navigation">
-      <div class="sidebar-brand">
-        <p class="brand-name">Luemy</p>
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <GraduationCap :size="22" stroke-width="2.2" />
+          </div>
+          <span class="brand-text">Luemy</span>
+        </div>
       </div>
 
       <nav class="sidebar-nav">
@@ -100,32 +109,72 @@ function handleFeedbackSubmitted() {
           v-for="item in navItems"
           :key="item.id"
           :to="item.href"
-          :class="['sidebar-link', activeItem === item.id ? 'sidebar-link--active' : '']"
-          :title="item.label"
+          :class="['nav-item', activeItem === item.id ? 'nav-item--active' : '']"
         >
-          <component :is="iconFor(item)" class="sidebar-icon" aria-hidden="true" />
-          <span>{{ item.label }}</span>
+          <div class="nav-item-indicator" />
+          <div class="nav-item-icon">
+            <component :is="iconFor(item)" :size="19" stroke-width="2" />
+          </div>
+          <span class="nav-item-label">{{ item.label }}</span>
         </NuxtLink>
       </nav>
 
-      <button type="button" class="sidebar-feedback" @click="openReportModal">
-        <Bug class="sidebar-icon" aria-hidden="true" />
-        <span>Report Bug</span>
-      </button>
+      <div class="sidebar-bottom">
+        <div class="sidebar-separator" />
 
-      <button type="button" class="sidebar-logout" @click="handleLogout">
-        <LogOut class="sidebar-icon" aria-hidden="true" />
-        <span>Log out</span>
-      </button>
+        <div class="sidebar-actions">
+          <button
+            type="button"
+            class="action-btn"
+            :title="isDark ? 'Light mode' : 'Dark mode'"
+            @click="toggleTheme"
+          >
+            <div class="action-icon">
+              <Moon v-if="isDark" :size="18" stroke-width="2" />
+              <Sun v-else :size="18" stroke-width="2" />
+            </div>
+            <span class="action-label">{{ isDark ? 'Light' : 'Dark' }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="action-btn"
+            title="Report a bug"
+            @click="openReportModal"
+          >
+            <div class="action-icon">
+              <Bug :size="18" stroke-width="2" />
+            </div>
+            <span class="action-label">Report</span>
+          </button>
+
+          <button
+            type="button"
+            class="action-btn action-btn--danger"
+            title="Log out"
+            @click="handleLogout"
+          >
+            <div class="action-icon">
+              <LogOut :size="18" stroke-width="2" />
+            </div>
+            <span class="action-label">Log out</span>
+          </button>
+        </div>
+      </div>
     </aside>
 
     <div v-if="sidebarOpen" class="mobile-backdrop" @click="closeSidebar" />
 
     <aside :class="['mobile-sidebar', sidebarOpen ? 'mobile-sidebar--open' : '']" aria-label="Mobile navigation">
-      <div class="mobile-sidebar-header">
-        <p class="brand-name">Luemy</p>
-        <button type="button" class="icon-button" aria-label="Close navigation" @click="closeSidebar">
-          <X aria-hidden="true" />
+      <div class="mobile-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <GraduationCap :size="20" stroke-width="2.2" />
+          </div>
+          <span class="brand-text">Luemy</span>
+        </div>
+        <button type="button" class="close-btn" aria-label="Close menu" @click="closeSidebar">
+          <X :size="20" stroke-width="2" />
         </button>
       </div>
 
@@ -134,18 +183,46 @@ function handleFeedbackSubmitted() {
           v-for="item in navItems"
           :key="item.id"
           :to="item.href"
-          :class="['sidebar-link', activeItem === item.id ? 'sidebar-link--active' : '']"
+          :class="['nav-item', activeItem === item.id ? 'nav-item--active' : '']"
           @click="closeSidebar"
         >
-          <component :is="iconFor(item)" class="sidebar-icon" aria-hidden="true" />
-          <span>{{ item.label }}</span>
+          <div class="nav-item-indicator" />
+          <div class="nav-item-icon">
+            <component :is="iconFor(item)" :size="19" stroke-width="2" />
+          </div>
+          <span class="nav-item-label">{{ item.label }}</span>
         </NuxtLink>
       </nav>
 
-      <button type="button" class="sidebar-feedback" @click="openReportModal">
-        <Bug class="sidebar-icon" aria-hidden="true" />
-        <span>Report Bug</span>
-      </button>
+      <div class="sidebar-bottom">
+        <div class="sidebar-separator" />
+        <div class="sidebar-actions">
+          <button
+            type="button"
+            class="action-btn"
+            :title="isDark ? 'Light mode' : 'Dark mode'"
+            @click="toggleTheme"
+          >
+            <div class="action-icon">
+              <Moon v-if="isDark" :size="18" stroke-width="2" />
+              <Sun v-else :size="18" stroke-width="2" />
+            </div>
+            <span class="action-label">{{ isDark ? 'Light' : 'Dark' }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="action-btn"
+            title="Report a bug"
+            @click="openReportModal"
+          >
+            <div class="action-icon">
+              <Bug :size="18" stroke-width="2" />
+            </div>
+            <span class="action-label">Report</span>
+          </button>
+        </div>
+      </div>
     </aside>
 
     <section class="app-workspace">
@@ -189,111 +266,181 @@ function handleFeedbackSubmitted() {
 <style scoped>
 .app-shell {
   display: grid;
-  grid-template-columns: 15.5rem minmax(0, 1fr);
+  grid-template-columns: 17rem minmax(0, 1fr);
   height: 100%;
   min-height: 0;
   background: var(--background);
 }
 
-.app-sidebar,
-.mobile-sidebar {
+.app-sidebar {
   background: var(--sidebar);
   color: var(--sidebar-foreground);
   border-right: 1px solid var(--sidebar-border);
-}
-
-.app-sidebar {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
-  min-height: 0;
-  padding: var(--spacing-md);
+  width: 17rem;
+  overflow: hidden;
 }
 
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  min-height: 2.75rem;
+.sidebar-header {
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
 }
 
-.brand-name {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 750;
-  color: var(--sidebar-foreground);
-}
-
-.sidebar-nav {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-  min-height: 0;
-}
-
-.sidebar-link,
-.sidebar-logout {
+.brand {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  min-height: 2.5rem;
+}
+
+.brand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: linear-gradient(135deg, var(--sidebar-primary), var(--sidebar-accent));
+  border-radius: var(--radius-md);
+  color: var(--sidebar-primary-foreground);
+}
+
+.brand-text {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--sidebar-foreground);
+  letter-spacing: -0.03em;
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--spacing-sm);
+  gap: 0.25rem;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  height: 2.5rem;
   width: 100%;
-  border: 1px solid transparent;
   border-radius: var(--radius-md);
   padding: 0 var(--spacing-sm);
   color: var(--sidebar-muted);
   text-decoration: none;
-  font: inherit;
   font-size: 0.9rem;
-  font-weight: 650;
+  font-weight: 500;
   background: transparent;
   cursor: pointer;
-  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
-.sidebar-link:hover,
-.sidebar-logout:hover {
+.nav-item:hover {
+  color: var(--sidebar-foreground);
   background: var(--sidebar-accent);
-  color: var(--sidebar-accent-foreground);
 }
 
-.sidebar-link--active {
+.nav-item--active {
+  color: var(--sidebar-foreground);
   background: var(--sidebar-accent);
-  border-color: var(--sidebar-border);
-  color: var(--sidebar-accent-foreground);
 }
 
-.sidebar-icon {
-  width: 1.05rem;
-  height: 1.05rem;
-  flex: 0 0 auto;
+.nav-item-indicator {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 1.25rem;
+  background: var(--sidebar-primary);
+  border-radius: 0 3px 3px 0;
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.sidebar-logout {
-  color: var(--destructive);
+.nav-item--active .nav-item-indicator {
+  width: 3px;
 }
 
-.sidebar-feedback {
+.nav-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  opacity: 0.75;
+  transition: opacity 0.2s ease;
+}
+
+.nav-item:hover .nav-item-icon,
+.nav-item--active .nav-item-icon {
+  opacity: 1;
+}
+
+.nav-item-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-bottom {
+  padding: var(--spacing-sm);
+}
+
+.sidebar-separator {
+  height: 1px;
+  background: var(--sidebar-border);
+  margin-bottom: var(--spacing-sm);
+}
+
+.sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.action-btn {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  min-height: 2.5rem;
+  height: 2.25rem;
   width: 100%;
-  border: 1px solid var(--sidebar-border);
   border-radius: var(--radius-md);
   padding: 0 var(--spacing-sm);
-  color: var(--sidebar-accent-foreground);
-  text-decoration: none;
-  font: inherit;
-  font-size: 0.9rem;
-  font-weight: 650;
-  background: color-mix(in oklab, var(--sidebar-accent) 68%, transparent);
+  color: var(--sidebar-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
 }
 
-.sidebar-feedback:hover {
+.action-btn:hover {
+  color: var(--sidebar-foreground);
   background: var(--sidebar-accent);
+}
+
+.action-btn--danger:hover {
+  color: var(--destructive);
+  background: color-mix(in oklch, var(--destructive) 12%, transparent);
+}
+
+.action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.action-label {
+  white-space: nowrap;
 }
 
 .app-workspace {
@@ -430,23 +577,50 @@ function handleFeedbackSubmitted() {
     inset: 0 auto 0 0;
     z-index: 90;
     display: flex;
-    width: min(19rem, 86vw);
+    width: min(20rem, 86vw);
     flex-direction: column;
-    gap: var(--spacing-lg);
     padding: var(--spacing-md);
     transform: translateX(-100%);
-    transition: transform 0.18s ease;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .mobile-sidebar--open {
     transform: translateX(0);
   }
 
-  .mobile-sidebar-header {
+  .mobile-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
+  }
+
+  .close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: none;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--sidebar-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .close-btn:hover {
+    background: var(--sidebar-accent);
+    color: var(--sidebar-foreground);
+  }
+
+  .mobile-sidebar .sidebar-nav {
+    flex: 1;
+    padding: 0 var(--spacing-sm);
+  }
+
+  .mobile-sidebar .sidebar-bottom {
+    padding: var(--spacing-sm);
   }
 }
 </style>

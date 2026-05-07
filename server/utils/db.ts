@@ -55,12 +55,13 @@ CREATE TABLE IF NOT EXISTS course_time_slots (
 CREATE TABLE IF NOT EXISTS professor_av_time_slots (
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
     professor_id INTEGER NOT NULL,
-    day_of_week TEXT NOT NULL,
+    day_of_week TEXT,
+    specific_date TEXT,
     start_time TEXT NOT NULL, 
     end_time TEXT NOT NULL,
     hall TEXT NOT NULL CHECK(hall IN ('1', '2', '3', '4', 'A', 'B')),
     FOREIGN KEY (professor_id) REFERENCES professors_info(user_id) ON DELETE CASCADE,
-    UNIQUE(day_of_week, start_time, end_time, hall)
+    UNIQUE(professor_id, specific_date, start_time, end_time, hall)
 );
 
 -- courses students enrollments  
@@ -141,6 +142,27 @@ CREATE TABLE IF NOT EXISTS assignment_submissions (
     db.exec("ALTER TABLE professor_av_time_slots ADD COLUMN hall TEXT CHECK(hall IN ('1', '2', '3', '4', 'A', 'B'))")
   } catch {
     // Column already exists on initialized databases.
+  }
+
+  try {
+    db.exec("ALTER TABLE professor_av_time_slots ADD COLUMN specific_date TEXT")
+  } catch {
+    // Column already exists on initialized databases.
+  }
+
+  try {
+    db.exec("DROP INDEX IF EXISTS uq_professor_av_time_slots")
+  } catch {
+    // Index may not exist
+  }
+
+  try {
+    db.exec(`
+      CREATE UNIQUE INDEX IF NOT EXISTS uq_professor_av_date_slots
+      ON professor_av_time_slots (professor_id, specific_date, start_time, end_time, hall)
+    `)
+  } catch {
+    // Index already exists
   }
 
   console.log('[DB] Database initialized successfully')
