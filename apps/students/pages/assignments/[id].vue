@@ -127,6 +127,14 @@ const handleSubmissionComplete = async (event: any) => {
           </span>
         </div>
         <p class="submission-date">{{ formatDate(submission.submission_date) }}</p>
+
+        <div v-if="submission.grade !== null && submission.grade !== undefined" class="grade-box">
+          <div class="grade-row">
+            <span class="grade-label">Your Grade</span>
+            <span class="grade-value">{{ submission.grade }} / {{ assignment.max_score }}</span>
+          </div>
+          <p v-if="submission.feedback" class="feedback-text">{{ submission.feedback }}</p>
+        </div>
         
         <div class="content-box">
           {{ submission.content }}
@@ -279,6 +287,43 @@ const handleSubmissionComplete = async (event: any) => {
   font-size: 0.8rem;
   color: var(--muted-foreground);
   font-weight: 500;
+}
+
+.grade-box {
+  margin-bottom: 0.875rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--success), transparent 92%);
+}
+
+.grade-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.grade-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.grade-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--success);
+}
+
+.feedback-text {
+  margin: 0.625rem 0 0;
+  color: var(--foreground);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
 }
 
 .content-box {

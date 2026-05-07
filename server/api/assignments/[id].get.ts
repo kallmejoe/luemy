@@ -58,9 +58,12 @@ export default defineEventHandler(async (event) => {
 
     // Get submission if exists
     const submission = db.prepare(
-      `SELECT id, status, submission_date, content
-       FROM assignment_submissions
-       WHERE student_id = ? AND assignment_id = ?`
+      `SELECT s.id, s.status, s.submission_date, s.content,
+              g.grade, g.feedback
+       FROM assignment_submissions s
+       LEFT JOIN assignment_grades g
+         ON g.student_id = s.student_id AND g.assignment_id = s.assignment_id
+       WHERE s.student_id = ? AND s.assignment_id = ?`
     ).get(studentId, assignmentId);
 
     return {
