@@ -42,7 +42,7 @@
             @click.stop="selectSlot(slot)"
           >
             <span class="slot-time">{{ formatTime(slot.start_time) }}</span>
-            <span class="slot-end">{{ formatTime(slot.end_time) }}</span>
+            <span class="slot-end">{{ formatTime(slot.end_time) }} - Hall {{ slot.hall }}</span>
           </div>
         </div>
       </div>
@@ -74,6 +74,10 @@
 
           <p class="slot-display">
             {{ formatTime(slot.start_time) }} - {{ formatTime(slot.end_time) }}
+          </p>
+
+          <p class="slot-hall">
+            Hall: <span class="hall-badge">{{ slot.hall }}</span>
           </p>
         </article>
       </template>
@@ -118,6 +122,24 @@
           >
         </div>
 
+        <div class="form-group">
+          <label for="hall-select">Hall</label>
+          <select
+            id="hall-select"
+            v-model="newSlot.hall"
+            class="input-field"
+          >
+            <option value="">Select a hall</option>
+            <option
+              v-for="hall in availableHalls"
+              :key="hall"
+              :value="hall"
+            >
+              Hall {{ hall }}
+            </option>
+          </select>
+        </div>
+
         <div v-if="slotError" class="error-message">
           {{ slotError }}
         </div>
@@ -140,6 +162,7 @@ interface TimeSlot {
   day_of_week: string
   start_time: string
   end_time: string
+  hall: string
 }
 
 interface CalendarDay {
@@ -160,11 +183,13 @@ const slotError = ref("")
 
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+const availableHalls = ["1", "2", "3", "4", "A", "B"]
 const currentDate = ref(new Date())
 
 const newSlot = ref({
   startTime: "09:00",
-  endTime: "10:00"
+  endTime: "10:00",
+  hall: "",
 })
 
 const currentMonth = computed(() => currentDate.value.getMonth())
@@ -257,7 +282,7 @@ const selectSlot = (slot: TimeSlot) => {
 const showAddSlotModal = (dayName: string) => {
   selectedDayName.value = dayName
   selectedDay.value = dayName
-  newSlot.value = { startTime: "09:00", endTime: "10:00" }
+  newSlot.value = { startTime: "09:00", endTime: "10:00", hall: "" }
   slotError.value = ""
   showModal.value = true
 }
@@ -299,6 +324,11 @@ const addSlot = async () => {
     return
   }
 
+  if (!newSlot.value.hall) {
+    slotError.value = "Please select a hall"
+    return
+  }
+
   if (newSlot.value.startTime >= newSlot.value.endTime) {
     slotError.value = "End time must be after start time"
     return
@@ -314,6 +344,7 @@ const addSlot = async () => {
         dayOfWeek: selectedDay.value,
         startTime: newSlot.value.startTime,
         endTime: newSlot.value.endTime,
+        hall: newSlot.value.hall,
       },
     })
 
@@ -582,6 +613,22 @@ onMounted(() => {
   padding: var(--spacing-sm);
   background: var(--accent);
   border-radius: var(--radius);
+}
+
+.slot-hall {
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.hall-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.85rem;
 }
 
 .btn-delete-small {

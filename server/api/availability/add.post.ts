@@ -30,21 +30,32 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readBody(event)
-  const { dayOfWeek, startTime, endTime } = body
+  const { dayOfWeek, startTime, endTime, hall } = body
 
-  if (!dayOfWeek || !startTime || !endTime) {
+  if (!dayOfWeek || !startTime || !endTime || !hall) {
     setResponseStatus(event, 400)
-    return { success: false, message: "Missing required fields: dayOfWeek, startTime, endTime" }
+    return { success: false, message: "Missing required fields: dayOfWeek, startTime, endTime, hall" }
+  }
+
+  const validHalls = ["1", "2", "3", "4", "A", "B"]
+  if (!validHalls.includes(hall)) {
+    setResponseStatus(event, 400)
+    return { success: false, message: `Invalid hall. Must be one of: ${validHalls.join(", ")}` }
   }
 
   try {
     const result = db.prepare(
-      "INSERT INTO professor_av_time_slots (professor_id, day_of_week, start_time, end_time) VALUES (?, ?, ?, ?)"
-    ).run(professorId, dayOfWeek, startTime, endTime)
+      "INSERT INTO professor_av_time_slots (professor_id, day_of_week, start_time, end_time, hall) VALUES (?, ?, ?, ?, ?)"
+    ).run(professorId, dayOfWeek, startTime, endTime, hall)
 
     return { success: true, id: result.lastInsertRowid }
   } catch (err) {
     console.error("[availability create] Error:", err)
+    const errorMessage = err instanceof Error ? err.message : String(err)
+    if (errorMessage.includes("UNIQUE constraint failed")) {
+      return { success: false, message: "This hall is already reserved for this time slot" }
+    }
     return { success: false, message: "Failed to add availability slot" }
   }
 })
+
