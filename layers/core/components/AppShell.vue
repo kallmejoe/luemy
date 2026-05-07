@@ -92,11 +92,7 @@ function handleFeedbackSubmitted() {
   <div class="app-shell">
     <aside class="app-sidebar" aria-label="Primary navigation">
       <div class="sidebar-brand">
-        <div class="brand-mark">L</div>
-        <div>
-          <p class="brand-name">Luemy</p>
-          <p class="brand-context">{{ portalName || 'Learning portal' }}</p>
-        </div>
+        <p class="brand-name">Luemy</p>
       </div>
 
       <nav class="sidebar-nav">
@@ -127,13 +123,7 @@ function handleFeedbackSubmitted() {
 
     <aside :class="['mobile-sidebar', sidebarOpen ? 'mobile-sidebar--open' : '']" aria-label="Mobile navigation">
       <div class="mobile-sidebar-header">
-        <div class="sidebar-brand">
-          <div class="brand-mark">L</div>
-          <div>
-            <p class="brand-name">Luemy</p>
-            <p class="brand-context">{{ portalName || 'Learning portal' }}</p>
-          </div>
-        </div>
+        <p class="brand-name">Luemy</p>
         <button type="button" class="icon-button" aria-label="Close navigation" @click="closeSidebar">
           <X aria-hidden="true" />
         </button>
@@ -223,34 +213,14 @@ function handleFeedbackSubmitted() {
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
   min-height: 2.75rem;
 }
 
-.brand-mark {
-  display: grid;
-  width: 2.25rem;
-  height: 2.25rem;
-  place-items: center;
-  border-radius: var(--radius-md);
-  background: var(--sidebar-primary);
-  color: var(--sidebar-primary-foreground);
-  font-weight: 800;
-}
-
-.brand-name,
-.brand-context {
-  margin: 0;
-}
-
 .brand-name {
+  margin: 0;
   font-size: 0.95rem;
   font-weight: 750;
-}
-
-.brand-context {
-  color: var(--sidebar-muted);
-  font-size: 0.75rem;
+  color: var(--sidebar-foreground);
 }
 
 .sidebar-nav {
