@@ -8,5 +8,6 @@ export const useNavItems = (): NavItem[] => {
     { id: 'students', href: '/students', label: 'Students', icon: 'UsersRound' },
     { id: 'courses', href: '/courses', label: 'Courses', icon: 'BookOpen' },
     { id: 'profile', href: '/profile', label: 'Profile', icon: 'UserRound' },
+  { id: 'api-docs', href: '/api-docs', label: 'API Docs', icon: 'FileText' },
   ]
 }

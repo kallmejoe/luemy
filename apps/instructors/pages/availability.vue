@@ -16,7 +16,6 @@ definePageMeta({
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  min-height: 100%;
-  padding: 0;
+  overflow: hidden;
 }
 </style>

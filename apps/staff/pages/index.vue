@@ -21,7 +21,7 @@ onMounted(() => {
     <div class="auth-card">
       <h1 class="auth-title">Create Staff Account</h1>
       <p class="auth-subtitle">Sign up as a staff member</p>
-      <SignupForm role="professor" />
+      <SignupForm role="admin" />
       <p class="auth-link">
         Already have an account? <NuxtLink to="/login">Log in</NuxtLink>
       </p>

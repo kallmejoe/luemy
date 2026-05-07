@@ -14,14 +14,6 @@ definePageMeta({
 
 <style scoped>
 .profile-page {
-  min-height: 100vh;
-  padding: var(--spacing-lg);
   background: var(--color-background);
-}
-
-@media (max-width: 640px) {
-  .profile-page {
-    padding: var(--spacing-md);
-  }
 }
 </style>

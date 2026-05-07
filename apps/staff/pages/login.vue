@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useAuth } from '@core/composables/useAuth'
 
+import LoginForm from '@core/components/LoginForm.vue'
+
 definePageMeta({
   layout: 'auth'
 })

@@ -405,9 +405,10 @@ onMounted(() => {
 <style scoped>
 .availability-calendar {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.65fr);
   gap: var(--spacing-lg);
   align-items: start;
+  overflow: hidden;
 }
 
 .calendar-section {
@@ -786,7 +787,7 @@ onMounted(() => {
   background: color-mix(in oklab, var(--primary), black 10%);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 860px) {
   .availability-calendar {
     grid-template-columns: 1fr;
   }
