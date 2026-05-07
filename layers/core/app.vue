@@ -5,10 +5,8 @@
 </template>
 
 <script setup lang="ts">
-const { initializeTheme } = useTheme()
-
-onMounted(() => {
-  initializeTheme()
-})
+// useTheme composable auto-initializes on mount
+// No manual initialization needed
+useTheme()
 </script>
 

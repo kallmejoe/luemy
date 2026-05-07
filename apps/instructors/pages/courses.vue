@@ -11,6 +11,9 @@ interface Course {
   professor_id: number
 }
 
+const router = useRouter()
+const token = useCookie("token")
+
 const courses = ref<Course[]>([])
 const myCourseIds = ref<number[]>([])
 
@@ -66,13 +69,13 @@ const handleCreateCourse = () => {
     <div class="courses-heading">
       <div class="heading-content">
         <div>
-          <h1 class="page-title">All Courses</h1>
+          <h1 class="page-title">Courses</h1>
           <p class="page-subtitle">
-            View available courses. Courses marked as "Teaching" are yours.
+            Manage your courses and view available offerings
           </p>
         </div>
-        <UiButton @click="handleCreateCourse">
-          Create Course
+        <UiButton @click="handleCreateCourse" class="create-btn">
+          + New Course
         </UiButton>
       </div>
     </div>
@@ -85,32 +88,46 @@ const handleCreateCourse = () => {
         :class="{ teaching: isTeaching(course.id) }"
         @click="handleCourseClick(course.id)"
       >
-        <div class="course-row">
-          <div class="course-indicator">
-            <span v-if="isTeaching(course.id)" class="badge badge--teaching"
-              >Teaching</span
-            >
+        <!-- Teaching Badge -->
+        <div v-if="isTeaching(course.id)" class="card-badge">
+          <span class="badge-icon">✓</span>
+          <span>Teaching</span>
+        </div>
+
+        <!-- Main Content -->
+        <div class="card-content">
+          <div class="card-main">
+            <h3 class="course-name">{{ course.name }}</h3>
+            <p v-if="course.professor_name" class="professor-name">
+              {{ course.professor_name }}
+            </p>
           </div>
 
-          <div class="course-info">
-            <div class="course-title-row">
-              <h3>{{ course.name }}</h3>
-            </div>
-            <p v-if="course.professor_name">{{ course.professor_name }}</p>
-          </div>
-
-          <div v-if="isTeaching(course.id)" class="course-actions">
-            <UiButton
-              size="sm"
-              variant="outline"
+          <!-- Edit Button (Only for teaching courses) -->
+          <div v-if="isTeaching(course.id)" class="card-actions">
+            <button
+              class="edit-btn"
               title="Edit course"
               @click="handleEditClick(course.id, $event)"
             >
-              Edit
-            </UiButton>
+              <span class="edit-icon">✎</span>
+            </button>
           </div>
         </div>
+
+        <!-- Hover Overlay -->
+        <div class="card-overlay">
+          <span class="view-text">View Course</span>
+        </div>
       </div>
+    </div>
+
+    <!-- Empty State -->
+    <div v-if="courses.length === 0" class="empty-state">
+      <div class="empty-icon">📚</div>
+      <h2>No courses available</h2>
+      <p>Create your first course to get started</p>
+      <UiButton @click="handleCreateCourse">Create Course</UiButton>
     </div>
   </div>
 </template>
@@ -119,7 +136,7 @@ const handleCreateCourse = () => {
 .courses-page {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   min-height: 100%;
 }
 
@@ -151,118 +168,199 @@ const handleCreateCourse = () => {
   margin: 0;
 }
 
+.create-btn {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 600;
+}
+
 .course-list {
   display: grid;
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
 }
 
 .course-card {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 1rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
   background: var(--card);
-  transition: all 0.2s ease;
+  border: 1px solid var(--border);
+  border-radius: 10px;
   cursor: pointer;
+  transition: all 0.25s ease;
+  overflow: hidden;
+}
+
+.course-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: transparent;
+  transition: background 0.25s ease;
 }
 
 .course-card:hover {
   border-color: var(--primary);
-  background: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px color-mix(in oklab, var(--foreground), transparent 90%);
+}
+
+.course-card:hover::before {
+  background: var(--primary);
 }
 
 .course-card.teaching {
-  border-color: var(--primary);
-  background: var(--accent);
+  border-color: color-mix(in oklab, var(--primary), transparent 50%);
+  background: linear-gradient(135deg, var(--card) 0%, color-mix(in oklab, var(--primary), transparent 3%) 100%);
 }
 
-.course-row {
+.course-card.teaching::before {
+  background: var(--primary);
+}
+
+.card-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
   display: flex;
   align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-bottom-left-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-icon {
+  font-size: 0.65rem;
+}
+
+.card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 1rem;
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  margin-top: 0.5rem;
 }
 
-.course-indicator {
-  min-width: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.course-actions {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  margin-left: auto;
-}
-
-.course-info {
+.card-main {
   flex: 1;
   min-width: 0;
 }
 
-.course-title-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.25rem;
-}
-
-.course-title-row h3 {
-  margin: 0;
-  font-size: 1.1rem;
+.course-name {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--color-text);
+  line-height: 1.3;
 }
 
-.course-info p {
+.professor-name {
   margin: 0;
   font-size: 0.9rem;
   color: var(--muted-foreground);
 }
 
-.badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  background: var(--primary);
-  color: var(--card);
+.card-actions {
+  flex-shrink: 0;
 }
 
-.badge--teaching {
-  background: var(--primary);
-  color: var(--card);
-}
-
-.btn {
-  display: inline-flex;
+.edit-btn {
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
   border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  text-decoration: none;
+  background: var(--card);
+  color: var(--muted-foreground);
   cursor: pointer;
   transition: all 0.2s ease;
-  border: none;
-  background: var(--primary);
-  color: var(--card);
-  font-family: inherit;
 }
 
-.btn:hover {
-  background: var(--color-primary-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px color-mix(in oklab, var(--primary), transparent 70%);
+.edit-btn:hover {
+  border-color: var(--primary);
+  background: var(--accent);
+  color: var(--primary);
 }
 
-.btn--edit {
+.edit-icon {
+  font-size: 1rem;
+}
+
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--primary);
-  color: var(--card);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.course-card:hover .card-overlay {
+  opacity: 0.1;
+}
+
+.view-text {
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  opacity: 0.5;
+}
+
+.empty-state h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--color-text);
+}
+
+.empty-state p {
+  margin: 0 0 1rem 0;
+  color: var(--muted-foreground);
+}
+
+@media (max-width: 640px) {
+  .course-list {
+    grid-template-columns: 1fr;
+  }
+
+  .heading-content {
+    flex-direction: column;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
 }
 </style>

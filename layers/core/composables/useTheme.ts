@@ -1,3 +1,5 @@
+import { ref, readonly, onMounted } from "vue"
+
 export const useTheme = () => {
   const isDark = ref(false)
   const isInitialized = ref(false)
