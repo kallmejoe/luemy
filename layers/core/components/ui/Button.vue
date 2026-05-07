@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import type { PrimitiveProps } from "reka-ui"
 import type { HTMLAttributes } from "vue"
 import { computed } from "vue"
-import { Primitive } from "reka-ui"
 import { cn } from "@core/lib/utils"
 import type { ButtonVariants } from "@core/lib/button-variants"
 
-interface Props extends PrimitiveProps {
+interface Props {
+  as?: string
   variant?: ButtonVariants["variant"]
   size?: ButtonVariants["size"]
   class?: HTMLAttributes["class"]
@@ -27,16 +26,15 @@ const buttonClass = computed(() =>
 </script>
 
 <template>
-  <Primitive
+  <component
+    :is="as || 'button'"
     data-slot="button"
     :data-variant="variant"
     :data-size="size"
-    :as="as"
-    :as-child="asChild"
     :class="buttonClass"
   >
     <slot />
-  </Primitive>
+  </component>
 </template>
 
 <style scoped>
@@ -67,7 +65,7 @@ const buttonClass = computed(() =>
 .ui-button--default {
   background: var(--primary);
   color: var(--primary-foreground);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+  box-shadow: var(--shadow-sm);
 }
 
 .ui-button--default:not(:disabled):hover {

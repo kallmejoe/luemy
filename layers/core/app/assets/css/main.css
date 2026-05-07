@@ -25,3 +25,257 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+a {
+  color: var(--primary);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.auth-page {
+  width: 100%;
+  padding: var(--spacing-md);
+}
+
+.auth-card {
+  width: min(100%, 25rem);
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-xl);
+}
+
+.auth-title {
+  margin: 0 0 var(--spacing-xs);
+  color: var(--foreground);
+  text-align: center;
+  font-size: 1.65rem;
+  font-weight: 750;
+  letter-spacing: 0;
+}
+
+.auth-subtitle {
+  margin: 0 0 var(--spacing-lg);
+  color: var(--muted-foreground);
+  text-align: center;
+  font-size: 0.92rem;
+}
+
+.auth-link {
+  margin: var(--spacing-md) 0 0;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.auth-link a,
+.link,
+.back-link,
+.view-link,
+.email-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 650;
+}
+
+.auth-link a:hover,
+.link:hover,
+.back-link:hover,
+.view-link:hover,
+.email-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.dashboard,
+.courses-page,
+.enrollment-page,
+.course-detail,
+.assignment-detail,
+.assignments-page,
+.grading-page,
+.course-details-page,
+.edit-course-page,
+.profile-page {
+  display: flex;
+  width: min(100%, 72rem);
+  min-height: 0;
+  margin: 0 auto;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: 0;
+}
+
+.dashboard-title,
+.page-title {
+  margin: 0;
+  color: var(--foreground);
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 780;
+  letter-spacing: 0;
+}
+
+.dashboard-welcome,
+.page-subtitle,
+.course-professor,
+.empty-state,
+.loading,
+.loading-state,
+.not-found-state,
+.description-empty,
+.section-hint,
+.hint-text {
+  color: var(--muted-foreground);
+}
+
+.dashboard-grid,
+.stats-card,
+.info-grid,
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--spacing-md);
+}
+
+.dashboard-card,
+.info-card,
+.stats-card,
+.course-card,
+.detail-section,
+.submission-card,
+.assignment-card,
+.form-container,
+.edit-mode,
+.profile-header,
+.password-section,
+.empty-state,
+.loading,
+.loading-state,
+.not-found-state,
+.error-state,
+.success-state {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard-card,
+.info-card,
+.detail-section,
+.submission-card,
+.assignment-card,
+.form-container,
+.edit-mode,
+.empty-state,
+.loading,
+.loading-state,
+.not-found-state,
+.error-state,
+.success-state {
+  padding: var(--spacing-lg);
+}
+
+.course-card {
+  padding: var(--spacing-md);
+}
+
+.dashboard-card h2,
+.info-card h2,
+.section-title,
+.section-heading {
+  margin: 0 0 var(--spacing-sm);
+  color: var(--foreground);
+  font-size: 1.05rem;
+  font-weight: 720;
+}
+
+.dashboard-card p,
+.info-card p,
+.description-text,
+.detail-value {
+  color: var(--muted-foreground);
+  line-height: 1.65;
+}
+
+.badge,
+.status-badge,
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid var(--border);
+  border-radius: 999rem;
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.active,
+.enrolled,
+.submitted,
+.graded,
+.success-message,
+.success-state,
+.role-student {
+  border-color: color-mix(in oklab, var(--success), var(--border) 72%);
+  background: color-mix(in oklab, var(--success), var(--card) 90%);
+  color: var(--success);
+}
+
+.pending,
+.warning,
+.role-professor {
+  border-color: color-mix(in oklab, var(--warning), var(--border) 72%);
+  background: color-mix(in oklab, var(--warning), var(--card) 88%);
+  color: var(--warning-foreground);
+}
+
+.error-message,
+.error-state,
+.inactive,
+.role-admin {
+  border-color: color-mix(in oklab, var(--destructive), var(--border) 72%);
+  background: color-mix(in oklab, var(--destructive), var(--card) 91%);
+  color: var(--destructive);
+}
+
+.message {
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.form-field,
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.modal-overlay {
+  background: var(--overlay);
+}
+
+@media (max-width: 640px) {
+  .auth-card,
+  .dashboard-card,
+  .info-card,
+  .detail-section,
+  .submission-card,
+  .assignment-card,
+  .form-container,
+  .edit-mode {
+    padding: var(--spacing-md);
+  }
+}

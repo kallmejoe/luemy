@@ -286,15 +286,15 @@ const getAssignmentStats = () => {
 }
 
 .stat-value.submitted {
-  color: hsl(217, 97%, 44%);
+  color: var(--info);
 }
 
 .stat-value.graded {
-  color: hsl(142, 72%, 29%);
+  color: var(--success);
 }
 
 .stat-value.pending {
-  color: hsl(47, 93%, 43%);
+  color: var(--warning);
 }
 
 .assignments-section {

@@ -194,31 +194,31 @@ const formatDate = (dateString: string): string => {
 .course-details-page {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md, 1rem);
+  gap: var(--spacing-md);
   min-height: 100%;
-  padding: var(--spacing-md, 1rem);
+  padding: var(--spacing-md);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm, 0.5rem);
+  gap: var(--spacing-sm);
 }
 
 .back-link {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--color-primary, #3b82f6);
+  color: var(--primary);
   text-decoration: none;
   font-weight: 500;
   width: fit-content;
-  padding: var(--spacing-xs, 0.25rem) 0;
+  padding: var(--spacing-xs) 0;
   transition: all 0.2s ease;
 }
 
 .back-link:hover {
-  color: var(--color-primary-dark, #2563eb);
+  color: var(--color-primary-dark);
   transform: translateX(-4px);
 }
 
@@ -229,35 +229,35 @@ const formatDate = (dateString: string): string => {
 .page-title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--color-text, #1a1a1a);
+  color: var(--foreground);
   margin: 0;
-  padding: var(--spacing-md, 1rem) 0 0 0;
+  padding: var(--spacing-md) 0 0 0;
 }
 
 .page-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg, 1.5rem);
+  gap: var(--spacing-lg);
 }
 
 .loading-state {
   text-align: center;
-  padding: var(--spacing-lg, 1.5rem);
-  color: var(--color-text-secondary, #666);
+  padding: var(--spacing-lg);
+  color: var(--muted-foreground);
   font-size: 1rem;
 }
 
 .error-state {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md, 1rem);
+  gap: var(--spacing-md);
   align-items: center;
-  padding: var(--spacing-lg, 1.5rem);
-  background: #fee;
-  border: 1px solid #fcc;
+  padding: var(--spacing-lg);
+  background: color-mix(in oklab, var(--destructive), var(--card) 90%);
+  border: 1px solid color-mix(in oklab, var(--destructive), var(--border) 70%);
   border-radius: 8px;
-  color: #c33;
+  color: var(--destructive);
   text-align: center;
 }
 
@@ -273,79 +273,79 @@ const formatDate = (dateString: string): string => {
 }
 
 .course-header {
-  background: var(--color-surface, white);
-  border: 1px solid var(--color-border, #e0e0e0);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  padding: var(--spacing-lg, 1.5rem);
-  margin-bottom: var(--spacing-lg, 1.5rem);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
 }
 
 .course-meta {
   display: flex;
-  gap: var(--spacing-md, 1rem);
+  gap: var(--spacing-md);
   flex-wrap: wrap;
 }
 
 .status-badge {
   display: inline-block;
-  padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 500;
 }
 
 .status-badge.teaching {
-  background: var(--color-primary, #3b82f6);
-  color: white;
+  background: var(--primary);
+  color: var(--card);
 }
 
 .status-badge.active {
-  background: #efe;
-  color: #3c3;
-  border: 1px solid #cfc;
+  background: color-mix(in oklab, var(--success), var(--card) 90%);
+  color: var(--success);
+  border: 1px solid color-mix(in oklab, var(--success), var(--border) 70%);
 }
 
 .status-badge.inactive {
-  background: #fee;
-  color: #c33;
-  border: 1px solid #fcc;
+  background: color-mix(in oklab, var(--destructive), var(--card) 90%);
+  color: var(--destructive);
+  border: 1px solid color-mix(in oklab, var(--destructive), var(--border) 70%);
 }
 
 .course-details {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg, 1.5rem);
+  gap: var(--spacing-lg);
 }
 
 .detail-section {
-  background: var(--color-surface, white);
-  border: 1px solid var(--color-border, #e0e0e0);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  padding: var(--spacing-lg, 1.5rem);
+  padding: var(--spacing-lg);
 }
 
 .section-title {
-  margin: 0 0 var(--spacing-md, 1rem) 0;
+  margin: 0 0 var(--spacing-md) 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-text, #1a1a1a);
+  color: var(--foreground);
 }
 
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-md, 1rem);
+  gap: var(--spacing-md);
 }
 
 .detail-item {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs, 0.25rem);
+  gap: var(--spacing-xs);
 }
 
 .detail-label {
   font-weight: 600;
-  color: var(--color-text-secondary, #666);
+  color: var(--muted-foreground);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -353,20 +353,20 @@ const formatDate = (dateString: string): string => {
 
 .detail-value {
   margin: 0;
-  color: var(--color-text, #1a1a1a);
+  color: var(--foreground);
   font-size: 0.95rem;
 }
 
 .description-box {
-  background: var(--color-hover, #f9fafb);
-  border-left: 4px solid var(--color-primary, #3b82f6);
-  padding: var(--spacing-md, 1rem);
+  background: var(--accent);
+  border-left: 4px solid var(--primary);
+  padding: var(--spacing-md);
   border-radius: 4px;
 }
 
 .description-text {
   margin: 0;
-  color: var(--color-text, #1a1a1a);
+  color: var(--foreground);
   line-height: 1.6;
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -374,21 +374,21 @@ const formatDate = (dateString: string): string => {
 
 .description-empty {
   margin: 0;
-  color: var(--color-text-secondary, #666);
+  color: var(--muted-foreground);
   font-style: italic;
 }
 
 .actions {
   display: flex;
-  gap: var(--spacing-md, 1rem);
-  margin-top: var(--spacing-lg, 1.5rem);
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
 }
 
 .btn {
   display: inline-block;
-  padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
-  background: var(--color-primary, #3b82f6);
-  color: white;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--primary);
+  color: var(--card);
   text-decoration: none;
   border-radius: 6px;
   font-weight: 600;
@@ -399,18 +399,18 @@ const formatDate = (dateString: string): string => {
 }
 
 .btn:hover {
-  background: var(--color-primary-dark, #2563eb);
+  background: var(--color-primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px color-mix(in oklab, var(--primary), transparent 70%);
 }
 
 .btn--primary {
-  background: var(--color-primary, #3b82f6);
+  background: var(--primary);
 }
 
 @media (max-width: 640px) {
   .course-details-page {
-    padding: var(--spacing-sm, 0.5rem);
+    padding: var(--spacing-sm);
   }
 
   .page-title {

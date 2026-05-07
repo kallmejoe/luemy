@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import UiButton from '@core/components/ui/Button.vue'
+import UiInput from '@core/components/ui/Input.vue'
+import UiLabel from '@core/components/ui/Label.vue'
+import UiTextarea from '@core/components/ui/Textarea.vue'
 import { useAuth } from '@core/composables/useAuth'
 
 definePageMeta({
@@ -161,8 +164,8 @@ const saveGrade = async (submission: Submission) => {
 
             <form class="grade-form" @submit.prevent="saveGrade(submission)">
               <div class="form-field score-field">
-                <label :for="`grade-${submission.id}`">Grade (max {{ submission.max_score }})</label>
-                <input
+                <UiLabel :for="`grade-${submission.id}`">Grade (max {{ submission.max_score }})</UiLabel>
+                <UiInput
                   :id="`grade-${submission.id}`"
                   v-model="gradeForms[submission.id].grade"
                   type="number"
@@ -170,12 +173,12 @@ const saveGrade = async (submission: Submission) => {
                   step="0.1"
                   :max="submission.max_score"
                   required
-                >
+                />
               </div>
 
               <div class="form-field">
-                <label :for="`feedback-${submission.id}`">Feedback (optional)</label>
-                <textarea
+                <UiLabel :for="`feedback-${submission.id}`">Feedback (optional)</UiLabel>
+                <UiTextarea
                   :id="`feedback-${submission.id}`"
                   v-model="gradeForms[submission.id].feedback"
                   rows="3"
@@ -237,15 +240,15 @@ const saveGrade = async (submission: Submission) => {
 }
 
 .error-message {
-  background: color-mix(in srgb, var(--destructive) 18%, white);
+  background: color-mix(in srgb, var(--destructive) 18%, var(--card));
   color: var(--destructive);
-  border: 1px solid color-mix(in srgb, var(--destructive) 35%, white);
+  border: 1px solid color-mix(in srgb, var(--destructive) 35%, var(--card));
 }
 
 .success-message {
-  background: color-mix(in srgb, var(--chart-2) 18%, white);
+  background: color-mix(in srgb, var(--chart-2) 18%, var(--card));
   color: var(--chart-2);
-  border: 1px solid color-mix(in srgb, var(--chart-2) 35%, white);
+  border: 1px solid color-mix(in srgb, var(--chart-2) 35%, var(--card));
 }
 
 .state-card,

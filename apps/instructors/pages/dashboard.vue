@@ -1,119 +1,122 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import UiButton from "@core/components/ui/Button.vue";
-import { useUser } from "@core/composables/useUser";
-import { useAuth } from "@core/composables/useAuth";
+import { ref } from 'vue'
+import UiButton from '@core/components/ui/Button.vue'
+import UiInput from '@core/components/ui/Input.vue'
+import UiLabel from '@core/components/ui/Label.vue'
+import UiTextarea from '@core/components/ui/Textarea.vue'
+import { useUser } from '@core/composables/useUser'
+import { useAuth } from '@core/composables/useAuth'
 
 definePageMeta({
-  middleware: ["auth"],
-});
+  middleware: ['auth']
+})
 
-const user = useUser();
-const { token } = useAuth();
+const user = useUser()
+const { token } = useAuth()
 
-const showCreateCourseModal = ref(false);
-const showAddTimeSlotModal = ref(false);
+const showCreateCourseModal = ref(false)
+const showAddTimeSlotModal = ref(false)
 
 const courseForm = ref({
-  name: "",
-  description: "",
-  active: true,
-});
+  name: '',
+  description: '',
+  active: true
+})
 
-const creatingCourse = ref(false);
-const createCourseError = ref("");
+const creatingCourse = ref(false)
+const createCourseError = ref('')
 
 const timeSlotForm = ref({
-  day: "Monday",
-  start: "",
-  end: "",
-});
+  day: 'Monday',
+  start: '',
+  end: ''
+})
 
-const creatingTimeSlot = ref(false);
-const createTimeSlotError = ref("");
-const createTimeSlotSuccess = ref("");
+const creatingTimeSlot = ref(false)
+const createTimeSlotError = ref('')
+const createTimeSlotSuccess = ref('')
 
 async function createCourse() {
-  creatingCourse.value = true;
-  createCourseError.value = "";
+  creatingCourse.value = true
+  createCourseError.value = ''
 
   try {
-    const response = await $fetch("/api/courses", {
-      method: "POST",
+    const response = await $fetch('/api/courses', {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${token.value}`,
+        Authorization: `Bearer ${token.value}`
       },
       body: {
         name: courseForm.value.name,
         description: courseForm.value.description,
-        active: courseForm.value.active,
-      },
-    });
+        active: courseForm.value.active
+      }
+    })
 
     if (response.success) {
-      showCreateCourseModal.value = false;
+      showCreateCourseModal.value = false
       courseForm.value = {
-        name: "",
-        description: "",
-        active: true,
-      };
+        name: '',
+        description: '',
+        active: true
+      }
     } else {
-      createCourseError.value = response.message || "Failed to create course";
+      createCourseError.value = response.message || 'Failed to create course'
     }
   } catch {
-    createCourseError.value = "Failed to create course";
+    createCourseError.value = 'Failed to create course'
   } finally {
-    creatingCourse.value = false;
+    creatingCourse.value = false
   }
 }
 
 function resetTimeSlotForm() {
   timeSlotForm.value = {
-    day: "Monday",
-    start: "",
-    end: "",
-  };
+    day: 'Monday',
+    start: '',
+    end: ''
+  }
 }
 
 function closeTimeSlotModal() {
-  showAddTimeSlotModal.value = false;
-  createTimeSlotError.value = "";
-  resetTimeSlotForm();
+  showAddTimeSlotModal.value = false
+  createTimeSlotError.value = ''
+  resetTimeSlotForm()
 }
 
 async function createTimeSlot() {
-  creatingTimeSlot.value = true;
-  createTimeSlotError.value = "";
-  createTimeSlotSuccess.value = "";
+  creatingTimeSlot.value = true
+  createTimeSlotError.value = ''
+  createTimeSlotSuccess.value = ''
 
   try {
     const response = await $fetch<{ success: boolean; message?: string }>(
-      "/api/staff/office-hours",
+      '/api/staff/office-hours',
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          Authorization: `Bearer ${token.value}`,
+          Authorization: `Bearer ${token.value}`
         },
         body: {
           day: timeSlotForm.value.day,
           start: timeSlotForm.value.start,
-          end: timeSlotForm.value.end,
-        },
-      },
-    );
+          end: timeSlotForm.value.end
+        }
+      }
+    )
 
     if (response.success) {
-      closeTimeSlotModal();
-      createTimeSlotSuccess.value = "Time slot added successfully.";
+      closeTimeSlotModal()
+      createTimeSlotSuccess.value = 'Time slot added successfully.'
     } else {
-      createTimeSlotError.value = response.message || "Failed to add time slot";
+      createTimeSlotError.value = response.message || 'Failed to add time slot'
     }
   } catch (error: unknown) {
-    const fetchError = error as { data?: { message?: string } };
+    const fetchError = error as { data?: { message?: string } }
     createTimeSlotError.value =
-      fetchError.data?.message || "Failed to add time slot";
+      fetchError.data?.message || 'Failed to add time slot'
   } finally {
-    creatingTimeSlot.value = false;
+    creatingTimeSlot.value = false
   }
 }
 </script>
@@ -123,7 +126,7 @@ async function createTimeSlot() {
     <div class="dashboard-header">
       <h1 class="dashboard-title">Instructor Dashboard</h1>
       <p class="dashboard-welcome">
-        Welcome back, <strong>{{ user?.name }} 👋</strong>
+        Welcome back, <strong>{{ user?.name }}</strong>
       </p>
     </div>
 
@@ -143,10 +146,10 @@ async function createTimeSlot() {
           <UiButton @click="showCreateCourseModal = true">
             Create Course
           </UiButton>
-          <UiButton @click="navigateTo('/assignments')">
+          <UiButton variant="outline" @click="navigateTo('/assignments')">
             Manage Assignments
           </UiButton>
-          <UiButton @click="showAddTimeSlotModal = true">
+          <UiButton variant="outline" @click="showAddTimeSlotModal = true">
             Add Time Slot
           </UiButton>
         </div>
@@ -163,14 +166,16 @@ async function createTimeSlot() {
       <div class="modal-content">
         <div class="modal-header">
           <h2 id="create-course-title">Create Course</h2>
-          <button
+          <UiButton
             type="button"
             aria-label="Close dialog"
             class="modal-close"
+            variant="ghost"
+            size="icon"
             @click="showCreateCourseModal = false"
           >
-            ×
-          </button>
+            x
+          </UiButton>
         </div>
 
         <form class="modal-form" @submit.prevent="createCourse">
@@ -179,8 +184,8 @@ async function createTimeSlot() {
           </div>
 
           <div class="form-field">
-            <label for="course-name">Course Name</label>
-            <input
+            <UiLabel for="course-name">Course Name</UiLabel>
+            <UiInput
               id="course-name"
               v-model="courseForm.name"
               type="text"
@@ -189,8 +194,8 @@ async function createTimeSlot() {
           </div>
 
           <div class="form-field">
-            <label for="course-description">Description</label>
-            <textarea
+            <UiLabel for="course-description">Description</UiLabel>
+            <UiTextarea
               id="course-description"
               v-model="courseForm.description"
             />
@@ -202,26 +207,22 @@ async function createTimeSlot() {
               v-model="courseForm.active"
               type="checkbox"
               name="active"
-            />
-            <label for="course-active">Active</label>
+            >
+            <UiLabel for="course-active">Active</UiLabel>
           </div>
 
           <div class="modal-actions">
-            <button
+            <UiButton
               type="button"
-              class="btn-secondary"
+              variant="outline"
               @click="showCreateCourseModal = false"
             >
               Cancel
-            </button>
+            </UiButton>
 
-            <button
-              type="submit"
-              class="btn-primary"
-              :disabled="creatingCourse"
-            >
-              {{ creatingCourse ? "Creating..." : "Create Course" }}
-            </button>
+            <UiButton type="submit" :disabled="creatingCourse">
+              {{ creatingCourse ? 'Creating...' : 'Create Course' }}
+            </UiButton>
           </div>
         </form>
       </div>
@@ -237,14 +238,16 @@ async function createTimeSlot() {
       <div class="modal-content">
         <div class="modal-header">
           <h2 id="add-time-slot-title">Add Availability Time Slot</h2>
-          <button
+          <UiButton
             type="button"
             aria-label="Close dialog"
             class="modal-close"
+            variant="ghost"
+            size="icon"
             @click="closeTimeSlotModal"
           >
             x
-          </button>
+          </UiButton>
         </div>
 
         <form class="modal-form" @submit.prevent="createTimeSlot">
@@ -253,7 +256,7 @@ async function createTimeSlot() {
           </div>
 
           <div class="form-field">
-            <label for="slot-day">Day</label>
+            <UiLabel for="slot-day">Day</UiLabel>
             <select id="slot-day" v-model="timeSlotForm.day" required>
               <option value="Monday">Monday</option>
               <option value="Tuesday">Tuesday</option>
@@ -266,8 +269,8 @@ async function createTimeSlot() {
           </div>
 
           <div class="form-field">
-            <label for="slot-start">Start Time</label>
-            <input
+            <UiLabel for="slot-start">Start Time</UiLabel>
+            <UiInput
               id="slot-start"
               v-model="timeSlotForm.start"
               type="time"
@@ -276,8 +279,8 @@ async function createTimeSlot() {
           </div>
 
           <div class="form-field">
-            <label for="slot-end">End Time</label>
-            <input
+            <UiLabel for="slot-end">End Time</UiLabel>
+            <UiInput
               id="slot-end"
               v-model="timeSlotForm.end"
               type="time"
@@ -286,21 +289,13 @@ async function createTimeSlot() {
           </div>
 
           <div class="modal-actions">
-            <button
-              type="button"
-              class="btn-secondary"
-              @click="closeTimeSlotModal"
-            >
+            <UiButton type="button" variant="outline" @click="closeTimeSlotModal">
               Cancel
-            </button>
+            </UiButton>
 
-            <button
-              type="submit"
-              class="btn-primary"
-              :disabled="creatingTimeSlot"
-            >
-              {{ creatingTimeSlot ? "Adding..." : "Add Time Slot" }}
-            </button>
+            <UiButton type="submit" :disabled="creatingTimeSlot">
+              {{ creatingTimeSlot ? 'Adding...' : 'Add Time Slot' }}
+            </UiButton>
           </div>
         </form>
       </div>
@@ -309,66 +304,14 @@ async function createTimeSlot() {
 </template>
 
 <style scoped>
-.dashboard {
-  padding-bottom: 2rem;
-}
-
 .dashboard-header {
-  margin-bottom: 2rem;
-}
-
-.dashboard-title {
-  margin: 0 0 0.25rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--foreground);
-}
-
-.dashboard-welcome {
-  margin: 0;
-  color: var(--muted-foreground);
-  font-size: 0.9375rem;
-}
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.25rem;
-}
-
-.dashboard-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-}
-
-.dashboard-card h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.0625rem;
-  font-weight: 600;
-  color: var(--foreground);
-}
-
-.dashboard-card p {
-  margin: 0.25rem 0;
-  color: var(--muted-foreground);
-  font-size: 0.875rem;
-}
-
-.success-message {
-  margin: 0 0 0.75rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: var(--radius);
-  background: var(--accent);
-  color: var(--accent-foreground);
-  font-size: 0.875rem;
+  margin-bottom: var(--spacing-md);
 }
 
 .action-buttons {
   display: flex;
-  gap: 0.75rem;
   flex-wrap: wrap;
+  gap: var(--spacing-sm);
 }
 
 .modal-overlay {
@@ -378,136 +321,75 @@ async function createTimeSlot() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 1rem;
+  background: var(--overlay);
+  padding: var(--spacing-md);
 }
 
 .modal-content {
   width: 100%;
   max-width: 28rem;
-  background: var(--background);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-lg);
 }
 
 .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
   color: var(--foreground);
+  font-size: 1.2rem;
+  font-weight: 700;
 }
 
 .modal-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: var(--muted-foreground);
-  cursor: pointer;
-  line-height: 1;
-}
-
-.modal-close:hover {
-  color: var(--foreground);
+  flex: 0 0 auto;
 }
 
 .modal-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-}
-
-.error-message {
-  padding: 0.75rem;
-  background: var(--destructive);
-  color: var(--destructive-foreground);
-  border-radius: var(--radius);
-  font-size: 0.875rem;
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.form-field label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--foreground);
-}
-
-.form-field input[type="text"],
-.form-field input[type="email"],
-.form-field input[type="password"],
-.form-field textarea,
-.form-field select,
-.form-field input[type="time"] {
-  padding: 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--background);
-  color: var(--foreground);
-  font-size: 0.875rem;
-}
-
-.form-field textarea {
-  min-height: 5rem;
-  resize: vertical;
+  gap: var(--spacing-md);
 }
 
 .form-field--checkbox {
   flex-direction: row;
   align-items: center;
-  gap: 0.5rem;
 }
 
 .form-field--checkbox input {
   width: 1rem;
   height: 1rem;
+  accent-color: var(--primary);
+}
+
+.form-field select {
+  min-height: 2.5rem;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  color: var(--foreground);
+  padding: 0 var(--spacing-sm);
 }
 
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 0.75rem;
-  padding-top: 0.5rem;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-xs);
 }
 
-.btn-primary,
-.btn-secondary {
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border: none;
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background: var(--background);
-  color: var(--foreground);
-  border: 1px solid var(--border);
-}
-
-.btn-secondary:hover {
-  background: var(--accent);
+@media (max-width: 640px) {
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
 }
 </style>

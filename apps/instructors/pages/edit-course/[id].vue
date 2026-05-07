@@ -136,31 +136,31 @@ const handleCancel = () => {
 .edit-course-page {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md, 1rem);
+  gap: var(--spacing-md);
   min-height: 100%;
-  padding: var(--spacing-md, 1rem);
+  padding: var(--spacing-md);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm, 0.5rem);
+  gap: var(--spacing-sm);
 }
 
 .back-link {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--color-primary, #3b82f6);
+  color: var(--primary);
   text-decoration: none;
   font-weight: 500;
   width: fit-content;
-  padding: var(--spacing-xs, 0.25rem) 0;
+  padding: var(--spacing-xs) 0;
   transition: all 0.2s ease;
 }
 
 .back-link:hover {
-  color: var(--color-primary-dark, #2563eb);
+  color: var(--color-primary-dark);
   transform: translateX(-4px);
 }
 
@@ -171,16 +171,16 @@ const handleCancel = () => {
 .page-title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--color-text, #1a1a1a);
+  color: var(--foreground);
   margin: 0;
-  padding: var(--spacing-md, 1rem) 0 0 0;
+  padding: var(--spacing-md) 0 0 0;
 }
 
 .page-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg, 1.5rem);
+  gap: var(--spacing-lg);
 }
 
 .form-container {
@@ -191,21 +191,21 @@ const handleCancel = () => {
 
 .loading-state {
   text-align: center;
-  padding: var(--spacing-lg, 1.5rem);
-  color: var(--color-text-secondary, #666);
+  padding: var(--spacing-lg);
+  color: var(--muted-foreground);
   font-size: 1rem;
 }
 
 .error-state {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md, 1rem);
+  gap: var(--spacing-md);
   align-items: center;
-  padding: var(--spacing-lg, 1.5rem);
-  background: #fee;
-  border: 1px solid #fcc;
+  padding: var(--spacing-lg);
+  background: color-mix(in oklab, var(--destructive), var(--card) 90%);
+  border: 1px solid color-mix(in oklab, var(--destructive), var(--border) 70%);
   border-radius: 8px;
-  color: #c33;
+  color: var(--destructive);
   text-align: center;
 }
 
@@ -216,9 +216,9 @@ const handleCancel = () => {
 
 .btn {
   display: inline-block;
-  padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
-  background: var(--color-primary, #3b82f6);
-  color: white;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--primary);
+  color: var(--card);
   text-decoration: none;
   border-radius: 6px;
   font-weight: 600;
@@ -228,18 +228,18 @@ const handleCancel = () => {
 }
 
 .btn:hover {
-  background: var(--color-primary-dark, #2563eb);
+  background: var(--color-primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px color-mix(in oklab, var(--primary), transparent 70%);
 }
 
 .btn--primary {
-  background: var(--color-primary, #3b82f6);
+  background: var(--primary);
 }
 
 @media (max-width: 640px) {
   .edit-course-page {
-    padding: var(--spacing-sm, 0.5rem);
+    padding: var(--spacing-sm);
   }
 
   .page-title {

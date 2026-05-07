@@ -2,25 +2,23 @@
   <div class="edit-course-form">
     <form @submit.prevent="handleSubmit">
       <div class="form-group">
-        <label for="course-name" class="form-label">Course Name</label>
-        <input
+        <UiLabel for="course-name" class="form-label">Course Name</UiLabel>
+        <UiInput
           id="course-name"
           v-model="formData.name"
           type="text"
-          class="form-input"
           placeholder="Enter course name"
           required
           minlength="2"
           maxlength="255"
-        >
+        />
       </div>
 
       <div class="form-group">
-        <label for="course-description" class="form-label">Description</label>
-        <textarea
+        <UiLabel for="course-description" class="form-label">Description</UiLabel>
+        <UiTextarea
           id="course-description"
           v-model="formData.description"
-          class="form-textarea"
           placeholder="Enter course description"
           rows="6"
           maxlength="1000"
@@ -40,21 +38,20 @@
       </div>
 
       <div class="form-actions">
-        <button
+        <UiButton
           :disabled="isLoading"
           type="button"
-          class="btn btn--secondary"
+          variant="outline"
           @click="handleCancel"
         >
           Cancel
-        </button>
-        <button
+        </UiButton>
+        <UiButton
           :disabled="isLoading"
           type="submit"
-          class="btn btn--primary"
         >
           {{ isLoading ? "Saving..." : "Save Changes" }}
-        </button>
+        </UiButton>
       </div>
 
       <div v-if="error" class="error-message">
@@ -69,6 +66,10 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue"
+import UiButton from "@core/components/ui/Button.vue"
+import UiInput from "@core/components/ui/Input.vue"
+import UiLabel from "@core/components/ui/Label.vue"
+import UiTextarea from "@core/components/ui/Textarea.vue"
 
 interface Course {
   id: number
@@ -160,42 +161,42 @@ const handleCancel = () => {
 
 <style scoped>
 .edit-course-form {
-  background: var(--color-surface, white);
+  background: var(--card);
   border-radius: 8px;
-  padding: var(--spacing-lg, 1.5rem);
-  border: 1px solid var(--color-border, #e0e0e0);
+  padding: var(--spacing-lg);
+  border: 1px solid var(--border);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm, 0.5rem);
-  margin-bottom: var(--spacing-md, 1rem);
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
 }
 
 .form-label {
   font-weight: 600;
-  color: var(--color-text, #1a1a1a);
+  color: var(--foreground);
   font-size: 0.95rem;
 }
 
 .form-input,
 .form-textarea {
-  padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
-  border: 1px solid var(--color-border, #d0d0d0);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--input);
   border-radius: 6px;
-  font-family: var(--font-body, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto);
+  font-family: var(--font-body);
   font-size: 0.95rem;
-  color: var(--color-text, #1a1a1a);
-  background: var(--color-base, #ffffff);
+  color: var(--foreground);
+  background: var(--card);
   transition: all 0.2s ease;
 }
 
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #3b82f6);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--info), transparent 88%);
 }
 
 .form-textarea {
@@ -205,23 +206,23 @@ const handleCancel = () => {
 
 .char-count {
   font-size: 0.85rem;
-  color: var(--color-text-secondary, #666);
+  color: var(--muted-foreground);
   margin: 0;
   text-align: right;
 }
 
 .checkbox-group {
-  padding: var(--spacing-md, 1rem);
-  background: var(--color-hover, #f9fafb);
+  padding: var(--spacing-md);
+  background: var(--accent);
   border-radius: 6px;
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm, 0.5rem);
+  gap: var(--spacing-sm);
   cursor: pointer;
-  color: var(--color-text, #1a1a1a);
+  color: var(--foreground);
   font-weight: 500;
 }
 
@@ -229,25 +230,25 @@ const handleCancel = () => {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: var(--color-primary, #3b82f6);
+  accent-color: var(--primary);
 }
 
 .form-actions {
   display: flex;
-  gap: var(--spacing-md, 1rem);
+  gap: var(--spacing-md);
   justify-content: flex-end;
-  margin-top: var(--spacing-lg, 1.5rem);
+  margin-top: var(--spacing-lg);
 }
 
 .btn {
-  padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+  padding: var(--spacing-sm) var(--spacing-md);
   border: none;
   border-radius: 6px;
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: var(--font-body, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto);
+  font-family: var(--font-body);
 }
 
 .btn:disabled {
@@ -256,48 +257,48 @@ const handleCancel = () => {
 }
 
 .btn--primary {
-  background: var(--color-primary, #3b82f6);
-  color: white;
+  background: var(--primary);
+  color: var(--card);
 }
 
 .btn--primary:hover:not(:disabled) {
-  background: var(--color-primary-dark, #2563eb);
+  background: var(--color-primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px color-mix(in oklab, var(--primary), transparent 70%);
 }
 
 .btn--secondary {
-  background: var(--color-border, #e0e0e0);
-  color: var(--color-text, #1a1a1a);
+  background: var(--border);
+  color: var(--foreground);
 }
 
 .btn--secondary:hover:not(:disabled) {
-  background: var(--color-border-hover, #d0d0d0);
+  background: var(--input);
 }
 
 .error-message {
-  margin-top: var(--spacing-md, 1rem);
-  padding: var(--spacing-md, 1rem);
-  background: #fee;
-  border: 1px solid #fcc;
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: color-mix(in oklab, var(--destructive), var(--card) 90%);
+  border: 1px solid color-mix(in oklab, var(--destructive), var(--border) 70%);
   border-radius: 6px;
-  color: #c33;
+  color: var(--destructive);
   font-size: 0.95rem;
 }
 
 .success-message {
-  margin-top: var(--spacing-md, 1rem);
-  padding: var(--spacing-md, 1rem);
-  background: #efe;
-  border: 1px solid #cfc;
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: color-mix(in oklab, var(--success), var(--card) 90%);
+  border: 1px solid color-mix(in oklab, var(--success), var(--border) 70%);
   border-radius: 6px;
-  color: #3c3;
+  color: var(--success);
   font-size: 0.95rem;
 }
 
 @media (max-width: 640px) {
   .edit-course-form {
-    padding: var(--spacing-md, 1rem);
+    padding: var(--spacing-md);
   }
 
   .form-actions {

@@ -138,7 +138,7 @@ onMounted(async () => {
 
 .course-card:hover {
   border-color: var(--primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px oklch(0.25 0.025 252 / 5%);
 }
 
 .course-card::before {

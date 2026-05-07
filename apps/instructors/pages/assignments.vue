@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import UiButton from '@core/components/ui/Button.vue'
+import UiInput from '@core/components/ui/Input.vue'
+import UiLabel from '@core/components/ui/Label.vue'
+import UiTextarea from '@core/components/ui/Textarea.vue'
 import { useAuth } from '@core/composables/useAuth'
 
 definePageMeta({
@@ -142,7 +145,7 @@ const isPastDue = (dateString: string) => {
           </div>
 
           <div class="form-field">
-            <label for="course-select">Course</label>
+            <UiLabel for="course-select">Course</UiLabel>
             <select id="course-select" v-model="assignmentForm.course_id" required>
               <option disabled value="">Select a course...</option>
               <option v-for="course in courses" :key="course.id" :value="course.id">
@@ -152,18 +155,18 @@ const isPastDue = (dateString: string) => {
           </div>
 
           <div class="form-field">
-            <label for="assignment-title">Title</label>
-            <input
+            <UiLabel for="assignment-title">Title</UiLabel>
+            <UiInput
               id="assignment-title"
               v-model="assignmentForm.title"
               type="text"
               required
-            >
+            />
           </div>
 
           <div class="form-field">
-            <label for="assignment-description">Description</label>
-            <textarea
+            <UiLabel for="assignment-description">Description</UiLabel>
+            <UiTextarea
               id="assignment-description"
               v-model="assignmentForm.description"
             />
@@ -171,26 +174,26 @@ const isPastDue = (dateString: string) => {
 
           <div class="form-row">
             <div class="form-field flex-1">
-              <label for="assignment-score">Max Score</label>
-              <input
+              <UiLabel for="assignment-score">Max Score</UiLabel>
+              <UiInput
                 id="assignment-score"
                 v-model.number="assignmentForm.max_score"
                 type="number"
                 min="0"
                 step="0.1"
                 required
-              >
+              />
             </div>
 
             <div class="form-field flex-1">
-              <label for="assignment-due">Due Date</label>
-              <input
+              <UiLabel for="assignment-due">Due Date</UiLabel>
+              <UiInput
                 id="assignment-due"
                 v-model="assignmentForm.due_date"
                 type="datetime-local"
                 :min="getMinDateTime()"
                 required
-              >
+              />
             </div>
           </div>
 
@@ -293,11 +296,11 @@ const isPastDue = (dateString: string) => {
 
 .success-message {
   padding: 0.75rem;
-  background: rgba(76, 175, 80, 0.1);
-  color: #2e7d32;
+  background: color-mix(in oklab, var(--success), transparent 88%);
+  color: var(--success);
   border-radius: var(--radius);
   font-size: 0.875rem;
-  border: 1px solid rgba(76, 175, 80, 0.2);
+  border: 1px solid color-mix(in oklab, var(--success), transparent 80%);
 }
 
 .form-field {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { useRouter } from "vue-router"
+import UiButton from "@core/components/ui/Button.vue"
 
 definePageMeta({
   middleware: ["auth"],
@@ -87,13 +88,14 @@ const handleEditClick = (courseId: number, event: Event) => {
           </div>
 
           <div v-if="isTeaching(course.id)" class="course-actions">
-            <button
-              class="btn btn--edit"
+            <UiButton
+              size="sm"
+              variant="outline"
               title="Edit course"
               @click="handleEditClick(course.id, $event)"
             >
               Edit
-            </button>
+            </UiButton>
           </div>
         </div>
       </div>
@@ -126,7 +128,7 @@ const handleEditClick = (courseId: number, event: Event) => {
 
 .page-subtitle {
   font-size: 0.95rem;
-  color: var(--color-text-secondary, #666);
+  color: var(--muted-foreground);
   margin: 0;
 }
 
@@ -136,22 +138,22 @@ const handleEditClick = (courseId: number, event: Event) => {
 }
 
 .course-card {
-  border: 1px solid var(--color-border, #e0e0e0);
+  border: 1px solid var(--border);
   border-radius: 6px;
   padding: 1rem;
-  background: var(--color-surface, white);
+  background: var(--card);
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .course-card:hover {
-  border-color: var(--color-primary, #3b82f6);
-  background: var(--color-hover, #f9fafb);
+  border-color: var(--primary);
+  background: var(--accent);
 }
 
 .course-card.teaching {
-  border-color: var(--color-primary, #3b82f6);
-  background: var(--color-primary-light, #eff6ff);
+  border-color: var(--primary);
+  background: var(--accent);
 }
 
 .course-row {
@@ -199,7 +201,7 @@ const handleEditClick = (courseId: number, event: Event) => {
 .course-info p {
   margin: 0;
   font-size: 0.9rem;
-  color: var(--color-text-secondary, #666);
+  color: var(--muted-foreground);
 }
 
 .badge {
@@ -208,13 +210,13 @@ const handleEditClick = (courseId: number, event: Event) => {
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 500;
-  background: var(--color-primary, #3b82f6);
-  color: white;
+  background: var(--primary);
+  color: var(--card);
 }
 
 .badge--teaching {
-  background: var(--color-primary, #3b82f6);
-  color: white;
+  background: var(--primary);
+  color: var(--card);
 }
 
 .btn {
@@ -229,19 +231,19 @@ const handleEditClick = (courseId: number, event: Event) => {
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
-  background: var(--color-primary, #3b82f6);
-  color: white;
+  background: var(--primary);
+  color: var(--card);
   font-family: inherit;
 }
 
 .btn:hover {
-  background: var(--color-primary-dark, #2563eb);
+  background: var(--color-primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px color-mix(in oklab, var(--primary), transparent 70%);
 }
 
 .btn--edit {
-  background: var(--color-primary, #3b82f6);
-  color: white;
+  background: var(--primary);
+  color: var(--card);
 }
 </style>

@@ -2,11 +2,10 @@
   <div class="submission-form">
     <form @submit.prevent="handleSubmit">
       <div class="form-group">
-        <label for="submission-content" class="form-label">Submit Your Work</label>
-        <textarea
+        <UiLabel for="submission-content" class="form-label">Submit Your Work</UiLabel>
+        <UiTextarea
           id="submission-content"
           v-model="content"
-          class="form-textarea"
           placeholder="Enter your assignment text here..."
           rows="8"
           :disabled="isSubmitting"
@@ -15,21 +14,20 @@
       </div>
 
       <div class="form-actions">
-        <button
+        <UiButton
           type="button"
-          class="btn btn-clear"
+          variant="outline"
           :disabled="isSubmitting"
           @click="handleClear"
         >
           Clear
-        </button>
-        <button
+        </UiButton>
+        <UiButton
           type="submit"
-          class="btn btn-submit"
           :disabled="!content.trim() || isSubmitting"
         >
           {{ isSubmitting ? 'Submitting...' : 'Submit' }}
-        </button>
+        </UiButton>
       </div>
 
       <div v-if="successMessage" class="message message-success">
@@ -45,6 +43,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuth } from '@core/composables/useAuth'
+import UiButton from '@core/components/ui/Button.vue'
+import UiLabel from '@core/components/ui/Label.vue'
+import UiTextarea from '@core/components/ui/Textarea.vue'
 
 interface Props {
   assignmentId: number
@@ -150,7 +151,7 @@ const handleClear = () => {
 .form-textarea:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary), transparent 88%);
 }
 
 .form-textarea:disabled {
@@ -197,14 +198,14 @@ const handleClear = () => {
 }
 
 .btn-submit {
-  background: #16a34a;
-  color: white;
+  background: var(--success);
+  color: var(--card);
 }
 
 .btn-submit:hover:not(:disabled) {
-  background: #15803d;
+  background: var(--success);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+  box-shadow: 0 4px 12px color-mix(in oklab, var(--success), transparent 75%);
 }
 
 .btn-clear {
@@ -226,14 +227,14 @@ const handleClear = () => {
 }
 
 .message-success {
-  background: rgba(34, 197, 94, 0.1);
-  color: hsl(142, 72%, 29%);
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  background: color-mix(in oklab, var(--success), transparent 88%);
+  color: var(--success);
+  border: 1px solid color-mix(in oklab, var(--success), transparent 80%);
 }
 
 .message-error {
-  background: rgba(239, 68, 68, 0.1);
-  color: hsl(0, 84%, 40%);
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: color-mix(in oklab, var(--destructive), transparent 88%);
+  color: var(--destructive);
+  border: 1px solid color-mix(in oklab, var(--destructive), transparent 80%);
 }
 </style>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useAuth } from '@core/composables/useAuth'
+import UiButton from '@core/components/ui/Button.vue'
 
 definePageMeta({
   middleware: ['auth']
@@ -131,13 +132,13 @@ const handleSubmissionComplete = async (event: any) => {
           {{ submission.content }}
         </div>
 
-        <button 
+        <UiButton
           v-if="submission.status === 'Pending' || submission.status === 'Submitted'"
-          class="btn btn-secondary"
+          variant="outline"
           @click="showSubmissionForm = !showSubmissionForm"
         >
-          {{ showSubmissionForm ? '✕ Cancel' : '✎ Edit' }}
-        </button>
+          {{ showSubmissionForm ? 'Cancel' : 'Edit' }}
+        </UiButton>
       </div>
 
       <div v-if="!submission || showSubmissionForm" class="submission-form-section">
@@ -226,7 +227,7 @@ const handleSubmissionComplete = async (event: any) => {
 }
 
 .text-overdue {
-  color: #ef4444;
+  color: var(--destructive);
   font-weight: 600;
 }
 
@@ -345,18 +346,18 @@ const handleSubmissionComplete = async (event: any) => {
 }
 
 .status-pending {
-  background: rgba(202, 138, 4, 0.12);
-  color: #ca8a04;
+  background: color-mix(in oklab, var(--warning), transparent 86%);
+  color: var(--warning-foreground);
 }
 
 .status-submitted {
-  background: rgba(37, 99, 235, 0.12);
-  color: #2563eb;
+  background: color-mix(in oklab, var(--info), transparent 86%);
+  color: var(--primary);
 }
 
 .status-graded {
-  background: rgba(22, 163, 74, 0.12);
-  color: #16a34a;
+  background: color-mix(in oklab, var(--success), transparent 86%);
+  color: var(--success);
 }
 
 .submission-form-section {
@@ -378,13 +379,13 @@ const handleSubmissionComplete = async (event: any) => {
 
 .btn-secondary {
   background: var(--primary);
-  color: white;
+  color: var(--card);
 }
 
 .btn-secondary:hover {
   opacity: 0.9;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px oklch(0.25 0.025 252 / 10%);
 }
 
 .btn-secondary:active {

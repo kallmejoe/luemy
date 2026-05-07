@@ -473,18 +473,18 @@ async function handleSubmit(): Promise<void> {
 }
 
 .role-student {
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  background: color-mix(in oklab, var(--info), transparent 88%);
+  color: var(--info);
 }
 
 .role-professor {
-  background: rgba(139, 92, 246, 0.1);
-  color: #8b5cf6;
+  background: color-mix(in oklab, var(--chart-5), transparent 88%);
+  color: var(--chart-5);
 }
 
 .role-admin {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  background: color-mix(in oklab, var(--destructive), transparent 88%);
+  color: var(--destructive);
 }
 
 /* Edit Mode */
@@ -584,7 +584,7 @@ async function handleSubmit(): Promise<void> {
 .strength-fill {
   height: 100%;
   transition: width 0.3s, background-color 0.3s;
-  background: linear-gradient(90deg, #ef4444, #f97316, #eab308, #22c55e);
+  background: linear-gradient(90deg, var(--destructive), var(--warning), var(--warning), var(--success));
 }
 
 .strength-text {

@@ -117,13 +117,13 @@ const isOverdue = (dateString: string) => {
 }
 
 .assignment-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px oklch(0.25 0.025 252 / 5%);
   border-color: var(--primary);
 }
 
 .assignment-card.is-overdue {
-  border-color: rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.02);
+  border-color: color-mix(in oklab, var(--destructive), transparent 70%);
+  background: color-mix(in oklab, var(--destructive), transparent 96%);
 }
 
 .assignment-header {

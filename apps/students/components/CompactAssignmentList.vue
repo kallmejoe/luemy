@@ -131,11 +131,11 @@ const getStatusClass = (status?: string) => {
 
 .assignment-row:hover {
   border-color: var(--primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px oklch(0.25 0.025 252 / 5%);
 }
 
 .assignment-row.has-submission {
-  background: rgba(34, 197, 94, 0.02);
+  background: color-mix(in oklab, var(--success), transparent 96%);
 }
 
 .assignment-left {
@@ -156,15 +156,15 @@ const getStatusClass = (status?: string) => {
 }
 
 .status-dot-pending {
-  background: hsl(47, 93%, 43%);
+  background: var(--warning);
 }
 
 .status-dot-submitted {
-  background: hsl(217, 97%, 44%);
+  background: var(--info);
 }
 
 .status-dot-graded {
-  background: hsl(142, 72%, 29%);
+  background: var(--success);
 }
 
 .assignment-info {
@@ -205,18 +205,18 @@ const getStatusClass = (status?: string) => {
 }
 
 .badge-pending {
-  background: rgba(239, 193, 58, 0.1);
-  color: hsl(47, 93%, 43%);
+  background: color-mix(in oklab, var(--warning), transparent 88%);
+  color: var(--warning);
 }
 
 .badge-submitted {
-  background: rgba(59, 130, 246, 0.1);
-  color: hsl(217, 97%, 44%);
+  background: color-mix(in oklab, var(--info), transparent 88%);
+  color: var(--info);
 }
 
 .badge-graded {
-  background: rgba(34, 197, 94, 0.1);
-  color: hsl(142, 72%, 29%);
+  background: color-mix(in oklab, var(--success), transparent 88%);
+  color: var(--success);
 }
 
 .due-date {
