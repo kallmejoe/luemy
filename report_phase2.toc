@@ -1,0 +1,41 @@
+\contentsline {section}{\numberline {1}Project Overview}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}System Description}{2}{subsection.1.1}%
+\contentsline {section}{\numberline {2}Agile Principles, Values \& Pillars}{2}{section.2}%
+\contentsline {section}{\numberline {3}Scrum Team Roles}{3}{section.3}%
+\contentsline {section}{\numberline {4}Feature Prioritization}{3}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Prioritization Technique: MoSCoW Method}{3}{subsection.4.1}%
+\contentsline {section}{\numberline {5}Product Backlog (reference)}{4}{section.5}%
+\contentsline {section}{\numberline {6}MVP Components --- Sprint 1 \& Sprint 2}{4}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Sprint 1 Items}{4}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Sprint 2 Items}{4}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Repository Folder Structure}{5}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Key Directories}{5}{subsection.7.1}%
+\contentsline {section}{\numberline {8}Technology Stack}{6}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Frontend}{6}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Backend}{6}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Development Tools}{6}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Architecture Patterns}{6}{subsection.8.4}%
+\contentsline {section}{\numberline {9}Sprint 2 Summary}{7}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Sprint details}{7}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Sprint Planning --- key outcomes}{7}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Daily Scrum highlights (selected)}{7}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Sprint Review}{7}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Sprint Retrospective}{7}{subsection.9.5}%
+\contentsline {section}{\numberline {10}Meeting Minutes --- Formalized}{8}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Sprint Planning (04/May/26)}{8}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Daily Scrums (selected entries)}{8}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Sprint Review (18/May/26)}{8}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Sprint Retrospective (18/May/26)}{8}{subsection.10.4}%
+\contentsline {section}{\numberline {11}User Story Splitting}{9}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Why We Split User Stories}{9}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Splitting Techniques Applied}{9}{subsection.11.2}%
+\contentsline {subsubsection}{\numberline {11.2.1}Technique 1 --- Split by Role-Based Personas}{9}{subsubsection.11.2.1}%
+\contentsline {subsubsection}{\numberline {11.2.2}Technique 2 --- Split by Workflow Steps}{9}{subsubsection.11.2.2}%
+\contentsline {subsubsection}{\numberline {11.2.3}Technique 3 --- Split by Data Operations (CRUD)}{10}{subsubsection.11.2.3}%
+\contentsline {subsubsection}{\numberline {11.2.4}Technique 4 --- Split by Business Rules}{11}{subsubsection.11.2.4}%
+\contentsline {subsubsection}{\numberline {11.2.5}Technique 5 --- Split by Simple vs. Complex Implementation}{11}{subsubsection.11.2.5}%
+\contentsline {subsection}{\numberline {11.3}Splitting Technique Summary}{12}{subsection.11.3}%
+\contentsline {section}{\numberline {12}Estimation Technique}{13}{section.12}%
+\contentsline {section}{\numberline {13}Definition of Done (DoD) --- Sprint 2 (applies to repository)}{13}{section.13}%
+\contentsline {section}{\numberline {14}Verification \& Evidence}{14}{section.14}%
+\contentsfinish 

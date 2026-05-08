@@ -1,0 +1,713 @@
+\documentclass[12pt,a4paper]{article}
+\raggedbottom
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1cm, top=1.5cm, bottom=1.5cm]{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{calc}
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{amssymb}
+\usepackage[hidelinks]{hyperref}
+\usepackage{setspace}
+\usepackage{needspace}
+\usepackage{etoolbox}
+
+% Prevent widow/orphan headings
+\newcommand{\ensuresection}[1]{\needspace{8\baselineskip}#1}
+\newcommand{\ensurecontentspace}[1]{\needspace{#1}}
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\brokenpenalty=10000
+
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash\vspace{0pt}}m{#1}<{\vspace{0pt}}}
+
+\BeforeBeginEnvironment{longtable}{\needspace{5\baselineskip}}
+
+\tcbuselibrary{skins, breakable}
+\usetikzlibrary{calc, decorations.pathmorphing}
+
+\definecolor{agileblue}{HTML}{1A3C5E}
+\definecolor{agilecyan}{HTML}{0097B2}
+\definecolor{agilegreen}{HTML}{27AE60}
+\definecolor{agileorange}{HTML}{E67E22}
+\definecolor{agilelightgray}{HTML}{F4F6F8}
+\definecolor{agileaccent}{HTML}{5C6BC0}
+\definecolor{mustcolor}{HTML}{1B5E20}
+\definecolor{shouldcolor}{HTML}{1565C0}
+\definecolor{couldcolor}{HTML}{E65100}
+\definecolor{wontcolor}{HTML}{B71C1C}
+
+\titleformat{\section}{\needspace{8\baselineskip}\color{agileblue}\Large\bfseries}{}{}{}[\color{agilecyan}\rule{\textwidth}{2pt}]
+\titleformat{\subsection}{\needspace{6\baselineskip}\color{agileblue}\large\bfseries}{}{}{}[\color{agileblue!30}\rule{\textwidth}{0.8pt}]
+\titleformat{\subsubsection}{\color{agileblue}\normalsize\bfseries}{\color{agilecyan}\thesubsubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{12pt}{12pt}
+\titlespacing*{\subsection}{0pt}{8pt}{8pt}
+\titlespacing*{\subsubsection}{0pt}{6pt}{4pt}
+
+\contentsmargin{8pt}
+\titlecontents{section}[1.2em]{\addvspace{6pt}\bfseries\color{agileblue}}{\contentslabel{1.2em}}{}{\hfill\color{agilecyan}\contentspage}
+\titlecontents{subsection}[2.4em]{\addvspace{2pt}\color{agileblue!80}}{\contentslabel{1.8em}}{}{\titlerule*[6pt]{.}\contentspage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\color{agileblue}\small\textbf{University Management System}}
+\fancyhead[R]{\color{agileblue}\small\textbf{Phase 2 --- Sprint 2 Report}}
+\fancyfoot[C]{\color{agileblue!60}\small\thepage}
+\renewcommand{\headrulewidth}{1.5pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\tcbset{
+  moscowbox/.style={enhanced,breakable,colback=#1!10,colframe=#1,boxrule=2pt,arc=6pt,left=10pt,right=10pt,top=8pt,bottom=8pt,shadow={3pt}{-3pt}{1pt}{#1!25},fonttitle=\bfseries\color{white}\large,attach boxed title to top left={yshift=-4mm,xshift=8mm},boxed title style={colback=#1,arc=4pt,boxrule=0pt}},
+  notebox/.style={enhanced,breakable,colback=agileblue!4,colframe=agileblue,boxrule=1pt,arc=6pt,left=8pt,right=8pt,top=6pt,bottom=6pt,fonttitle=\bfseries\color{white}},
+  storybox/.style={enhanced,colback=agileblue!5,colframe=agileblue!40,boxrule=1.2pt,arc=4pt,left=8pt,right=8pt,top=5pt,bottom=5pt,fonttitle=\bfseries\color{agileblue}}
+}
+
+\newcommand{\mustbadge}{\colorbox{mustcolor}{\color{white}\tiny\bfseries\,MUST\,}}
+\newcommand{\shouldbadge}{\colorbox{shouldcolor}{\color{white}\tiny\bfseries\,SHOULD\,}}
+\newcommand{\couldbadge}{\colorbox{couldcolor}{\color{white}\tiny\bfseries\,COULD\,}}
+\newcommand{\wontbadge}{\colorbox{wontcolor}{\color{white}\tiny\bfseries\,WON'T\,}}
+\newcommand{\sprintbadge}[1]{\colorbox{agileaccent}{\color{white}\tiny\bfseries\,SP#1\,}}
+
+\newcommand{\curlysep}{%
+\begin{center}\begin{tikzpicture}
+  \draw[agilecyan,line width=1.2pt](-4.5cm,0)--(4.5cm,0);
+  \node[circle,fill=agilecyan,inner sep=3pt] at (0,0) {};
+\end{tikzpicture}\end{center}\vspace{6pt}}
+
+\newcommand{\sectionsep}{%
+\begin{center}\begin{tikzpicture}
+  \draw[agilecyan!50,line width=0.8pt](-4,0)to[out=8,in=172](0,0.12)to[out=352,in=188](4,0);
+  \node[circle,fill=agilecyan,inner sep=2.2pt] at (0,0.06) {};
+\end{tikzpicture}\end{center}\vspace{6pt}}
+
+\begin{document}
+
+% COVER PAGE
+\begin{titlepage}
+\pagecolor{white}\color{black}
+
+% Top decorative line
+\noindent\rule{\textwidth}{3pt}\vspace{1cm}
+
+\begin{center}
+
+% University/Project Title
+{\fontsize{16}{20}\selectfont\bfseries\color{agileblue}AGILE PROJECT REPORT}\\[0.3em]
+{\fontsize{12}{14}\selectfont\color{agileblue!70}University Management System}
+
+\vspace{1.5cm}
+
+% Main Title
+{\fontsize{48}{56}\selectfont\bfseries\color{agileblue}UMS}\\[0.4em]
+{\fontsize{28}{34}\selectfont\bfseries\color{agileblue}University\\Management\\System}
+
+\vspace{1cm}
+
+% Subtitle
+{\fontsize{14}{16}\selectfont\color{agileblue!80}Product Backlog, Prioritization \& Sprint Planning}
+
+\vspace{1cm}
+
+% Course Code
+{\fontsize{13}{15}\selectfont\bfseries\color{agileblue}CSE342 --- Agile Software Development}
+
+\vspace{2cm}
+
+% Team Members Section
+
+{\fontsize{11}{13}\selectfont\color{black}
+\begin{tabular}{@{}l@{\hspace{3cm}}l@{}}
+Youssef Tarek & 23p0177 \\[0.5em]
+Marwan Ahmed & 23p0242 \\[0.5em]
+Youssef Haddad & 23p0113 \\[0.5em]
+Ziyad Elnemr & 23p0013 \\[0.5em]
+Loay Khaled & 23p0340 \\[0.5em]
+Ahmed Sadik & 23p0140 \\
+\end{tabular}
+}
+
+% Quick links and roles (Jira, GitHub, Scrum Roles)
+\vspace{1em}
+\begin{tcolorbox}[enhanced,colback=agileblue!6,colframe=agileblue,boxrule=1pt,arc=6pt,left=8pt,right=8pt,top=6pt,bottom=6pt]
+\textbf{Project Links:} Jira: \url{https://ziyadelnemr90.atlassian.net/jira/software/c/projects/FMAP/boards/35} \quad GitHub: \url{https://github.com/Ziyad-Elnemr/luemy}\\[6pt]
+\textbf{Scrum Roles:} Product Owner: Loay Khaled \;|\; Scrum Master: Youssef Tarek \;|\; Development Team: Youssef Haddad, Marwan Ahmed, Ziyad Elnemr, Ahmed Sadik
+\end{tcolorbox}
+\vfill
+% Bottom section
+\noindent\rule{\textwidth}{1pt}\vspace{0.8cm}
+
+{\fontsize{11}{13}\selectfont\color{agileblue!70}
+Academic Year 2025--2026\\
+Presented TO:\\
+Prof Mohamed Hassan Mahmoud El Gazzar\\
+Eng Abdelrahman Salah \\
+Eng Hazem Zaki
+}
+
+\end{center}
+\end{titlepage}
+
+\newpage
+\section*{Scrum Team Roles}
+
+\begin{tabularx}{\textwidth}{@{}L{0.22\textwidth}X@{}}
+\toprule
+\textbf{Role} & \textbf{Assigned Member(s) and Responsibilities} \\
+\midrule
+Product Owner & Loay Khaled --- defines and prioritizes the product backlog, represents stakeholders, accepts completed work. \\
+Scrum Master & Youssef Tarek --- facilitates ceremonies, removes impediments, ensures the team follows the Definition of Done. \\
+Development Team & Youssef Haddad, Marwan Ahmed, Ziyad Elnemr, Ahmed Sadik --- cross-functional engineers responsible for implementation, testing, and documentation. \\
+\bottomrule
+\end{tabularx}
+
+\newpage
+\begin{tcolorbox}[enhanced,colback=agileblue!5,colframe=agileblue,boxrule=1.5pt,arc=6pt,title={$\equiv$ Table of Contents},fonttitle=\bfseries\large\color{white}]
+\tableofcontents
+\end{tcolorbox}
+
+\newpage
+\section{Project Overview}
+
+\begin{tcolorbox}[notebox,title={About This Document}]
+This document covers Sprint 2 of the FMAP University Management System: prioritization (MoSCoW), the reconciled Product Backlog, MVP Components from Sprint 1 and Sprint 2, Sprint 2 meeting minutes, user story splitting techniques, estimation technique (Planning Poker), Definition of Done (DoD) adapted to the repository, and verification evidence.
+\end{tcolorbox}
+
+\subsection{System Description}
+
+The University Management System (UMS) is a digital platform to support students, professors, staff and administrators. Modules: Facilities, Curriculum, Staff, Community.
+
+\section{Agile Principles, Values \& Pillars}
+
+The team follows Agile principles and values and intentionally applies the three Scrum pillars to guide delivery and process improvements. Evidence-based links to project artifacts are provided to show how principles are applied in practice.
+
+\subsection*{Agile Pillars}
+\begin{itemize}
+\item \textbf{Transparency}: Project work, board state, and documentation are publicly available in the repository and docs folder. All work is tracked and visible on the Jira board at \url{https://ziyadelnemr90.atlassian.net/jira/software/c/projects/FMAP/boards/35} and source code on GitHub.
+\item \textbf{Inspection}: Regular inspection is implemented via daily scrums, sprint reviews and API documentation used for verification (see staff API docs: apps/staff/pages/api-docs.vue).
+\item \textbf{Adaptation}: The team adapts scope and process based on feedback; developer-facing process guidance lives in \texttt{docs/WORKFLOW.md} which documents how we work and how changes are handled.
+\end{itemize}
+
+\subsection*{How we demonstrate principles (evidence)}
+\begin{itemize}
+\item Adaptability: see [Developer Workflow](docs/WORKFLOW.md) for developer-facing processes and change handling.
+\item Inspection: staff-facing API documentation is implemented in the app (apps/staff/pages/api-docs.vue) and rendered markdown (API docs page) for reviewers and QA.
+\item Transparency: source code, PRs and issue tracking available on GitHub: \url{https://github.com/Ziyad-Elnemr/luemy} and project Jira board.
+\end{itemize}
+
+
+
+
+\section{Feature Prioritization}
+
+\subsection{Prioritization Technique: MoSCoW Method}
+
+\begin{tcolorbox}[notebox]
+The team adopted the \textbf{MoSCoW prioritization method} --- a widely-used Agile technique that classifies all Product Backlog Items into four categories based on business value, technical dependencies, stakeholder impact, and delivery risk.
+\end{tcolorbox}
+
+\vspace{4pt}
+\begin{tcolorbox}[moscowbox=mustcolor,title={M --- Must Have}]
+\textbf{Non-negotiable features} that the system cannot go live without. These represent core functionality essential to all primary user journeys. If any Must Have is missing, the release is considered a failure.
+\end{tcolorbox}
+
+\vspace{3pt}
+\begin{tcolorbox}[moscowbox=shouldcolor,title={S --- Should Have}]
+\textbf{High-value features} that are important but not critical for the initial release. The system will function without them, but their absence significantly impacts user experience. These are high candidates for the next sprint.
+\end{tcolorbox}
+
+\vspace{3pt}
+\begin{tcolorbox}[moscowbox=couldcolor,title={C --- Could Have}]
+\textbf{Nice-to-have features} that improve usability or provide added convenience. Included only if time and resources allow within the sprint budget. Minimal impact if omitted.
+\end{tcolorbox}
+
+\vspace{3pt}
+\begin{tcolorbox}[moscowbox=wontcolor,title={W --- Won't Have (this time)}]
+\textbf{Out-of-scope features} for the current release cycle. They are acknowledged and documented for future sprints. This category also covers high-complexity items where cost/benefit does not justify immediate inclusion.
+\end{tcolorbox}
+
+\curlysep
+
+% Removed detailed MoSCoW decision-criteria table (now referenced in the backlog and planning notes)
+
+\newpage
+\section{Product Backlog (reference)}
+
+All detailed backlog items are managed in the team's Jira board and linked from GitHub issue/PRs. The full backlog table has been intentionally omitted from this report to avoid duplication and ensure the single source of truth remains the Jira board.
+
+\begin{tcolorbox}[notebox,title={Backlog Reference}]
+Jira board: \url{https://ziyadelnemr90.atlassian.net/jira/software/c/projects/FMAP/boards/35}\\
+GitHub repository: \url{https://github.com/Ziyad-Elnemr/luemy}\\
+The backlog and live prioritization are maintained on the Jira board; for verification see linked PRs and issue references on GitHub.
+\end{tcolorbox}
+
+\sectionsep
+
+\section{MVP Components --- Sprint 1 \& Sprint 2}
+
+\subsection{Sprint 1 Items}
+
+\begin{tcolorbox}[enhanced,colback=agileblue!4,colframe=agileblue,boxrule=1pt,arc=5pt,title={\textbf{Sprint 1 Deliverables}},fonttitle=\bfseries\color{white},attach boxed title to top left={yshift=-3mm,xshift=6mm},boxed title style={colback=agileblue,arc=3pt}]
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item FMAP-133 --- Create a New Course
+\item FMAP-135 --- Enroll in a Selected Course
+\item FMAP-137 --- View the List of Active Courses
+\item FMAP-138 --- Create a New Assignment with Deadlines
+\item FMAP-141 --- Upload and Submit Assignment Documents
+\item FMAP-147 --- Grade an Assignment and Provide Feedback
+\item FMAP-160 --- Registration \& Login for Student
+\end{itemize}
+\end{tcolorbox}
+
+\subsection{Sprint 2 Items}
+
+\begin{tcolorbox}[enhanced,colback=agilecyan!5,colframe=agilecyan,boxrule=1pt,arc=5pt,title={\textbf{Sprint 2 Deliverables}},fonttitle=\bfseries\color{white},attach boxed title to top left={yshift=-3mm,xshift=6mm},boxed title style={colback=agilecyan,arc=3pt}]
+\begin{itemize}[leftmargin=*,itemsep=3pt,label={$\bullet$}]
+\item FMAP-131 --- Update Existing Course Details
+\item FMAP-132 --- Search and Filter the Course Catalog
+\item FMAP-140 --- View Upcoming Assignment Deadlines
+\item FMAP-178 --- Manage Availability for Professor
+\item FMAP-184 --- View Centralized Staff Directory
+\item FMAP-198 --- Update Student Personal Information
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{4pt}
+\begin{center}
+\begin{tabular}{@{}>\bfseries\color{agileblue}L{0.30\textwidth}C{0.20\textwidth}@{}}
+\toprule
+\rowcolor{agileblue!10}
+\textbf{Sprint} & \textbf{Completed Items} \\
+\midrule
+Sprint 1 & 7 \\
+\rowcolor{agilelightgray}
+Sprint 2 & 6 \\
+\midrule
+\rowcolor{agileblue!8}
+\textbf{Total Completed} & \textbf{13} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+
+
+
+
+
+
+
+\section{Repository Folder Structure}
+
+\begin{tcolorbox}[notebox,title={Project Organization}]
+The FMAP (University Management System) repository is organized as a monorepo with clear separation of concerns:
+\end{tcolorbox}
+
+\begin{verbatim}
+luemy/ (root)
+├── apps/                    # Multi-app frontend structure
+│   ├── students/           # Student application (Nuxt 3)
+│   ├── staff/              # Staff/Admin application (Nuxt 3)
+│   └── instructors/        # Instructor application (Nuxt 3)
+├── layers/
+│   └── core/              # Shared components, composables, styles
+├── server/                 # Backend API and utilities
+│   ├── api/               # Endpoint handlers (grouped by resource)
+│   └── utils/             # Database, initialization, helpers
+├── db/                     # SQLite database file
+├── docs/                   # Project documentation
+├── public/                 # Static assets
+├── scripts/                # Utility scripts (db seeding, etc.)
+└── package.json, tsconfig.json, nuxt.config.ts
+\end{verbatim}
+
+\subsection{Key Directories}
+
+\begin{itemize}
+\item \textbf{apps/}: Three independent Nuxt applications, each with their own pages, layouts, components, middleware, and composables.
+\item \textbf{layers/core/}: Shared UI components, authentication composables, theme variables, and global styles reused across all three apps.
+\item \textbf{server/api/}: Vertical slices of endpoints organized by feature (auth, courses, assignments, staff, availability, feedback).
+\item \textbf{db/}: SQLite database file and schema migrations managed via \texttt{server/utils/init.ts}.
+\end{itemize}
+
+\sectionsep
+
+\newpage
+\section{Technology Stack}
+
+\begin{tcolorbox}[notebox,title={Development Stack}]
+The UMS project uses a modern, type-safe stack optimized for rapid iteration and quality assurance.
+\end{tcolorbox}
+
+\subsection{Frontend}
+
+\begin{itemize}
+\item \textbf{Nuxt 3}: Meta-framework for Vue 3 enabling SSR, file-based routing, and auto-imports.
+\item \textbf{Vue 3}: Component-based UI with Composition API for reactive state management.
+\item \textbf{TypeScript}: Type safety across all frontend code and build steps.
+\item \textbf{TailwindCSS}: Utility-first CSS for rapid UI development and consistent theming.
+\item \textbf{CSS Variables}: Custom theme system (agileblue, agilecyan, agilegreen, etc.) for app-specific branding.
+\end{itemize}
+
+\subsection{Backend}
+
+\begin{itemize}
+\item \textbf{Node.js}: Runtime for server-side endpoint handlers.
+\item \textbf{H3}: Lightweight HTTP server for handling requests (built into Nuxt server).
+\item \textbf{Jose}: JWT library for secure token generation and verification (auth).
+\item \textbf{SQLite}: Embedded database for development and deployment simplicity.
+\item \textbf{TypeScript}: End-to-end type safety from API layer to database.
+\end{itemize}
+
+\subsection{Development Tools}
+
+\begin{itemize}
+\item \textbf{Bun}: Fast package manager and runtime (primary); Node.js/npm as fallback.
+\item \textbf{ESLint}: Code linting and consistency enforcement.
+\item \textbf{Nuxt Typecheck}: Integrated type checking for Nuxt components and modules.
+\item \textbf{Git}: Version control with GitHub for collaboration and CI/CD readiness.
+\end{itemize}
+
+\subsection{Architecture Patterns}
+
+\begin{itemize}
+\item \textbf{API-First}: Backend exposes REST endpoints with JWT authentication; frontend consumes via \texttt{\$fetch}.
+\item \textbf{Composable-Based Logic}: Shared business logic (auth, navigation, theme) extracted into Vue composables.
+\item \textbf{Component Reusability}: Core components in \texttt{layers/core/components/} auto-imported and reused across apps.
+\item \textbf{Middleware Protection}: Auth middleware on protected routes; JWT validation on backend endpoints.
+\end{itemize}
+
+\sectionsep
+
+\section{Sprint 2 Summary}
+
+\subsection{Sprint details}
+
+Sprint window: 04/May/26 12:00 PM --- 18/May/26 11:30 PM (Sprint 2). 
+
+PO: Loay Khaled. Scrum Master: Youssef Tarek. Dev Team: Youssef Haddad, Marwan Ahmed, Ziyad Elnemr, Ahmed Sadek.
+
+\subsection{Sprint Planning --- key outcomes}
+
+\begin{itemize}
+\item Reduced scope by removing low-priority features to concentrate on MVP items.
+\item Top priorities: Security (fix exposed API, strong passwords, API docs), UI/UX (navigation improvements), Usability for instructors, Documentation, Deployment plan.
+\item Risk items noted: potential quality issues due to deadline changes and misaligned UX expectations.
+\end{itemize}
+
+\subsection{Daily Scrum highlights (selected)}
+
+\begin{itemize}
+\item 05/05 --- Merge conflict on PR referencing FMAP-140; Loay to mediate (evidence: Agile Notes).
+\item 06/05 --- Reduced attendance; meeting canceled.
+\item 07/05 --- Team performed PR reviews and merged outstanding PRs.
+\item 08/05 --- Functional testing of implemented requirements.
+\end{itemize}
+
+\subsection{Sprint Review}
+
+PO feedback: UI/UX improvements accepted; PO liked theme and calendar feature; navigation still noted as needing further simplification.
+
+\subsection{Sprint Retrospective}
+
+Team noted time pressure from schedule change; teamwork improved; action: increase meeting attendance and improve PR coordination.
+
+\sectionsep
+
+\section{Meeting Minutes --- Formalized}
+
+\subsection{Sprint Planning (04/May/26)}
+
+Attendees: PO (Loay), SM (Youssef), Dev Team. Decisions:
+\begin{itemize}
+\item Reduced scope, prioritized security and navigation.
+\item Estimation approach: Planning Poker (see Estimation section).
+\item Action items: Fix exposed API endpoints (owner: Marwan, due: 07/May/26).
+\item Update onboarding docs and API docs (owner: Ziyad, due: 10/May/26).
+\end{itemize}
+
+\subsection{Daily Scrums (selected entries)}
+
+\begin{itemize}
+\item 05/May/26: Merge conflict on FMAP-140 --- action: Loay mediate and produce merge plan.
+\item 07/May/26: PR review day --- all devs to merge and run functional tests.
+\end{itemize}
+
+\subsection{Sprint Review (18/May/26)}
+
+Attendees: PO, SM, Dev Team. Demonstrated: calendar feature, login improvements, assignment deadline view. PO accepted several items; navigation improvement remains.
+
+\subsection{Sprint Retrospective (18/May/26)}
+
+What went well: collaboration under tight deadlines. What to improve: more regular syncs, clearer PR ownership. Action: schedule two mandatory mid-sprint checkpoints.
+\newpage
+\section{User Story Splitting}
+
+\subsection{Why We Split User Stories}
+
+\begin{tcolorbox}[notebox]
+Large user stories (Epics) cannot be delivered within a single sprint. The team applied recognized splitting patterns to break large stories into independently deliverable, testable increments, each satisfying the INVEST criteria.
+\end{tcolorbox}
+
+\vspace{8pt}
+\begin{tcolorbox}[enhanced,colback=agileaccent!8,colframe=agileaccent,boxrule=1pt,arc=4pt,title={\textbf{INVEST Criteria}},fonttitle=\bfseries\color{white},attach boxed title to top left={yshift=-3mm,xshift=6mm},boxed title style={colback=agileaccent,arc=3pt}]
+Each split story must be:\quad\textbf{I}ndependent $\bullet$ \textbf{N}egotiable $\bullet$ \textbf{V}aluable $\bullet$ \textbf{E}stimable $\bullet$ \textbf{S}mall $\bullet$ \textbf{T}estable
+\end{tcolorbox}
+
+\curlysep
+
+\subsection{Splitting Techniques Applied}
+
+The team applied five core splitting techniques, each demonstrated with examples from the project backlog and sourced directly from the Curriculum, Facilities, and Staff module documentation.
+
+\subsubsection{Technique 1 --- Split by Role-Based Personas}
+
+Split an epic into distinct features based on different user personas with conflicting goals. Each persona gets a focused feature that serves their specific workflow.
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example: Course Catalog Management (Curriculum Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Original Epic:} \textit{``As a user, I want to manage and access the course catalog.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{Feature A (Admin Persona):} Course Catalog Administration
+  \begin{itemize}[itemsep=1pt]
+    \item \textbf{FMAP-133} --- Create a new course
+    \item \textbf{FMAP-137} --- View the list of active courses
+    \item \textbf{FMAP-131} --- Update existing course details
+  \end{itemize}
+\item \textbf{Feature B (Student Persona):} Student Registration Portal
+  \begin{itemize}[itemsep=1pt]
+    \item \textbf{FMAP-132} --- Search and filter the course catalog
+    \item \textbf{FMAP-135} --- Enroll in a selected course
+  \end{itemize}
+\end{enumerate}
+\textit{The epic naturally serves two completely different user personas (admin building curriculum vs. student consuming it), so it is split into two distinct features, each optimized for their workflow.}
+\end{tcolorbox}
+
+\vspace{10pt}
+\subsubsection{Technique 2 --- Split by Workflow Steps}
+
+Decompose a user journey into sequential phases, creating one story per phase so each can be developed and tested independently.
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example 2a: Transcript Management (Facilities Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Original Epic:} \textit{``As a student, I want to request, track, and receive an official transcript.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{FMAP-196} --- Student \textit{requests} an official sealed transcript
+\item \textbf{FMAP-202} --- Admin \textit{processes} and digitally signs the transcript
+\item \textbf{FMAP-198} --- Registrar \textit{updates} student information prior to generation
+\end{enumerate}
+\textit{Each step is testable in isolation and delivers value to a distinct user role.}
+\end{tcolorbox}
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example 2b: Performance Tracking (Staff Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Original Epic:} \textit{``As a professor, I want to submit performance data for annual review.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{FMAP-182} --- \textit{Submission Phase}: Add completed course details
+\item \textbf{FMAP-185} --- \textit{Report Phase}: Admin extracts performance report for review
+\end{enumerate}
+\textit{Workflow split into submission phase (faculty action) and reporting phase (admin action).}
+\end{tcolorbox}
+
+\vspace{10pt}
+\subsubsection{Technique 3 --- Split by Data Operations (CRUD)}
+
+Separate Create, Read, Update, and Delete operations into individual stories, each with distinct complexity and priority.
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example 3a: Course Catalog (Curriculum Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Original Epic:} \textit{``As an Admin, I want to fully manage the course catalog.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{FMAP-133} --- \textit{Create}: Create a new course
+\item \textbf{FMAP-137} --- \textit{Read}: View the list of active courses
+\item \textbf{FMAP-131} --- \textit{Update}: Update existing course details
+\item \textbf{FMAP-130} --- \textit{Delete}: Archive a retired course
+\end{enumerate}
+\textit{Core operations (Create, Read) are prioritized first; complex operations (Update, Delete) follow.}
+\end{tcolorbox}
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example 3b: Staff Directory (Staff Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Feature:} \textit{``Staff directory and role management.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{FMAP-184} --- \textit{Read Only}: View centralized staff directory
+\item \textbf{FMAP-186} --- \textit{Read \\& Write}: Manage course duties and responsibilities
+\end{enumerate}
+\textit{Data Operations applied at varying complexity levels: read-only access is separate from read-write management.}
+\end{tcolorbox}
+
+\vspace{10pt}
+\subsubsection{Technique 4 --- Split by Business Rules}
+
+Deliver core business logic first; add validation and complex rules in subsequent stories to incrementally build sophistication.
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example: Course Enrollment (Curriculum Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Original Epic:} \textit{``As a student, I want to find and enroll in courses.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{FMAP-132} --- \textit{Core Logic}: Search and filter the course catalog
+\item \textbf{FMAP-135} --- \textit{Enrollment}: Enroll in a selected course
+\item \textbf{FMAP-134} --- \textit{Validation}: System validation of course prerequisites
+\item \textbf{FMAP-136} --- \textit{Enhancement}: View remaining course capacity/seats
+\end{enumerate}
+\textit{Basic search and enrollment are released first; prerequisite validation and capacity checks are added as subsequent enhancements.}
+\end{tcolorbox}
+
+\vspace{10pt}
+\subsubsection{Technique 5 --- Split by Simple vs. Complex Implementation}
+
+Isolate risky or complex features by splitting them into a simple, internal-only version first, then adding complex integrations in subsequent stories.
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example 5a: Content Delivery (Curriculum Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Original Epic:} \textit{``As a professor and student, I want to access and manage learning materials online.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{Simple Path (Internal):}
+  \begin{itemize}[itemsep=1pt]
+    \item Upload and store course materials internally
+    \item Students access and download materials
+  \end{itemize}
+\item \textbf{Complex Path (External Integration):}
+  \begin{itemize}[itemsep=1pt]
+    \item Configure and synchronize with external LMS
+    \item Handle real-time data sync and legacy content migration
+  \end{itemize}
+\end{enumerate}
+\textit{Simple, low-risk internal features are delivered first; complex external integrations are added in later sprints.}
+\end{tcolorbox}
+
+\vspace{6pt}
+\begin{tcolorbox}[storybox,title={\textbf{Example 5b: HR Benefits (Staff Module)}},fonttitle=\bfseries\color{agileblue}]
+\textbf{Feature:} \textit{``HR benefits and payroll management.''}
+\vspace{4pt}
+\begin{enumerate}[itemsep=2pt]
+\item \textbf{FMAP-187} --- \textit{Simple}: View benefits summary (static page)
+\item \textbf{FMAP-188} --- \textit{Complex}: View payslips with secure access control
+\end{enumerate}
+\textit{Simple, static benefits view is quick to deliver; complex payroll with security rules follows.}
+\end{tcolorbox}
+
+\curlysep
+\subsection{Splitting Technique Summary}
+
+\vspace{8pt}
+\begin{center}
+\begin{tabular}{@{}>{\bfseries\color{agileblue}}L{0.25\textwidth}L{0.38\textwidth}L{0.29\textwidth}@{}}
+\toprule
+\rowcolor{agileblue!10}
+\textbf{Technique} & \textbf{Best Applied When} & \textbf{Example in Project} \\
+\midrule
+Role-Based Personas & Different actors with conflicting goals & Course catalog management \\
+\rowcolor{agilelightgray}
+Workflow Steps & Sequential multi-phase user journey & Transcript, Performance tracking \\
+Data Operations (CRUD) & Full data management lifecycle & Course catalog, Staff directory \\
+\rowcolor{agilelightgray}
+Business Rules & Core logic before validation rules & Course enrollment \\
+\rowcolor{agilelightgray}
+Simple vs. Complex & Risk isolation before complex integration & Content delivery, HR benefits \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\newpage
+\section{Estimation Technique}
+
+The team used Planning Poker during Sprint Planning:
+\begin{itemize}
+\item Scale: Fibonacci-like (1,2,3,5,8,13).
+\item Process: PO reads story $\rightarrow$ discussion $\rightarrow$ independent votes $\rightarrow$ reveal $\rightarrow$ discuss outliers $\rightarrow$ re-vote until consensus.
+\item Evidence: \texttt{Agile Notes.md} records estimation decisions; merge conflict on FMAP-140 shows a story that required re-estimation during sprint.
+\end{itemize}
+
+\sectionsep
+
+\section{Definition of Done (DoD) --- Sprint 2 (applies to repository)}
+
+Updated DoD (applies to every story/PR merged for Sprint 2):
+\begin{enumerate}
+\item Code compiles and lints: \texttt{npx eslint .} --- no new lint errors in changed files.
+\item Type checks: \texttt{npx nuxt typecheck apps/students} (and \texttt{apps/staff}, \texttt{apps/instructors}) --- no type errors in touched modules.
+\item Manual testing: stories are manually tested by developers and QA --- evidence of testing provided in PR description or manual verification screenshots.
+\item API Security: server endpoints validate JWT using \texttt{jose} and token checks (see \texttt{server/api/*}) --- include code snippet and tests for auth where applicable.
+\item DB migrations: any required DB schema changes included and seeded via \texttt{server/utils/init.ts}.
+\item Documentation: update \texttt{docs/} or \texttt{README.md} with usage or configuration changes.
+\item PR review: at least one review approval, CI green (if CI configured), and documented acceptance criteria met.
+\item Evidence: PR contains screenshots or links to manual verification and references corresponding FMAP ID(s).
+\end{enumerate}
+
+Reference commands:
+\begin{verbatim}
+npx eslint .
+npx nuxt typecheck apps/students
+bun run dev:students
+bun run dev:staff
+bun run dev:instructors
+\end{verbatim}
+
+\sectionsep
+
+\newpage
+\section{Verification \& Evidence}
+
+Where to find evidence:
+\begin{itemize}
+\item GitHub repo: \url{https://github.com/Ziyad-Elnemr/luemy} --- check PRs/commits referencing FMAP IDs.
+\item Server endpoints: \texttt{server/api/} --- JWT verification code pattern using \texttt{jose}.
+\item DB schema: \texttt{server/utils/init.ts}.
+\item Frontend components implementing features: \texttt{layers/core/components/}, \texttt{apps/*/components/} and \texttt{apps/*/pages/}.
+\item Jira board (reference): \url{https://ziyadelnemr90.atlassian.net/jira/software/c/projects/FMAP/boards/35}
+\end{itemize}
+
+Appendix: reproduction commands (run locally)
+\begin{verbatim}
+# Install dependencies (repo uses bun in dev; node alternative may be used)
+bun install
+# Prepare Nuxt (if required)
+npx nuxt prepare
+# Run lint
+npx eslint .
+# Typecheck
+npx nuxt typecheck apps/students
+# Run dev for students app
+bun run dev:students
+\end{verbatim}
+
+\sectionsep
+
+\newpage
+% Agile principles and values moved earlier in the document (see "Agile Principles, Values & Pillars" section).
+
+% Final Thank You page copied from report.tex
+\newpage
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+\begin{tikzpicture}
+\fill[agileblue,rounded corners=12pt](-8cm,-3.8cm)rectangle(8cm,3.8cm);
+\node[color=white,font=\Huge\bfseries] at (0,0) {Thank You};
+\end{tikzpicture}
+\end{center}
+\vspace*{\fill}
+
+\end{document}
